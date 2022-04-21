@@ -1,4 +1,5 @@
 <?php
+	if(defined("constante")){
 		echo'
 		<section>
 			<article>
@@ -93,6 +94,9 @@
 				}
 				echo'</table>';
 			echo'</article>
+			<script type="text/javascript" src="js/edit.js"></script>
 		</section>
 		';
+			}
+	else die("");
 ?>

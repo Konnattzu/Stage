@@ -1,4 +1,5 @@
 <?php
+	if(defined("constante")){
 		echo'
 		<section>
 			<article>
@@ -10,5 +11,7 @@
 				<input type="submit" name="submit" value="Ajouter"
 			</form>
 		</section>
-		';
+		';			
+		}
+	else die("");
 ?>
