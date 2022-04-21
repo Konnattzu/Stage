@@ -2,12 +2,11 @@
 
 	if(defined("constante")){
 		if(isset($_POST['patient_id'])){
-			if(mysqli_num_rows(mysqli_query($mysqli,"SELECT * FROM patientstest WHERE patient_id=".$_POST["patient_id"].";"))==1){
+			if(mysqli_num_rows(mysqli_query($mysqli,"SELECT * FROM patientstest WHERE patient_id='".$_POST["patient_id"]."';"))==1){
 				$prenom = $_POST["prenom"];
 				$nom = $_POST["nom"];
 				$sexe = $_POST["sexe"];
-				$date = DateTime::createFromFormat('d/m/Y', $_POST["date_naiss"]);
-				$date_naiss = $date->format('Y-m-d');
+				$date_naiss = $_POST["date_naiss"];
 				$grp_sang = $_POST["grp_sang"];
 				$taux_antcrps = $_POST["taux_antcrps"];
 				$req = mysqli_query($mysqli,"SELECT * FROM patientstest WHERE patient_id=".$_POST["patient_id"].";");
