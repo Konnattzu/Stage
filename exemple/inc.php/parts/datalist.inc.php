@@ -11,5 +11,5 @@
 						echo $val;
 						
 	}
-	else die("");
+	else die("");//bonjour
 						?>
