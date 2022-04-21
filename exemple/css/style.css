@@ -1,8 +1,10 @@
 table{
 	border: 2px solid black;
+	width: 80vw;
 }
 td{
 	border: 2px solid black;
+	min-width: 50px;
 }
 .colname{
 	font-weight: bold;

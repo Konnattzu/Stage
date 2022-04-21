@@ -6,6 +6,7 @@
 				<a href="index.php?ref=accueil">Retour à l&apos; accueil</a>
 				<a href="index.php?ref=saisie">Nouvelle entrée</a>
 				<h1>La liste</h1>';
+				include("inc.php/parts/edit_data.inc.php");
 				$liste = mysqli_query($_SESSION["mysqli"], 'SELECT * FROM patientstest;');
 				$i = 0;
 				echo'<table>';
@@ -37,59 +38,58 @@
 							echo'</td>';
 						}
 						echo'</tr>';
-						echo'<tr>';
+						echo'<tr id="line'.$i.'">
+							<form action="#line'.$i.'" method="post">';
 					foreach ($row[$i] as $col => $val) {
-							echo'<td>';
-						$infos = mysqli_query($_SESSION["mysqli"], 'SELECT 
-											TABLE_CATALOG,
-											TABLE_SCHEMA,
-											TABLE_NAME, 
-											COLUMN_NAME, 
-											DATA_TYPE 
-											FROM INFORMATION_SCHEMA.COLUMNS
-											where TABLE_NAME = "patientstest" 
-											and COLUMN_NAME = "'.$col.'";');
-						if(is_string($val)){
-							if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$val))
-							{
-								$date = strtotime($val);
-								$val = date("d/m/Y", $date);
-							}
-						}
-						echo $val;
+						echo'<td class="dataline">';
+							include("inc.php/parts/datalist.inc.php");
 						echo'</td>';
+						echo'
+						<td class="editline">';
+							include("inc.php/parts/editlist.inc.php");
+							echo'</td>';
+							
 					}
 						
-					echo'</tr>';
+					echo'<td class="editbtn">
+							<label>
+								<a href="#line'.$i.'">Edit</a>
+							</label>
+						</td>
+						<td class="savebtn">
+							<label>
+								<input type="submit" name="save" value="Save">
+							</label>
+						</td>
+						</form>
+					</tr>';
 					}else{
-					echo'<tr>';
+					echo'<tr name="tr" id="line'.$i.'">
+							<form name="form" action="#line'.$i.'" method="post">';
 					foreach ($row[$i] as $col => $val) {
-							echo'<td>';
-						$infos = mysqli_query($_SESSION["mysqli"], 'SELECT 
-											TABLE_CATALOG,
-											TABLE_SCHEMA,
-											TABLE_NAME, 
-											COLUMN_NAME, 
-											DATA_TYPE 
-											FROM INFORMATION_SCHEMA.COLUMNS
-											where TABLE_NAME = "patientstest" 
-											and COLUMN_NAME = "'.$col.'";');
-						
-						if(is_string($val)){
-							if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$val))
-							{
-								$date = strtotime($val);
-								$val = date("d/m/Y", $date);
-							}
-						}
-						echo $val;
+						echo'<td class="dataline">';
+							include("inc.php/parts/datalist.inc.php");
 						echo'</td>';
+						echo'
+						<td class="editline">';
+							include("inc.php/parts/editlist.inc.php");
+							echo'</td>';
+							
 					}
 						
-					echo'</tr>';
+					echo'<td class="editbtn">
+							<label>
+								<a href="#line'.$i.'">Edit</a>
+							</label>
+						</td>
+						<td class="savebtn">
+							<label>
+								<input type="submit" name="save" value="Save">
+							</label>
+						</td>
+						</form>
+					</tr>';
 					}
-					
-					
 					$i++;
 				}
 				echo'</table>';

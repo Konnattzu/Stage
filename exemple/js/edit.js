@@ -1,24 +1,35 @@
 
         //
         $(document).ready(function(){
-            $('.field').css("visibility", "hidden");
-            $('.dataline').hover(function(){
-                $('.editbtn').css("display", "");
-            });
-            $('.editbtn').click(function(){
-                $('.editbtn').css("display", "none");
-                $('.savebtn').css("display", "");
-                $('.dataline').css("display", "none");
-                $('.editline').css("display", "");
-            });
-            $('.save').click(function(){
-                $('textarea').css("pointer-events", "none");
-                $('.hide1').css("pointer-events", "none");
-                $('.hide2').css("pointer-events", "none");
-                $('.hide3').css("pointer-events", "none");
-                $('.visible1').css("pointer-events", "none");
-                $('.visible2').css("pointer-events", "none");
-                $('.visible3').css("pointer-events", "none");
-                $('#max-width').css("background-color", "");
-            });
+            $('.editline').css("display", "none");
+            $('.editbtn').css("display", "none");
+            $('.savebtn').css("display", "none");
+			var hoverelements = "";
+			var clickelements = "";
+			var editing = false;
+			for(i=0;i<4;i++){
+				hoverelements += '#line'+i+', ';
+				clickelements += '#line'+i+' .editbtn, ';
+			}
+			hoverelements = hoverelements.substring(0,hoverelements.length - 2);
+			clickelements = clickelements.substring(0,clickelements.length - 2);
+			$(hoverelements).hover(function(){
+				if(editing == false){
+					$(this).children('.editbtn').css("display", "");
+				}
+			},function(){
+				if(editing == false){
+					$(this).children('.editbtn').css("display", "none");
+				}
+			});
+			$(clickelements).click(function(){
+				if(editing == false){
+					$(this).css("display", "none");
+					$(this).parent().children('.savebtn').css("display", "");
+					$(this).parent().children('.dataline').css("display", "none");
+					$(this).parent().children('.editline').css("display", "");
+					editing = true;
+				}
+			});
+			
         });
