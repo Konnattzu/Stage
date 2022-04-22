@@ -97,6 +97,28 @@
 			<script type="text/javascript" src="js/edit.js"></script>
 		</section>
 		';
+		
+		echo'<section>';
+			$fic=fopen("../documents/patientstest.csv", "r");
+			while(!feof($fic))
+			{
+				$caractere=fgetc($fic);
+				echo $fic;
+				if(!feof($fic))
+				{
+					if($caractere != ","){
+						echo $caractere;
+					}else{
+						echo' ';
+					}
+					echo $caractere . "
+					";
+				}
+			}
+			fclose($fic) ;
+		echo'</section>';
+		
+		
 			}
 	else die("");
 ?>
