@@ -7,6 +7,8 @@
 				<a href="index.php?ref=saisie">Nouvelle entrée</a>
 				<h1>La liste</h1>';
 				include("inc.php/parts/edit_data.inc.php");
+				include("inc.php/parts/datatype.func.php");
+				include("inc.php/parts/clear.func.php");
 				$liste = mysqli_query($_SESSION["mysqli"], 'SELECT * FROM patientstest;');
 				$i = 0;
 				echo'<table>';
@@ -99,26 +101,88 @@
 		';
 		
 		echo'<section>';
-			$fic=fopen("../documents/patientstest.csv", "r");
-			while(!feof($fic))
-			{
-				$caractere=fgetc($fic);
-				echo $fic;
-				if(!feof($fic))
-				{
-					if($caractere != ","){
-						echo $caractere;
-					}else{
-						echo' ';
-					}
-					echo $caractere . "
-					";
+		echo'<br>';
+$csv = array_map("str_getcsv", file("../documents/patientstest.csv")); 
+$header = array_shift($csv);
+// Seperate the header from data
+			echo'<table>';
+				echo'<tr class="colname">';
+				for($j=0;$j<count($header);$j++){
+					echo'<td>';
+						echo $header[$j];			
+					echo'</td>';
+				$nbcol[$j] = array_search($header[$j], $header, true); 
 				}
-			}
-			fclose($fic) ;
+				echo'</tr>';
+				$row=0;
+				 foreach ($csv as $col) {
+					for($j=0;$j<count($header);$j++){
+						$array[$nbcol[$j]][$row] = $col[$nbcol[$j]];
+					}
+					$row++;
+				}
+				for($j=0;$j<$row;$j++){
+					echo'<tr>';
+						for($i=0;$i<count($header);$i++){
+							echo'<td>';
+								echo $array[$nbcol[$i]][$j];
+							echo'</td>';
+						}
+					echo'</tr>';
+				}
+				
+			echo'</table>';
 		echo'</section>';
-		
-		
+		$querytable = "CREATE TABLE step1
+			 (";
+		for($i=0;$i<count($header);$i++){
+			$datalength = 0;
+			$datatype = "";
+			$header[$i] = clear($header[$i]);
+			echo $header[$i];
+			$querytable .= $header[$i].' ';
+			for($j=0;$j<$row;$j++){
+				//echo $array[$nbcol[$i]][$j].', ';
+				$datalength = datalength($array[$nbcol[$i]][$j], $datalength);
+				$datatype = datatype($array[$nbcol[$i]][$j], $datatype, $datalength);
+			}
+			if(preg_match("/[(]/", $datatype)){
+				$querytable .= $datatype.''.$datalength.'), ';
+			}else{
+				$querytable .= $datatype.', ';
+			}
+			
+		}
+			$querytable .= ');';
+			echo'<br>';
+			for($i=1;$i<=3;$i++){
+				$querytable[strlen($querytable)-$i] = " ";
+			}
+			$querytable[strlen($querytable)-3] = ";";
+			$querytable[strlen($querytable)-4] = ")";
+			echo $querytable;
+			//mysqli_query($mysqli, $querytable);
+			echo'<br>';
+			for($j=0;$j<$row;$j++){
+				$querydata[$j] = "INSERT INTO step1 (";
+				for($i=0;$i<count($header);$i++){
+					$querydata[$j] .= $header[$i].", ";
+				}
+				$querydata[$j] .= ") VALUES (";
+				for($i=0;$i<count($header);$i++){
+					$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+				}
+				$querydata[$j] .= ");";
+				for($i=1;$i<=3;$i++){
+					$querydata[$j][strlen($querydata[$j])-$i] = " ";
+				}
+				$querydata[$j][strlen($querydata[$j])-3] = ";";
+				$querydata[$j][strlen($querydata[$j])-4] = ")";
+				echo $querydata[$j];
+				//mysqli_query($mysqli, $querydata);
+				echo'<br>';
+			}
+			
 			}
 	else die("");
 ?>

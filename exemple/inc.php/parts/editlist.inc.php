@@ -12,8 +12,6 @@
 							}else{
 								echo 'numb<input type="numb" name="'.$col.'" value="'.$val.'">';
 							}
-						}else{
-							echo'what';
 						}
 						
 	}

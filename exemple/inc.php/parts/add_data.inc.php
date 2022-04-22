@@ -1,5 +1,4 @@
 <?php
-
 	if(defined("constante")){
 		//Le chemin d'acces a ton fichier sur le serveur
 		// $fichier = fopen("nom_du_fichier.text_ou_.csv", "r");
