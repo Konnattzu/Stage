@@ -11,6 +11,10 @@
 						   echo "Les changements on été sauvegardés !";
 						}
 					}
+					$reset = false;
+				}else{
+					unset($_SESSION["path"]);
+					$reset = true;
 				}
 	}
 	else die("");

@@ -9,52 +9,70 @@
 				include("inc.php/parts/edit_data.inc.php");
 				include("inc.php/parts/datatype.func.php");
 				include("inc.php/parts/clear.func.php");
-				$path="documents/";
-				include("inc.php/parts/table_upload.inc.php");
-				echo'<form action="" method="post" enctype="multipart/form-data">
-								<label class="file_input">
-									<input type="file" name="table">
-								</label>
-								<input type="submit" name="send" value="Envoyer">
-					</form>';
-				
+
 		//include("inc.php/parts/editlist.inc.php");
-		
-		if(isset($path)){
-			$csv = array_map("str_getcsv", file($path)); 
-			$header = array_shift($csv);
-			echo'<section>';
-				echo'<table>';
-					echo'<tr class="colname">';
-					for($j=0;$j<count($header);$j++){
-						echo'<td>';
-							echo $header[$j];			
-						echo'</td>';
-					$nbcol[$j] = array_search($header[$j], $header, true); 
-					}
-					echo'</tr>';
-					$row=0;
-					 foreach ($csv as $col) {
-						for($j=0;$j<count($header);$j++){
-							$array[$nbcol[$j]][$row] = $col[$nbcol[$j]];
-						}
-						$row++;
-					}
-					for($j=0;$j<$row;$j++){
-						echo'<tr>';
-							for($i=0;$i<count($header);$i++){
-								echo'<td>';
-									echo $array[$nbcol[$i]][$j];
-								echo'</td>';
-							}
-						echo'</tr>';
-					}
-						
-				echo'</table>';
-			echo'</section>';
-			include("inc.php/parts/create_table.inc.php");
-			include("inc.php/parts/add_data.inc.php");
-		}
+			// echo'<section>';
+				// echo'<table>';
+					// echo'<tr class="colname">';
+					// for($j=0;$j<count($header);$j++){
+						// echo'<td>';
+							// echo $header[$j];
+						// echo'</td>';
+					// $nbcol[$j] = array_search($header[$j], $header, true);
+					// }
+					// echo'</tr>';
+					// $row=0;
+					 // foreach ($csv as $col) {
+						// for($j=0;$j<count($header);$j++){
+							// $array[$nbcol[$j]][$row] = $col[$nbcol[$j]];
+						// }
+						// $row++;
+					// }
+					// for($j=0;$j<$row;$j++){
+						// echo'<tr>';
+							// for($i=0;$i<count($header);$i++){
+								// echo'<td>';
+									// echo $array[$nbcol[$i]][$j];
+								// echo'</td>';
+							// }
+						// echo'</tr>';
+					// }
+
+				// echo'</table>';
+			// echo'</section>';
+			$infotable = mysqli_query($mysqli, 'SELECT 
+									TABLE_CATALOG,
+									TABLE_SCHEMA,
+									TABLE_NAME, 
+									COLUMN_NAME, 
+									DATA_TYPE, 
+									COLUMN_TYPE 
+									FROM INFORMATION_SCHEMA.COLUMNS
+									where TABLE_NAME = "step1";');
+			$col = 0;
+			$row = 0;
+			while($infos = $infotable->fetch_assoc()){
+				$header[$col] = $infos["COLUMN_NAME"];
+				$nbcol[$col] = $col;
+				$col++;
+			}
+			
+			$req = mysqli_query($mysqli, "SELECT * FROM step1");
+			while($data = $req->fetch_assoc()){
+				for($i=0;$i<count($header);$i++){
+					$array[$i][$row] = $data[$header[$i]];
+				}
+				$row++;
+			}
+			
+			
+			
+			
+
+			include("inc.php/parts/grid.inc.php");
+
+			
+			
 	}
 	else die("");
 ?>

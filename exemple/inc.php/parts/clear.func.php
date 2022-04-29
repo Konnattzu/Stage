@@ -1,5 +1,4 @@
 <?php
-	if(defined("constante")){
 		function clear($string){
 			
 			$string = strtr(utf8_decode($string), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
@@ -10,7 +9,4 @@
 			$string = utf8_encode($string);
 			return $string;
 		}
-		
-	}
-	else die("");
 ?>

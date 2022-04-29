@@ -1,7 +1,8 @@
 <?php
-	if(defined("constante")){
 		function datalength($data, $datalength){
-			if($datalength<strlen($data)){
+			if(intval($data)){
+				$datalength = 11;
+			}else if($datalength<strlen($data)){
 				$datalength = strlen($data);
 			}
 			return $datalength;
@@ -25,7 +26,4 @@
 			return $datatype;
 			
 		}
-		
-	}
-	else die("");
 ?>

@@ -23,7 +23,7 @@
 					include("inc.php/liste.inc.php");
 				break;
 				case "saisie":
-					include("inc.php/saisie.inc.php");
+					include("inc.php/table.inc.php");
 				break;
 			}
 		} else { 
