@@ -27,6 +27,8 @@
 		$querytable[strlen($querytable)-3] = ";";
 		$querytable[strlen($querytable)-4] = ")";
 		mysqli_query($mysqli, $querytable);
+		
+		mysqli_query($mysqli, "CREATE TABLE IF NOT EXISTS step2 LIKE step1;");
 	}
 	else die("");
 ?>

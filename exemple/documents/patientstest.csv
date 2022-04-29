@@ -1,5 +1,5 @@
-prénom,nom,numéro du patient,sexe,date de naissance,groupe sanguin,taux d’anticorps
-Hugo,Lefebvre,12002,M,2003-03-18,AB,20
-Thomas,Sansberro,13300,M,1999-12-07,O,15
-Jean,Bernard,75020,M,1962-05-05,B,18
-Jeanne,Bernardine,93030,F,1964-07-07,A,20
+numéro du patient,prénom,nom,sexe,date de naissance,groupe sanguin,taux d’anticorps
+12002,Hugo,Lefebvre,M,2003-03-18,AB,20
+13300,Thomas,Sansberro,M,1999-12-07,O,15
+75020,Jean,Bernard,M,1962-05-05,B,18
+93030,Jeanne,Bernardinande,F,1964-07-07,A,12

@@ -7,7 +7,10 @@
 <meta name="description" content=""/>
 <link rel="icon" href="images/favicon.ico" />
 <title>Exemple</title>
-<link rel="stylesheet" href="css/style.css">';
+<link rel="stylesheet" href="css/style.css">
+        <script type="text/javascript" src="js/suite.js"></script>
+        <link rel="stylesheet" href="css/suite.css" />
+        <link rel="stylesheet" href="css/auxiliary_controls.css" />';
 			}
 	else die("");
 	?>
