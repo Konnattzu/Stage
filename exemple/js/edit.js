@@ -1,35 +1,30 @@
 
 window.addEventListener("load", function(){
 	dispgrid = document.getElementsByClassName("dhx_grid_data")[0];
-	let rows = document.getElementsByClassName("dhx_grid-row");
-	let header = document.getElementsByClassName("dhx_grid-header-cell");
-	let cells = Array();
-	var cell;
 	savebtn = document.getElementById("savetable");
 	
 	var currenturl = document.location.href;
 	currenturl = currenturl.replace(/\/$/, "");
 	currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
 	
+	var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
+	
+	console.log(addbtn);
+	
+	init();
+	
 	if(typeof(savebtn) != 'undefined' && savebtn != null){
 		savebtn.addEventListener("click", sendtable, false);
 	}
 	
-	for(var i=0; i<rows.length; i++){
-		cells = rows[i].getElementsByClassName("dhx_grid-cell");
-		for(var j=0; j<cells.length; j++){
-			rows[i][j] = cells[j];
-		}
-	}
-			console.log(rows);
-		
-	for(var i=0; i<rows.length; i++){
-		for(var j=0; j<cells.length; j++){
-			rows[i][j].addEventListener("dblclick", edit, false);
-		}
-	}
-
-	dispgrid.addEventListener("mousewheel", function(){
+	dispgrid.addEventListener("mousewheel", init, false);
+	
+	addbtn.addEventListener("click", function(){delay = setTimeout(function(){init();}, 100);}, false);
+	
+	
+	
+	function init(){
+		console.log("init");
 		let rows = document.getElementsByClassName("dhx_grid-row");
 		let header = document.getElementsByClassName("dhx_grid-header-cell");
 		let cells = Array();
@@ -47,7 +42,8 @@ window.addEventListener("load", function(){
 				rows[i][j].addEventListener("dblclick", edit, false);
 			}
 		}
-	});
+	}
+
 
 	function edit(){
 		cell = this;
@@ -124,6 +120,7 @@ window.addEventListener("load", function(){
 					// config.scales.left.max = results*1.2;
 					// //window.location.reload();
 				// }
+				init();
 			}
 		}
 		request.open("POST", "inc.php/parts/send_data.inc.php", true);
@@ -134,7 +131,7 @@ window.addEventListener("load", function(){
 	function sendtable(){
 		//get all csv data (not displayed table data)
 		console.log(rows);
-		console.log(heaader);
+		console.log(header);
 		var data = new FormData();
 		graphable = false;
 		data.append("header", header);

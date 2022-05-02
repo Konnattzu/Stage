@@ -8,7 +8,6 @@
 	$row = $_POST["row"];
 	$editplace = $_POST["editplace"];
 	if($editplace == "liste"){
-		$req = "UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';";
 		$infotable = mysqli_query($_SESSION["mysqli"], 'SELECT 
 										TABLE_CATALOG,
 										TABLE_SCHEMA,
@@ -31,11 +30,15 @@
 			$datatype = datatype($value, $type, $len);
 			mysqli_query($mysqli, "ALTER TABLE step1 MODIFY ".$column." ".$datatype." (".strlen($value).");");
 		}
-		if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$idcolumn."='".$row."';"))>=1){
-			mysqli_query($mysqli, $req);
+		if($column != $idcolumn && ($row != "" && !empty($row))){
+			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$idcolumn."='".$row."';"))>=1){
+				mysqli_query($mysqli, "UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';");
+			}
+		}else if($column == $idcolumn && ($row != "" && !empty($row))){
+			mysqli_query($mysqli, "INSERT INTO step1 (".$column.") VALUES ('".$value."');");
 		}
 	}else if($editplace == "saisie"){
-		$req = "UPDATE step2 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';";
+		$queryupdate = "UPDATE step2 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';";
 		$infotable = mysqli_query($_SESSION["mysqli"], 'SELECT 
 										TABLE_CATALOG,
 										TABLE_SCHEMA,
@@ -59,7 +62,7 @@
 			mysqli_query($mysqli, "ALTER TABLE step2 MODIFY ".$column." ".$datatype." (".strlen($value).");");
 		}
 		if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step2 WHERE ".$idcolumn."='".$row."';"))>=1){
-			mysqli_query($mysqli, $req);
+			mysqli_query($mysqli, $queryupdate);
 		}
 	}
 	echo $value;
