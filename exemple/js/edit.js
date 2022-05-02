@@ -26,12 +26,11 @@ window.addEventListener("load", function(){
 	
 	function init(){
 		console.log("init");
-		let rows = document.getElementsByClassName("dhx_grid-row");
-		let header = document.getElementsByClassName("dhx_grid-header-cell");
-		let cells = Array();
-		var cell;
-		var cross = document.querySelectorAll(".remove-button");
-		var rembtn = Array();
+		rows = document.getElementsByClassName("dhx_grid-row");
+		header = document.getElementsByClassName("dhx_grid-header-cell");
+		cells = Array();
+		cross = document.querySelectorAll(".remove-button");
+		rembtn = Array();
 		
 		for(var i=0; i<rows.length; i++){
 			cells = rows[i].getElementsByClassName("dhx_grid-cell");
@@ -56,6 +55,11 @@ window.addEventListener("load", function(){
 
 	function edit(){
 		cell = this;
+		for(var i=0; i<rows.length; i++){
+			for(var j=0; j<cells.length; j++){
+				rows[i][j].removeEventListener("click", edit, false);
+			}
+		}
 		console.log(cell);
 		colnb = cell.getAttribute("aria-colindex")-1;
 		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
