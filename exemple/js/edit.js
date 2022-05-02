@@ -9,6 +9,7 @@ window.addEventListener("load", function(){
 	
 	var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
 	
+	
 	console.log(addbtn);
 	
 	init();
@@ -29,6 +30,8 @@ window.addEventListener("load", function(){
 		let header = document.getElementsByClassName("dhx_grid-header-cell");
 		let cells = Array();
 		var cell;
+		var cross = document.querySelectorAll(".remove-button");
+		var rembtn = Array();
 		
 		for(var i=0; i<rows.length; i++){
 			cells = rows[i].getElementsByClassName("dhx_grid-cell");
@@ -42,6 +45,12 @@ window.addEventListener("load", function(){
 				rows[i][j].addEventListener("dblclick", edit, false);
 			}
 		}
+		
+		for(var i=0; i<cross.length;i++){
+			rembtn[i] = cross[i].parentElement.parentElement;
+			rembtn[i].addEventListener("click", remrow, false);
+		}
+		console.log(rembtn);
 	}
 
 
@@ -90,7 +99,40 @@ window.addEventListener("load", function(){
 		}
 	}
 	
-	
+	function remrow(){
+		rownb = event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("aria-rowindex")-1;
+		rowid = grid.config.data[rownb][grid.config.columns[1].id];
+		colid = grid.config.columns[1].id;
+		console.log(rowid);
+		console.log(colid);
+		var data = new FormData();
+		graphable = false;
+		data.append("row", rowid);
+		data.append("idcolumn", colid);
+		data.append("editplace", currentref);
+		// for(i=0;i<config.series.length;i++){
+			// if(config.series[i].value == colname){
+				// graphable = true;
+			// }
+		// }
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			if (request.readyState === 4) {
+				var results = request.responseText;
+				console.log(results);
+				console.log(request.responseText);
+				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
+				// if(config.scales.left.max < results*1.2){
+					// config.scales.left.max = results*1.2;
+					// //window.location.reload();
+				// }
+				init();
+			}
+		}
+		request.open("POST", "inc.php/parts/delete_data.inc.php", true);
+		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		request.send(data);
+	}
 	
 	function senddata(el){
 		clearTimeout(delay);
