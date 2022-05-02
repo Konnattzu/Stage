@@ -16,7 +16,8 @@
 									<input type="file" name="table">
 								</label>
 								<input type="submit" name="send" value="Envoyer">
-					</form>';
+					</form>
+					<a id="savetable">Sauvegarder</a>';
 			if((isset($reset) && $reset == true) || (isset($_SESSION["path"]) && $_SESSION["path"] != 'documents/'.$_FILES['table']['name'])){
 				mysqli_query($_SESSION["mysqli"], "DELETE FROM step2;");
 			}
@@ -73,7 +74,8 @@
 				$row++;
 			}
 
-			include("inc.php/parts/grid.inc.php");
+			// include("inc.php/parts/grid.inc.php");
+			include("inc.php/parts/bllb.inc.php");
 
 			
 			

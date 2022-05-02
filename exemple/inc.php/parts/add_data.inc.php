@@ -60,7 +60,6 @@
 					$type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
 					$len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
 					$datatype = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
-					mysqli_query($mysqli, "ALTER TABLE step1 MODIFY ".$column[$i]." ".$datatype." (".strlen($array[$nbcol[$i]][$j]).");");
 					mysqli_query($mysqli, "ALTER TABLE step2 MODIFY ".$column[$i]." ".$datatype." (".strlen($array[$nbcol[$i]][$j]).");");
 				}
 			}
@@ -79,13 +78,6 @@
 			}
 			$queryupdate[$j] .= " WHERE ".$column[$j]."='".$idvalue."';";
 			mysqli_query($mysqli, $querydata[$j]);
-			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column[0]."='".$idvalue."';"))>=1){
-				//echo str_replace("step2", "step1", $queryupdate[$j]);
-				mysqli_query($mysqli, str_replace("step2", "step1", $queryupdate[$j]));
-			}else{
-				//echo str_replace("step2", "step1", $querydata[$j]);
-				mysqli_query($mysqli, str_replace("step2", "step1", $querydata[$j]));
-			}
 		}
 	}
 	else die("");
