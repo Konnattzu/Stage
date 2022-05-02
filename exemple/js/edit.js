@@ -11,7 +11,9 @@ window.addEventListener("load", function(){
 	currenturl = currenturl.replace(/\/$/, "");
 	currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
 	
-	savebtn.addEventListener("click", sendtable, false);
+	if(typeof(savebtn) != 'undefined' && savebtn != null){
+		savebtn.addEventListener("click", sendtable, false);
+	}
 	
 	for(var i=0; i<rows.length; i++){
 		cells = rows[i].getElementsByClassName("dhx_grid-cell");
@@ -19,6 +21,7 @@ window.addEventListener("load", function(){
 			rows[i][j] = cells[j];
 		}
 	}
+			console.log(rows);
 		
 	for(var i=0; i<rows.length; i++){
 		for(var j=0; j<cells.length; j++){
@@ -48,20 +51,21 @@ window.addEventListener("load", function(){
 
 	function edit(){
 		cell = this;
+		console.log(cell);
 		colnb = cell.getAttribute("aria-colindex")-1;
 		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
-		rowid = grid.config.data[rownb][grid.config.columns[0].id];
+		rowid = grid.config.data[rownb][grid.config.columns[1].id];
 		colname = grid.config.columns[colnb].id;
-		colid = grid.config.columns[0].id;
+		colid = grid.config.columns[1].id;
 		entry = grid.config.data[rownb][grid.config.columns[colnb].id];
-		// console.log("colid "+colid);
-		// console.log("rowid "+rowid);
-		// console.log("colname "+colname);
-		// console.log("celltext "+entry);
-		// console.log(cell);
+		console.log("colid "+colid);
+		console.log("rowid "+rowid);
+		console.log("colname "+colname);
+		console.log("celltext "+entry);
+		console.log(cell);
 
 		cell.addEventListener("keypress", handler, false);
-		document.addEventListener("click", handler, false);
+		document.addEventListener("mousedown", handler, false);
 		
 		cell.removeEventListener("dblclick", edit, false);
 	}
@@ -74,18 +78,18 @@ window.addEventListener("load", function(){
 		event.stopImmediatePropagation();
 		e = event;
 		if (e.key == "Enter"){
-			// console.log(e.target.parentElement);
-			// console.log(cell);
+			console.log(e.target.parentElement);
+			console.log(cell);
 			delay = setTimeout(function(){senddata(e.path[1]);}, 1);
 			cell.removeEventListener("keypress", handler, false);
-			document.removeEventListener("click", handler, false);
+			document.removeEventListener("mousedown", handler, false);
 			cell.addEventListener("dblclick", edit, false);
 		}else if(e.target.parentElement != cell){
-			// console.log(e.target.parentElement);
-			// console.log(cell);
+			console.log(e.target.parentElement);
+			console.log(cell);
 			delay = setTimeout(function(){senddata(cell);}, 1);
 			cell.removeEventListener("keypress", handler, false);
-			document.removeEventListener("click", handler, false);
+			document.removeEventListener("mousedown", handler, false);
 			cell.addEventListener("dblclick", edit, false);
 		}
 	}
@@ -104,22 +108,22 @@ window.addEventListener("load", function(){
 		data.append("idcolumn", colid);
 		data.append("value", newtext);
 		data.append("editplace", currentref);
-		for(i=0;i<config.series.length;i++){
-			if(config.series[i].value == colname){
-				graphable = true;
-			}
-		}
+		// for(i=0;i<config.series.length;i++){
+			// if(config.series[i].value == colname){
+				// graphable = true;
+			// }
+		// }
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				var results = request.responseText;
 				console.log(results);
 				console.log(request.responseText);
-				grid.config.data[rownb][grid.config.columns[colnb].id] = results;
-				if(config.scales.left.max < results*1.2){
-					config.scales.left.max = results*1.2;
-					//window.location.reload();
-				}
+				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
+				// if(config.scales.left.max < results*1.2){
+					// config.scales.left.max = results*1.2;
+					// //window.location.reload();
+				// }
 			}
 		}
 		request.open("POST", "inc.php/parts/send_data.inc.php", true);
