@@ -42,7 +42,7 @@ window.addEventListener("load", function(){
 			
 		for(var i=0; i<rows.length; i++){
 			for(var j=0; j<cells.length; j++){
-				rows[i][j].addEventListener("dblclick", edit, false);
+				rows[i][j].addEventListener("click", edit, false);
 			}
 		}
 		
@@ -72,7 +72,7 @@ window.addEventListener("load", function(){
 		cell.addEventListener("keypress", handler, false);
 		document.addEventListener("mousedown", handler, false);
 		
-		cell.removeEventListener("dblclick", edit, false);
+		cell.removeEventListener("click", edit, false);
 	}
 	
 	function handler(){
@@ -88,14 +88,14 @@ window.addEventListener("load", function(){
 			delay = setTimeout(function(){senddata(e.path[1]);}, 1);
 			cell.removeEventListener("keypress", handler, false);
 			document.removeEventListener("mousedown", handler, false);
-			cell.addEventListener("dblclick", edit, false);
+			cell.addEventListener("click", edit, false);
 		}else if(e.target.parentElement != cell){
 			console.log(e.target.parentElement);
 			console.log(cell);
 			delay = setTimeout(function(){senddata(cell);}, 1);
 			cell.removeEventListener("keypress", handler, false);
 			document.removeEventListener("mousedown", handler, false);
-			cell.addEventListener("dblclick", edit, false);
+			cell.addEventListener("click", edit, false);
 		}
 	}
 	
