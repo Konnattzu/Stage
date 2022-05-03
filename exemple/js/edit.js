@@ -7,20 +7,38 @@ window.addEventListener("load", function(){
 	currenturl = currenturl.replace(/\/$/, "");
 	currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
 	
-	var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
+	var editbtn = document.querySelectorAll("[data-dhx-id = edit]")[0];
 	
 	
-	console.log(addbtn);
+	
+	console.log(editbtn);
 	
 	init();
 	
 	if(typeof(savebtn) != 'undefined' && savebtn != null){
-		savebtn.addEventListener("click", sendtable, false);
+		savebtn.addEventListener("click", function(){delay = setTimeout(function(){sendtable();}, 120);}, false);
 	}
 	
 	dispgrid.addEventListener("mousewheel", init, false);
 	
-	addbtn.addEventListener("click", function(){delay = setTimeout(function(){init();}, 100);}, false);
+	editbtn.addEventListener("mouseenter", function(){delay = setTimeout(function(){
+		var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
+		console.log('add');
+		addbtn.addEventListener("click", newrow, false);
+		}, 100);}, false);
+		
+	// editbtn.addEventListener("mouseleave", function(){
+		// var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
+		// console.log('rem');
+		// addbtn.removeEventListener("click", newrow, false);
+		// }, false);
+	
+	function newrow(){
+		delay = setTimeout(function(){init();}, 100); 
+		addbtn.removeEventListener("click", newrow, false);
+		console.log("oui");
+	}
+	
 	
 	
 	
@@ -150,22 +168,22 @@ window.addEventListener("load", function(){
 		data.append("idcolumn", colid);
 		data.append("value", newtext);
 		data.append("editplace", currentref);
-		// for(i=0;i<config.series.length;i++){
-			// if(config.series[i].value == colname){
-				// graphable = true;
-			// }
-		// }
+		for(i=0;i<config.series.length;i++){
+			if(config.series[i].value == colname){
+				graphable = true;
+			}
+		}
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				var results = request.responseText;
 				console.log(results);
 				console.log(request.responseText);
-				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
-				// if(config.scales.left.max < results*1.2){
-					// config.scales.left.max = results*1.2;
-					// //window.location.reload();
-				// }
+				grid.config.data[rownb][grid.config.columns[colnb].id] = results;
+				if(config.scales.left.max < results*1.2){
+					config.scales.left.max = results*1.2;
+					//window.location.reload();
+				}
 				init();
 			}
 		}
@@ -175,34 +193,17 @@ window.addEventListener("load", function(){
 	}
 	
 	function sendtable(){
-		//get all csv data (not displayed table data)
-		console.log(rows);
-		console.log(header);
-		var data = new FormData();
-		graphable = false;
-		data.append("header", header);
-		data.append("rows", rows);
-		// for(i=0;i<config.series.length;i++){
-			// if(config.series[i].value == colname){
-				// graphable = true;
-			// }
-		// }
-		// var request = new XMLHttpRequest();
-		// request.onreadystatechange = function () {
-			// if (request.readyState === 4) {
-				// var results = request.responseText;
-				// console.log(results);
-				// console.log(request.responseText);
-				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
-				// if(config.scales.left.max < results*1.2){
-					// config.scales.left.max = results*1.2;
-					// //window.location.reload();
-				// }
-			// }
-		// }
-		// request.open("POST", "inc.php/parts/send_data.inc.php", true);
-		// request.setRequestHeader("X-Requested-With", "xmlhttprequest");
-		// request.send(data);	
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			if (request.readyState === 4) {
+				var results = request.responseText;
+				savebtn.innerText = "Sauvegardé";
+				console.log(results);
+			}
+		}
+		request.open("POST", "inc.php/parts/send_table.inc.php", true);
+		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		request.send();	
 	}
 });
 

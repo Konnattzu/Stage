@@ -6,62 +6,79 @@ echo'<section>
 
 			echo'</section>';
 echo'<script>
-const toolbarData = [
-  {
-      id: "add",
-      type: "button",
-      circle: true,
-      value: "Add a new row",
-      size: "small",
-      icon: "mdi mdi-plus",
-      full: true
-  },
-
-  {
-            type: "spacer"
-  },
-
-  {
-      id: "impXlsx",
-      type: "button",
-      circle: true,
-      value: "Télécharger en xlsx",
-      size: "small",
-      icon: "dxi dxi-download",
-      full: true
-  },
-
-
-  {
-      id: "impcsv",
-      type: "button",
-      circle: true,
-      value: "Télécharger en csv",
-      size: "small",
-      icon: "dxi dxi-download",
-      full: true
-  },
-
-  {
-            type: "spacer"
-  },
-
-  {
-            type: "spacer"
-  },
-
-  {
-            type: "spacer"
-  }
-];
-
+var datasetmenu = [
+    {
+        "id": "file",
+        "value": "File",
+        "items": [
+            { "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },
+            { "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
+            "items": [
+              {
+                  id: "impXlsx",
+                  type: "button",
+                  circle: true,
+                  value: "Télécharger en xlsx",
+                  size: "small",
+                  icon: "dxi dxi-download",
+                  full: true
+              },
+              {
+                  id: "impcsv",
+                  type: "button",
+                  circle: true,
+                  value: "Télécharger en csv",
+                  size: "small",
+                  icon: "dxi dxi-download",
+                  full: true
+              }
+            ]
+          }
+        ]
+    },
+    {
+        "id": "edit",
+        "value": "Edit",
+        "items": [
+            { "id": "undo", "value": "Undo", "icon": "dxi dxi-undo" },
+            { "id": "redo", "value": "Redo", "icon": "dxi dxi-redo" },
+            {  id: "add", type: "button", circle: true, value: "Add a new row", size: "small", icon: "mdi mdi-plus", full: true}
+        ]
+    },';
+    $balise1= "<img class='menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-pie.svg'/><span class='dhx_nav-menu-button__text'>Charts</span>";
+    $balise2= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-spline.svg'/><span class='dhx_menu-button__text'> Spline</span>";
+    $balise3= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-donut.svg'/><span class='dhx_menu-button__text'> Donut</span>";
+    $balise4= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-bar.svg'/><span class='dhx_menu-button__text'> Bar</span>";
+	echo'{
+        "id": "charts",
+        "html": "'.$balise1.'",
+        "items": [
+            {
+                "id": "spline",
+                "html": "'.$balise2.'"
+            },
+            {
+                "id": "donut",
+                "html": "'.$balise3.'"
+            },
+            {
+                "id": "bar",
+                "html": "'.$balise4.'"
+            }
+        ]
+    }
+]
+const menu = new dhx.Menu("menu", {
+css: "dhx_widget--bg_white dhx_widget--bordered"
+});
+menu.data.parse(datasetmenu);
 // Layout initialization
 const layout = new dhx.Layout("layout", {
 cols: [
   {
       rows: [
           {
-              id: "toolbar",
+              id: "menu",
               height: "content"
           },
           {
@@ -80,16 +97,9 @@ cols: [
 ]
 });
 
-// Toolbar initialization
-const toolbar = new dhx.Toolbar(null, {
-css: "toolbar_template_a",
-});
-// loading structure into Toolbar
-toolbar.data.parse(toolbarData);
-// assign the handler to the Click event of the button with the id="add"
-// pressing the Add button will add a new item to the grid and open the form for editing this item
 
-toolbar.events.on("click", function (id) {
+
+menu.events.on("click", function (id) {
 if (id === "add") {
   const newId = grid.data.add({ //data a renseigner
       A: "",
@@ -109,8 +119,36 @@ if (id === "impXlsx") {
 if (id === "impcsv") {
 grid.export.csv();
 }
-});
+/*import file*/
+if (id === "fileOpen") {
+let input = document.createElement("input");
+  input.type = "file";
+  input.onchange = _ => {
+            let files =   Array.from(input.files);
+            console.log(files);
+			var data = new FormData();
+		
+		data.append("table", input.files[0]);
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			if (request.readyState === 4) {
+				fileresults = request.responseText;
+				console.log(request.responseText);';
+				$_SESSION["path"] = "documents/datafile.csv";
+				echo'window.location.reload();
+			}
+		}
+		request.open("POST", "inc.php/parts/table_upload.inc.php", true);
+		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		request.send(data);
+        };
+  input.click();
+}
+});';
 
+if(isset($_SESSION["path"])){
+echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
 css: "dhx_demo-grid",
@@ -126,9 +164,9 @@ columns: [
       }
 	  },';
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}], editable: true }, ';
+				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true }, ';
 		}
-			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}], editable: true } ';
+			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
     echo'
 ],
 autoWidth: true,
@@ -143,10 +181,10 @@ eventHandlers: {
 });
 
 // loading data into Grid
-dataset = ';
+database = ';
 include("inc.php/parts/data.inc.php");
 echo';
-grid.data.parse(dataset);
+grid.data.parse(database);
 
 
 // config graph
@@ -203,16 +241,18 @@ const config = {
         halign: "right",
         valign: "top"
     },
-    data: dataset
+    data: database
 };
 
 const chart = new dhx.Chart(null, config);
 
 
 // attaching widgets to Layout cells
-layout.getCell("toolbar").attach(toolbar);
+
 layout.getCell("grid").attach(grid);
-layout.getCell("chart").attach(chart);
+layout.getCell("chart").attach(chart);';
+}
+echo'layout.getCell("menu").attach(menu);
 
 </script>
 <!--tableur-->';
