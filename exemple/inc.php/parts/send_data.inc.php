@@ -35,7 +35,6 @@
 				mysqli_query($mysqli, "UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';");
 			}
 		}else if($column == $idcolumn && ($row != "" && !empty($row))){
-			// echo "insert";
 			mysqli_query($mysqli, "INSERT INTO step1 (".$column.") VALUES ('".$value."');");
 		}
 	}else if($editplace == "saisie"){

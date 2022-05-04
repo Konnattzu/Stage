@@ -15,6 +15,17 @@
 				<header>';
 			include('inc.php/header.inc.php');
 			echo'</header>';
+			if($_SESSION["currentpage"] != "saisie"){
+				if(isset($_SESSION["path"])){
+					if(file_exists($_SESSION["path"])){
+						unlink($_SESSION["path"]);					
+					}
+					unset($_SESSION["path"]);	
+				}
+				if(isset($_SESSION["csv"])){
+					unset($_SESSION["csv"]);
+				}
+			}
 			switch($page){
 				case "accueil":
 					include("inc.php/accueil.inc.php");

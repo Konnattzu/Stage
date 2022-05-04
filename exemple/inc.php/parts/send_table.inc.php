@@ -137,9 +137,9 @@
 				}else{
 								echo'case 2
 								';
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES "'.$array2[0][$i].'";
+					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
-					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[$j].') VALUES ("'.$array2[$j][$i].'");');
+					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');
 					for($j=1;$j<count($column2);$j++){
 						echo"UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';
 							";
@@ -150,9 +150,9 @@
 				if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column2[0]."='".$array2[0][$i]."';"))==0){
 								echo'case 3
 								';
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES "'.$array2[0][$i].'";
+					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
-					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[$j].') VALUES ("'.$array2[$j][$i].'");');
+					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');
 					for($j=1;$j<count($column2);$j++){
 						echo"UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';
 							";
@@ -170,9 +170,9 @@
 			}else{
 				echo'case 5
 						';
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES "'.$array2[0][$i].'";
+					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
-					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[$j].') VALUES ("'.$array2[$j][$i].'");');
+					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');
 				for($j=1;$j<count($column2);$j++){
 					echo"UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';
 						";

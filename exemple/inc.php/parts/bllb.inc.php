@@ -45,25 +45,85 @@ var datasetmenu = [
             {  id: "add", type: "button", circle: true, value: "Add a new row", size: "small", icon: "mdi mdi-plus", full: true}
         ]
     },';
-    $balise1= "<img class='menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-pie.svg'/><span class='dhx_nav-menu-button__text'>Charts</span>";
-    $balise2= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-spline.svg'/><span class='dhx_menu-button__text'> Spline</span>";
-    $balise3= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-donut.svg'/><span class='dhx_menu-button__text'> Donut</span>";
-    $balise4= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-bar.svg'/><span class='dhx_menu-button__text'> Bar</span>";
+    $balise1= "<img class='menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-pie.svg'/><span class='dhx_nav-menu-button__text'>Graphiques</span>";
+    $balise2= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-bar.svg'/><span class='dhx_menu-button__text'> Barre</span>";
+    $balise2_a= "<span class='dhx_menu-button__text'> Simple</span>";
+    $balise2_b= "<span class='dhx_menu-button__text'> Empilé</span>";
+    $balise2_c= "<span class='dhx_menu-button__text'> Double</span>";
+    $balise2_d= "<span class='dhx_menu-button__text'> Horizontale</span>";
+	$balise3= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-donut.svg'/><span class='dhx_menu-button__text'> Circulaire</span>";
+    $balise3_a= "<span class='dhx_menu-button__text'> Anneau</span>";
+    $balise3_b= "<span class='dhx_menu-button__text'> Radar</span>";
+    $balise3_c= "<span class='dhx_menu-button__text'> Secteur</span>";
+    $balise3_d= "<span class='dhx_menu-button__text'> Horizontale</span>";
+    $balise4_a= "<span class='dhx_menu-button__text'> Aires</span>";
+    $balise4_b= "<span class='dhx_menu-button__text'> Courbe</span>";
+    $balise4_c= "<span class='dhx_menu-button__text'> Nuage de points</span>";
+	$balise4= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-spline.svg'/><span class='dhx_menu-button__text'> Courbe</span>";
 	echo'{
         "id": "charts",
         "html": "'.$balise1.'",
         "items": [
             {
-                "id": "spline",
-                "html": "'.$balise2.'"
+                "id": "barre",
+                "html": "'.$balise2.'",
+				"items": [
+                    {
+                        "id": "Hsimple",
+                        "html": "'.$balise2_a.'"
+                    },
+                    {
+                        "id": "Hempilé",
+                        "html": "'.$balise2_b.'"
+                    },
+                    {
+                        "id": "Hdouble",
+                        "html": "'.$balise2_c.'"
+                    },
+                    {
+                        "id": "Hhorizontal",
+                        "html": "'.$balise2_d.'"
+                    }
+
+                ]
             },
             {
-                "id": "donut",
-                "html": "'.$balise3.'"
+                "id": "circulaire",
+                "html": "'.$balise3.'",
+                "items": [
+                    {
+                        "id": "Ganneau",
+                        "html": "'.$balise3_a.'"
+                    },
+                    {
+                        "id": "Gradar",
+                        "html": "'.$balise3_b.'"
+                    },
+                    {
+                        "id": "Gsecteur",
+                          "html": "'.$balise3_c.'"
+                    }
+
+                ]
             },
             {
-                "id": "bar",
-                "html": "'.$balise4.'"
+                "id": "courbe",
+                "html": "'.$balise4.'",
+				"items": [
+                    {
+                        "id": "Gaire",
+                        "html": "'.$balise4_a.'"
+                    },
+                    {
+                        "id": "Gcourbe",
+                        "html": "'.$balise4_b.'"
+                    },
+                    {
+                        "id": "Gnuage",
+                          "html": "'.$balise4_c.'"
+                    }
+
+                ]
             }
         ]
     }
@@ -129,14 +189,13 @@ let input = document.createElement("input");
 			var data = new FormData();
 		
 		data.append("table", input.files[0]);
-		
+		console.log(data);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				fileresults = request.responseText;
-				console.log(request.responseText);';
-				$_SESSION["path"] = "documents/datafile.csv";
-				echo'window.location.reload();
+				console.log(request.responseText);
+				window.location.reload();
 			}
 		}
 		request.open("POST", "inc.php/parts/table_upload.inc.php", true);
@@ -146,8 +205,8 @@ let input = document.createElement("input");
   input.click();
 }
 });';
-
-if(isset($_SESSION["path"])){
+$blbl = false;
+if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["path"]) && $blbl == true) {
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
@@ -159,7 +218,7 @@ columns: [
       editable: false,
       autoWidth: false,
       template: function () {';
-			$span = "<span class='action-buttons'><a class='remove-button noselect'>&#10060;</a></span>";
+			$span = "<span class='action-buttons'><a class='remove-button noselect' title='Supprimer'>&#10060;</a></span>";
           echo'return "'.$span.'";
       }
 	  },';

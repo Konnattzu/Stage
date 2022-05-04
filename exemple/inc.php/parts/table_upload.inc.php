@@ -5,10 +5,13 @@
 					   $extension_upload = $infosfichier['extension'];
 					   $extensions_autorisees = 'csv';
 					   if ($extension_upload == $extensions_autorisees){ 
-						$_SESSION["path"] = "documents/datafile.csv";
+						$_SESSION["path"] = "../../documents/datafile.csv";
+						if(file_exists($_SESSION["path"])){
+						   unlink($_SESSION["path"]);
+						}
 						   move_uploaded_file($_FILES['table']['tmp_name'],$_SESSION["path"]);
-							$_SESSION["path"] .= $_FILES['table']['name'];
-						   echo "Les changements on été sauvegardés !";
+							$_SESSION["path"] = "documents/datafile.csv";
+							echo $_SESSION["path"];
 						}
 					}
 				}

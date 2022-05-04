@@ -1,5 +1,6 @@
-numéro du patient,prénom,nom,sexe,date de naissance,groupe sanguin,taux d’anticorps,je suis positif,je suis malicieux
-12002,Hugo,Lefebvre,M,2003-03-18,AB,20,oui,oui
-13300,Thomas,Sansberro,M,1999-12-07,O,15,non,oui
-75020,Jean,Bernard,M,1962-05-05,B,18,non,oui
-93030,Jeanne,Bernardinande,F,1964-07-07,A,12,oui,oui
+numéro du patient,prénom,nom,sexe,date de naissance,groupe sanguin,taux d’anticorps,je suis positif
+12002,Hugo,Lefebvre,M,2003-03-18,AB,20,oui
+13300,Thomas,Sansberro,M,1999-12-07,O,15,non
+75020,Jean,Bernard,M,1962-05-05,B,18,non
+93030,Jeanne,Bernardinande,F,1964-07-07,A,12,oui
+78451,Loul,,,,,,oui

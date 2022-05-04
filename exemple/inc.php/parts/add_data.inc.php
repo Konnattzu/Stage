@@ -11,6 +11,8 @@
 									FROM INFORMATION_SCHEMA.COLUMNS
 									where TABLE_NAME = "step2";');
 									$i = 0;
+									$datatype = Array();
+									$datalength = Array();
 			while($infos = $infotable->fetch_assoc()){
 				$column[$i] = $infos["COLUMN_NAME"];
 				$coltype[$i] = $infos["COLUMN_TYPE"];
@@ -18,44 +20,95 @@
 				$i++;
 			}
 		for($j=0;$j<$row;$j++){
-			for($i=0;$i<count($column);$i++){
-				$type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
-				$len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
-				$datatype = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
-				$datalength = datalength($array[$nbcol[$i]][$j], $len[$i]);
-				if($datatype != $type[$i] || $datalength != $len[$i] || similar_text($header[$i], $column[$i])<8){
-					
-					for($k=0;$k<count($column);$k++){
-						if($datatype == $type[$i] && $datalength == $len[$i] && similar_text($header[$i], $column[$k])>=8){
-							$header[$i] = $column[$k];
-						}
+			if(count($header) >= count($column)){
+			print_r($header);
+				for($i=0;$i<count($column);$i++){
+					if($header[$i] != $column[$i]){
+						echo $header[$i];
+						echo $column[$i];
+						// $type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
+						// $len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
+						// $datatype = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
+						// $datalength = datalength($array[$nbcol[$i]][$j], $len[$i]);
+						// if($datatype != $type[$i] || $datalength != $len[$i] || similar_text($header[$i], $column[$i])<8){
+							
+							// for($k=0;$k<count($column);$k++){
+								// if($datatype == $type[$i] && $datalength == $len[$i] && similar_text($header[$i], $column[$k])>=8){
+									// $header[$i] = $column[$k];
+								// }
+							// }
+						// }
 					}
 				}
+			}else if(count($header) <= count($column)){
+				for($i=0;$i<count($header);$i++){
+					if($header[$i] != $column[$i]){
+						
+							echo"<br>";
+						$matching = 0;
+						$rightcol = 0;
+						for($k=0;$k<count($column);$k++){
+							$type[$k] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
+							$len[$k] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
+							$datatype[$i] = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
+							$datalength[$i] = datalength($array[$nbcol[$i]][$j], $len[$i]);
+							echo similar_text($header[$i], $column[$k]);
+							if($datatype == $type[$k] && similar_text($header[$i], $column[$k])>8){
+								echo"<br>";
+								echo $header[$i];
+								echo $column[$k];
+								if($matching < similar_text($header[$i], $column[$k])){
+									$matching = similar_text($header[$i], $column[$k]);
+									$rightcol = $k;
+								}
+							}
+							echo ' col'.$rightcol.' ';
+						}
+						// $type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
+						// $len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
+						// $datatype = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
+						// $datalength = datalength($array[$nbcol[$i]][$j], $len[$i]);
+						// if($datatype != $type[$i] || $datalength != $len[$i] || similar_text($header[$i], $column[$i])<8){
+							
+							// for($k=0;$k<count($column);$k++){
+								// if($datatype == $type[$i] && $datalength == $len[$i] && similar_text($header[$i], $column[$k])>=8){
+									// $header[$i] = $column[$k];
+								// }
+							// }
+						// }
+					}
+				}
+							
 			}
 			
-			if(count($header) > count($column)){
-				echo'plus';
+			if(count($header) >= count($column)){
 				for($i=count($column);$i<count($header);$i++){
-					echo $header[$i];
 					$type[$i] = "";
 					$len[$i] = 0;
 					$datatype = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
 					$datalength = datalength($array[$nbcol[$i]][$j], $len[$i]);
 					mysqli_query($mysqli, "ALTER TABLE step2 ADD ".$header[$i]." ".$datatype." (".$datalength.");");
-					echo "ALTER TABLE step1 ADD ".$header[$i]." ".$datatype." (".$datalength.");";
+				}
+			}else if(count($header) <= count($column)){
+				for($i=count($header);$i<count($column);$i++){
+					mysqli_query($mysqli, "ALTER TABLE step2 DROP COLUMN ".$column[$i].";");
 				}
 			}
 			
 			$querydata[$j] = "INSERT INTO step2 (";
 			for($i=0;$i<count($header);$i++){
-				$querydata[$j] .= $column[$i].", ";
+				if(!empty($array[$nbcol[$i]][$j])){
+					$querydata[$j] .= $column[$i].", ";
+				}
 			}
 			$querydata[$j][strlen($querydata[$j])-2] = " ";
 			$querydata[$j][strlen($querydata[$j])-1] = " ";
 			$querydata[$j] = rtrim($querydata[$j]);
 			$querydata[$j] .= ") VALUES (";
 			for($i=0;$i<count($header);$i++){
-				$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+				if(!empty($array[$nbcol[$i]][$j])){
+					$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+				}
 			}
 			$querydata[$j] .= ");";
 			for($i=1;$i<=3;$i++){
@@ -87,8 +140,8 @@
 					$identifier = $header[$i];
 					$idvalue = $array[$nbcol[$i]][$j];
 				}
+				$queryupdate[$j] .= " WHERE ".$column[$i]."='".$idvalue."';";
 			}
-			$queryupdate[$j] .= " WHERE ".$column[$j]."='".$idvalue."';";
 			mysqli_query($mysqli, $querydata[$j]);
 		}
 	}
