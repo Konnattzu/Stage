@@ -168,8 +168,8 @@ window.addEventListener("load", function(){
 		data.append("idcolumn", colid);
 		data.append("value", newtext);
 		data.append("editplace", currentref);
-		for(i=0;i<config.series.length;i++){
-			if(config.series[i].value == colname){
+		for(i=0;i<grid.config.columns;i++){
+			if(grid.config.columns[1].id == colname){
 				graphable = true;
 			}
 		}
@@ -180,9 +180,11 @@ window.addEventListener("load", function(){
 				console.log(results);
 				console.log(request.responseText);
 				grid.config.data[rownb][grid.config.columns[colnb].id] = results;
-				if(config.scales.left.max < results*1.2){
-					config.scales.left.max = results*1.2;
-					//window.location.reload();
+				if(typeof(config) != "undefined"){
+					if(config.scales.left.max < results*1.2){
+						config.scales.left.max = results*1.2;
+						//window.location.reload();
+					}
 				}
 				init();
 			}

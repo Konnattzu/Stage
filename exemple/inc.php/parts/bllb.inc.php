@@ -6,6 +6,19 @@ echo'<section>
 
 			echo'</section>';
 echo'<script>
+//window.addEventListener("load", function(){setTimeout(loop, 10);});
+
+function loop(){
+	setTimeout(loop, 1000);
+	aledfils = document.getElementById("aledfils").parentElement.parentElement.parentElement;
+	console.log(aledfils);
+	aledfils.addEventListener("click", time);
+}
+
+function time(){
+	setTimeout(aled, 10);
+}
+
 var datasetmenu = [
     {
         "id": "file",
@@ -47,7 +60,7 @@ var datasetmenu = [
     },';
     $balise1= "<img class='menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-pie.svg'/><span class='dhx_nav-menu-button__text'>Graphiques</span>";
     $balise2= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-bar.svg'/><span class='dhx_menu-button__text'> Barre</span>";
-    $balise2_a= "<span class='dhx_menu-button__text'> Simple</span>";
+    $balise2_a= "<span class='dhx_menu-button__text' id='aledfils'> Simple</span>";
     $balise2_b= "<span class='dhx_menu-button__text'> Empilé</span>";
     $balise2_c= "<span class='dhx_menu-button__text'> Double</span>";
     $balise2_d= "<span class='dhx_menu-button__text'> Horizontale</span>";
@@ -205,8 +218,7 @@ let input = document.createElement("input");
   input.click();
 }
 });';
-$blbl = false;
-if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["path"]) && $blbl == true) {
+if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["path"])) {
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
@@ -245,71 +257,81 @@ include("inc.php/parts/data.inc.php");
 echo';
 grid.data.parse(database);
 
-
-// config graph
-
-const config = {
-    type: "bar",
-    css: "dhx_widget--bg_white dhx_widget--bordered",
-    scales: {
-        "bottom": {
-            text: "'.$header[0].'"
-        },
-        "left": {
-            maxTicks: 10,
-            max: ';
-				$maxval = 1;
-				for($i=0;$i<count($header);$i++){
-					for($j=0;$j<$row;$j++){
-						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
-							if($array[$nbcol[$i]][$j] > $maxval*1.2){
-								$maxval = $array[$nbcol[$i]][$j];
-							}
-						}
-					}
-				}
-				echo $maxval*1.2;
-			echo',
-            min: 0
-        }
-    },
-	
-    series: [';
-		for($j=0;$j<count($header)-1;$j++){
-			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8" },';
-			}
-		}
-			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18" }';
-			}
-    echo'
-	],
-	legend: {
-        series: [';
-		for($j=0;$j<count($header)-1;$j++){
-			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-				echo '"'.$header[$j].'", ';
-				echo $array[$nbcol[$j]][0];
-			}
-		}
-			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-			echo '"'.$header[$j].'"';
-		}
-		echo'],
-        halign: "right",
-        valign: "top"
-    },
-    data: database
-};
-
-const chart = new dhx.Chart(null, config);
-
-
 // attaching widgets to Layout cells
 
 layout.getCell("grid").attach(grid);
-layout.getCell("chart").attach(chart);';
+
+function aled(){
+	console.log(this);
+  (() => {
+              if (window.localStorage) {
+
+                  if (!localStorage.getItem("reload")) {
+                      localStorage["reload"] = true;
+                      //window.location.reload();
+                  } else {
+                      localStorage.removeItem("reload");
+                  }
+              }
+          })();
+          const config = {
+              type: "bar",
+              css: "dhx_widget--bg_white dhx_widget--bordered",
+              scales: {
+                  "bottom": {
+                      text: "'.$header[0].'"
+                  },
+                  "left": {
+                      maxTicks: 10,
+                      max: ';
+          				$maxval = 1;
+          				for($i=0;$i<count($header);$i++){
+          					for($j=0;$j<$row;$j++){
+          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
+          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
+          								$maxval = $array[$nbcol[$i]][$j];
+          							}
+          						}
+          					}
+          				}
+          				echo $maxval*1.2;
+          			echo',
+                      min: 0
+                  }
+              },
+
+              series: [';
+          		for($j=0;$j<count($header)-1;$j++){
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8" },';
+          			}
+          		}
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18" }';
+          			}
+              echo'
+          	],
+          	legend: {
+                  series: [';
+          		for($j=0;$j<count($header)-1;$j++){
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '"'.$header[$j].'", ';
+          			}
+          		}
+          		if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          			echo '"'.$header[$j].'"';
+          		}
+          		echo'],
+                  halign: "right",
+                  valign: "top"
+              },
+              data: database
+          };
+
+          const chart = new dhx.Chart(null, config);
+		  layout.getCell("chart").attach(chart);
+}
+';
 }
 echo'layout.getCell("menu").attach(menu);
 
