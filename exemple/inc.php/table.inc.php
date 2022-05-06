@@ -71,8 +71,7 @@
 				$row++;
 			}
 		}
-			// include("inc.php/parts/grid.inc.php");
-			include("inc.php/parts/bllb.inc.php");
+			include("inc.php/parts/grid.inc.php");
 
 			
 			
