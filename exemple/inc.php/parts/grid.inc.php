@@ -173,11 +173,36 @@ if (id === "impXlsx") {
 if (id === "impcsv") {
 grid.export.csv();
 }
+/*import file*/
+if (id === "fileOpen") {
+let input = document.createElement("input");
+  input.type = "file";
+  input.onchange = _ => {
+            let files =   Array.from(input.files);
+            console.log(files);
+			var data = new FormData();
+		
+		data.append("table", input.files[0]);
+		console.log(data);
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			if (request.readyState === 4) {
+				fileresults = request.responseText;
+				console.log(request.responseText);
+				window.location.reload();
+			}
+		}
+		request.open("POST", "inc.php/parts/table_upload.inc.php", true);
+		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		request.send(data);
+        };
+  input.click();
+}
 });
 
 layout.getCell("menu").attach(menu);
 ';
-if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["path"])) {
+if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
@@ -219,7 +244,7 @@ function importXlsx() {
 // loading data into Grid
 database = ';
 include("inc.php/parts/data.inc.php");
-echo';
+echo'
 grid.data.parse(database);
 
 // attaching widgets to Layout cells
@@ -303,15 +328,102 @@ function Hsimple(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
 }
 
+//Histogramme empile
+function Hempile(){
+  //rechargement du graphe
+  var parent=document.getElementById("chart");
+  console.log(parent);
+  var enfant=document.getElementById("chart").childNodes[0];
+  console.log(enfant);
+  if(typeof(enfant)!= "undefined"){
+  parent.removeChild(enfant);
+  }
+  const reloadUsingLocationHash = () => {
+      window.location.hash = "chart";
+    }
+    window.onload = reloadUsingLocationHash();
+    //rechargement du graphe
+    const data = [
+  				 { month: "02", "company A": 20, "company B": 52, "company C": 72},
+  				 { month: "03", "company A": 5, "company B": 33, "company C": 90 },
+  				 { month: "04", "company A": 55, "company B": 30, "company C": 81 },
+  				 { month: "05", "company A": 30, "company B": 11, "company C": 62 },
+  				 { month: "06", "company A": 27, "company B": 14, "company C": 68 },
+  				 { month: "07", "company A": 32, "company B": 31, "company C": 64 },
+  		 ];
+
+  		 function getConfig(stacked) {
+  	    return {
+  	        type: "bar",
+  	        css: "dhx_widget--bg_white dhx_widget--bordered",
+  	        scales: {
+  	            "bottom": {
+                      text: "'.$header[0].'"
+                  },
+                  "left": {
+                      maxTicks: 10,
+                      max: ';
+          				$maxval = 1;
+          				for($i=0;$i<count($header);$i++){
+          					for($j=0;$j<$row;$j++){
+          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
+          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
+          								$maxval = $array[$nbcol[$i]][$j];
+          							}
+          						}
+          					}
+          				}
+          				echo $maxval*1.2;
+          			echo',
+                      min: 0
+                  }
+              },
+
+              series: [';
+          		for($j=0;$j<count($header)-1;$j++){
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8" },';
+          			}
+          		}
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18" }';
+          			}
+              echo'
+          	],
+          	legend: {
+                  series: [';
+          		for($j=0;$j<count($header)-1;$j++){
+          			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          				echo '"'.$header[$j].'", ';
+          			}
+          		}
+          		if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
+          			echo '"'.$header[$j].'"';
+          		}
+          		echo'],
+                  halign: "right",
+                  valign: "top"
+              }
+  	    }
+  	}
+
+  	let stacked = true;
+    const chart = new dhx.Chart("chart", getConfig(stacked));
+  chart.data.parse(data);
+  document.getElementById("layout").style.width = "50vw";
+  document.getElementById("chart").style.width = "50vw";
+  document.getElementById("parent").style.display = "flex";
+}
+
 //Histogramme Horizontal
 function Hhorizontal(){
-//rechargement du graphe
+  //rechargement du graphe
   var parent=document.getElementById("chart");
   console.log(parent);
   var enfant=document.getElementById("chart").childNodes[0];
@@ -383,10 +495,10 @@ function Hhorizontal(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
-		  document.getElementById("layout").style.width = "50vw";
-		  document.getElementById("chart").style.width = "50vw";
-		  document.getElementById("parent").style.display = "flex";
+  		chart.data.parse(data);
+      document.getElementById("layout").style.width = "50vw";
+      document.getElementById("chart").style.width = "50vw";
+      document.getElementById("parent").style.display = "flex";
 }
 
 //Graphique Anneau
@@ -412,28 +524,7 @@ function Ganneau(){
           const config = {
     type: "donut",
     css: "dhx_widget--bg_white dhx_widget--bordered",
-    scales: {
-        "bottom": {
-                      text: "'.$header[0].'"
-                  },
-                  "left": {
-                      maxTicks: 10,
-                      max: ';
-          				$maxval = 1;
-          				for($i=0;$i<count($header);$i++){
-          					for($j=0;$j<$row;$j++){
-          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
-          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
-          								$maxval = $array[$nbcol[$i]][$j];
-          							}
-          						}
-          					}
-          				}
-          				echo $maxval*1.2;
-          			echo',
-                      min: 0
-                  }
-              },
+    
 
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
@@ -463,7 +554,7 @@ function Ganneau(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
@@ -543,7 +634,7 @@ function Gradar(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
@@ -572,28 +663,7 @@ function Gsecteur(){
           const config = {
     type: "pie",
     css: "dhx_widget--bg_white dhx_widget--bordered",
-    scales: {
-        "bottom": {
-                      text: "'.$header[0].'"
-                  },
-                  "left": {
-                      maxTicks: 10,
-                      max: ';
-          				$maxval = 1;
-          				for($i=0;$i<count($header);$i++){
-          					for($j=0;$j<$row;$j++){
-          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
-          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
-          								$maxval = $array[$nbcol[$i]][$j];
-          							}
-          						}
-          					}
-          				}
-          				echo $maxval*1.2;
-          			echo',
-                      min: 0
-                  }
-              },
+    
 
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
@@ -623,7 +693,7 @@ function Gsecteur(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
@@ -703,7 +773,7 @@ function Gaire(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
@@ -779,7 +849,7 @@ function Gcourbe(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
@@ -857,7 +927,7 @@ function Gnuage(){
           };
 
           const chart = new dhx.Chart("chart", config);
-		  chart.data.parse(companiesData);
+		  chart.data.parse(data);
 		  document.getElementById("layout").style.width = "50vw";
 		  document.getElementById("chart").style.width = "50vw";
 		  document.getElementById("parent").style.display = "flex";
