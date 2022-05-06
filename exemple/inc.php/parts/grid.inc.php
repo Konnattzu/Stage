@@ -349,14 +349,7 @@ function Hempile(){
     }
     window.onload = reloadUsingLocationHash();
     //rechargement du graphe
-    const data = [
-  				 { month: "02", "company A": 20, "company B": 52, "company C": 72},
-  				 { month: "03", "company A": 5, "company B": 33, "company C": 90 },
-  				 { month: "04", "company A": 55, "company B": 30, "company C": 81 },
-  				 { month: "05", "company A": 30, "company B": 11, "company C": 62 },
-  				 { month: "06", "company A": 27, "company B": 14, "company C": 68 },
-  				 { month: "07", "company A": 32, "company B": 31, "company C": 64 },
-  		 ];
+    const data = database;
 
   		 function getConfig(stacked) {
   	    return {
@@ -379,7 +372,7 @@ function Hempile(){
           						}
           					}
           				}
-          				echo $maxval*1.2;
+          				echo $maxval*2.4;
           			echo',
                       min: 0
                   }
@@ -388,11 +381,11 @@ function Hempile(){
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
           			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8" },';
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8", stacked: stacked, color: "none" },';
           			}
           		}
           			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18" }';
+          				echo '{ id: "'.$header[$j].'", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18", stacked: stacked, color: "none" }';
           			}
               echo'
           	],
@@ -446,10 +439,7 @@ function Hhorizontal(){
     css: "dhx_widget--bg_white dhx_widget--bordered",
     scales: {
         "bottom": {
-                      text: "'.$header[0].'"
-                  },
-                  "left": {
-                      maxTicks: 10,
+			maxTicks: 10,
                       max: ';
           				$maxval = 1;
           				for($i=0;$i<count($header);$i++){
@@ -464,6 +454,10 @@ function Hhorizontal(){
           				echo $maxval*1.2;
           			echo',
                       min: 0
+                  },
+                  "left": {
+                      text: "'.$header[0].'"
+                      
                   }
               },
 
@@ -584,25 +578,9 @@ function Gradar(){
     type: "radar",
     css: "dhx_widget--bg_white dhx_widget--bordered",
     scales: {
-        "bottom": {
-                      text: "'.$header[0].'"
-                  },
-                  "left": {
-                      maxTicks: 10,
-                      max: ';
-          				$maxval = 1;
-          				for($i=0;$i<count($header);$i++){
-          					for($j=0;$j<$row;$j++){
-          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
-          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
-          								$maxval = $array[$nbcol[$i]][$j];
-          							}
-          						}
-          					}
-          				}
-          				echo $maxval*1.2;
-          			echo',
-                      min: 0
+        "radial": {
+                      value: "'.$header[0].'",
+                      maxTicks: 10
                   }
               },
 
@@ -874,14 +852,37 @@ function Gnuage(){
 		  
 		  
           const config = {
-    type: "area",
     css: "dhx_widget--bg_white dhx_widget--bordered",
     scales: {
         "bottom": {
-                      text: "'.$header[0].'"
+                      title: "'.$header[count($header)-1].'",
+					  max: ';
+          				$maxval = 1;
+          				for($i=0;$i<count($header);$i++){
+          					for($j=0;$j<$row;$j++){
+          						if(intval($array[$nbcol[$i]][$j]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][$j]) && $i > 0){
+          							if($array[$nbcol[$i]][$j] > $maxval*1.2){
+          								$maxval = $array[$nbcol[$i]][$j];
+          							}
+          						}
+          					}
+          				}
+          				echo $maxval*1.2;
+          			echo',
+                      min: 0,
+					  scalePadding: 25
                   },
                   "left": {
                       maxTicks: 10,
+                      title: "';
+					  $find = false;
+					  for($j=0;$j<count($header)-1;$j++){
+						if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0 && $find == false){
+							echo $header[$j];
+							$find = true;
+						}
+					  }
+					  echo'",
                       max: ';
           				$maxval = 1;
           				for($i=0;$i<count($header);$i++){
@@ -895,31 +896,123 @@ function Gnuage(){
           				}
           				echo $maxval*1.2;
           			echo',
-                      min: 0
                   }
               },
 
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
           			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          				echo '{ id: "'.$header[$j].'", type: "scatter", value: "'.$header[$j].'", color: "#81C4E8", fill: "#81C4E8" },';
+						$val1 = $header[$j];
+						if(isset($header[$j+1])){
+					$taken = false;
+							for($i=$j+1;$i<count($header);$i++){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+									$taken = true;
+								}
+								if($taken == false){
+									for($k=$j-1;$k>0;$k--){
+										if(intval($array[$nbcol[$k]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$k]][0]) && $k > 0){
+											$val2 = $header[$k];
+										}
+									}
+								}
+							}
+						}else{
+							for($i=$j-1;$i>0;$i--){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+								}
+							}
+						}
+          				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" },';
           			}
           		}
           			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          				echo '{ id: "'.$header[$j].'", type: "scatter", value: "'.$header[$j].'", color: "#8E4C18", fill: "#8E4C18" }';
+						$val1 = $header[$j];
+						if(isset($header[$j+1])){
+					$taken = false;
+							for($i=$j+1;$i<count($header);$i++){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+									$taken = true;
+								}
+								if($taken == false){
+									for($k=$j-1;$k>0;$k--){
+										if(intval($array[$nbcol[$k]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$k]][0]) && $k > 0){
+											$val2 = $header[$k];
+										}
+									}
+								}
+							}
+						}else{
+							for($i=$j-1;$i>0;$i--){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+								}
+							}
+						}
+          				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" }';
           			}
               echo'
           	],
           	legend: {
                   series: [';
-          		for($j=0;$j<count($header)-1;$j++){
+				  for($j=0;$j<count($header)-1;$j++){
           			if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          				echo '"'.$header[$j].'", ';
+						$val1 = $header[$j];
+						if(isset($header[$j+1])){
+					$taken = false;
+							for($i=$j+1;$i<count($header);$i++){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+									$taken = true;
+								}
+								if($taken == false){
+									for($k=$j-1;$k>0;$k--){
+										if(intval($array[$nbcol[$k]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$k]][0]) && $k > 0){
+											$val2 = $header[$k];
+										}
+									}
+								}
+							}
+						}else{
+							for($i=$j-1;$i>0;$i--){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+								}
+							}
+						}
+          				echo '"'.$val1.'_'.$val2.'",';
           			}
           		}
+          		
           		if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
-          			echo '"'.$header[$j].'"';
-          		}
+						$val1 = $header[$j];
+						if(isset($header[$j+1])){
+					$taken = false;
+							for($i=$j+1;$i<count($header);$i++){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+									$taken = true;
+								}
+								if($taken == false){
+									for($k=$j-1;$k>0;$k--){
+										if(intval($array[$nbcol[$k]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$k]][0]) && $k > 0){
+											$val2 = $header[$k];
+										}
+									}
+								}
+							}
+						}else{
+							for($i=$j-1;$i>0;$i--){
+								if(intval($array[$nbcol[$i]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$i]][0]) && $i > 0){
+									$val2 = $header[$i];
+								}
+							}
+						}
+          				echo '"'.$val1.'_'.$val2.'"';
+          			}
           		echo'],
                   halign: "right",
                   valign: "top"
