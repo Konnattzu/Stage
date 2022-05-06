@@ -8,7 +8,7 @@
 			$header[$i] = clear($header[$i]);
 			$querytable .= $header[$i].' ';
 			for($j=0;$j<$row;$j++){
-				$datalength = datalength($array[$nbcol[$i]][$j], $datalength);
+				$datalength = datalength($array[$nbcol[$i]][$j], $datatype, $datalength);
 				$datatype = datatype($array[$nbcol[$i]][$j], $datatype, $datalength);
 				if($datatype != "date"){
 					$datatype .= "(";

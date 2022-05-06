@@ -1,7 +1,6 @@
 <?php
 echo'<section>
-      <div style="height: 600px;">
-      <!-- component container -->
+      <div class="parent">
 <div id="layout" style="height: 100%;"></div>
 </div>';
 
