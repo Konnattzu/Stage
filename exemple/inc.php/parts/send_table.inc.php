@@ -4,18 +4,6 @@
 	include("clear.func.php");
 	include("datatype.func.php");
 	
-	//get datalist
-	//get headers list
-	//for each id, verify if it exists
-	//if yes, update
-	//else, insert
-	//for each data
-	//find the more approaching column name in the db
-	//verify if type correspond with the column 
-	//verify if charlen correspond with the column 
-	//if not, increase column charlen
-	//send data on the right column name
-	
 	$infotable1 = mysqli_query($mysqli, 'SELECT 
 										TABLE_CATALOG,
 										TABLE_SCHEMA,
