@@ -35,7 +35,10 @@
 				mysqli_query($mysqli, "UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';");
 			}
 		}else if($column == $idcolumn && ($row != "" && !empty($row))){
-			mysqli_query($mysqli, "INSERT INTO step1 (".$column.") VALUES ('".$value."');");
+			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column."='".$value."';"))==0){
+				echo "SELECT * FROM step1 WHERE ".$column."='".$value."';";
+				mysqli_query($mysqli, "INSERT INTO step1 (".$column.") VALUES ('".$value."');");
+			}
 		}
 	}else if($editplace == "saisie"){
 		$infotable = mysqli_query($_SESSION["mysqli"], 'SELECT 

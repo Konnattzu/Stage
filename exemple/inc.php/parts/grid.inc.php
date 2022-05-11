@@ -2,10 +2,24 @@
 echo'<section>
       <div id="parent">
 <!-- component container -->
-<div id="layout" style="height: 100%;"></div>
+<div id="layout" style="height: 100%;">
+
+</div>
 <div id="chart"></div>
+
 </div>
 <script>
+function redim(){
+  if(window.innerWidth>1100){
+    document.getElementById("layout").style.width = "50vw";
+    document.getElementById("chart").style.width = "50vw";
+    document.getElementById("parent").style.display = "flex";
+  }else{
+    document.getElementById("layout").style.width = "100vw";
+    document.getElementById("chart").style.width = "100vw";
+    document.getElementById("parent").style.display = "block";
+  }
+}
 
   var datasetmenu = [
     {
@@ -219,7 +233,7 @@ columns: [
       }
 	  },';
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true }, ';
+				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true }, ';
 		}
 			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
     echo'
@@ -268,6 +282,7 @@ function Hsimple(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -348,6 +363,7 @@ function Hempile(){
       window.location.hash = "chart";
     }
     window.onload = reloadUsingLocationHash();
+	window.onresize = redim;
     //rechargement du graphe
     const data = database;
 
@@ -428,6 +444,7 @@ function Hhorizontal(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -509,6 +526,7 @@ function Ganneau(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -568,6 +586,7 @@ function Gradar(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -632,6 +651,7 @@ function Gsecteur(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -691,6 +711,7 @@ function Gaire(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
   
@@ -770,6 +791,7 @@ function Gcourbe(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;  
 		  
@@ -847,6 +869,7 @@ function Gnuage(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 		  
@@ -925,6 +948,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" },';
           			}
           		}
@@ -951,6 +977,9 @@ function Gnuage(){
 									$val2 = $header[$i];
 								}
 							}
+						}
+						if(!isset($val2)){
+							$val2 = $val1;
 						}
           				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" }';
           			}
@@ -983,6 +1012,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '"'.$val1.'_'.$val2.'",';
           			}
           		}
@@ -1011,6 +1043,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '"'.$val1.'_'.$val2.'"';
           			}
           		echo'],
@@ -1030,6 +1065,8 @@ function Gnuage(){
 echo'
 
 </script>
+
+
 <!--tableur-->';
 			echo'<script type="text/javascript" src="js/edit.js"></script>';
 ?>
