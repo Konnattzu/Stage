@@ -53,6 +53,29 @@ if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'table1';"))>=1){
 		}
 		$row++;
 	}
+	
+	echo'dataset = ';
+	for($j=0;$j<$row-1;$j++){
+			echo'{ ';
+			for($i=0;$i<count($header)-1;$i++){
+					echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'", 
+					';
+			}
+			echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'"
+			';
+			echo'},';
+		}
+		echo '{ ';
+		for($i=0;$i<count($header)-1;$i++){
+				echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'", 
+				';
+		}
+		echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'"
+		';
+		echo'}';
+	
+    echo'
+	];';
 }
 
 ?>
