@@ -21,34 +21,6 @@
 			}
 			
 			if(count($header) >= count($column)){
-				/*
-				Pour chaque colonne
-					si le header est différent de la colonne
-						on détermine le type de la colonne
-						pour chaque header
-							pour chaque ligne
-								on détermine le type de la valeur
-							si le type colonne = valeur
-								si le match est supérieur au précédent
-									pour chaque colonne
-										si cette colonne est déjà attribuée
-											true
-												
-										si false
-											on attribue cette colonne
-						
-						si une colonne est attribuée
-							le header est égal à la colonne attribuée
-						sinon
-							nombre de dépassement ++
-							la colonne attribuée est égale a taille de column + nombre de dépassement
-							pour la taille de column a la taille de header
-								on détermine le type et la size
-								on insère une colonne dans la bdd
-								
-						on récupère les infos de la bdd
-			*/
-				
 				$rightcol = Array();
 				for($i=0;$i<count($column);$i++){
 					
