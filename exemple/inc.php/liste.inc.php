@@ -35,6 +35,11 @@
 				$row++;
 			}
 			
+			print_r($header);
+			print_r($array);
+			
+			
+			
 			$color = array();
 			echo'<script>
 			function colortype(rows){
