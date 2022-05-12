@@ -20,7 +20,7 @@
 			}
 			return $datalength;
 		}
-		function datatype($data, $datatype, $datalength){
+		function datatype($data, $datatype){
 			if(!intval($data)){
 				$datatype = "varchar";
 			}else if(intval($data) && $datatype != "varchar"){
