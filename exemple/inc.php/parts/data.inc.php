@@ -81,7 +81,7 @@ echo'[';
 		}
 		echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'"
 		';
-		echo'}';
+		echo'}];';
 
 	
 ?>
