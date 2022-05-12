@@ -7,6 +7,13 @@ a{
   color: #02b5ce;
 }
 
+td{
+	border: 2px solid black;
+}
+table{
+	border: 2px solid black;
+}
+
 a:hover{
 color: #5bcedb;   /*Modif 09/05*/
 }

@@ -34,11 +34,21 @@
 				}
 				$row++;
 			}
-			
-			print_r($header);
-			print_r($array);
-			
-			
+			echo'<table>
+					<tr>';
+					for($i=0;$i<count($header);$i++){
+						echo'<td>'.$header[$i].'</td>';
+					}
+				echo'</tr>';
+				for($j=0;$j<count($array[0]);$j++){
+					echo'<tr>';
+					for($i=0;$i<count($header);$i++){
+							echo'<td>'.$array[$i][$j].'</td>';
+						
+					}
+					echo'</tr>';
+				}
+			echo'</table>';
 			
 			$color = array();
 			echo'<script>
