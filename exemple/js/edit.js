@@ -208,7 +208,6 @@ window.addEventListener("load", function(){
 		rowid = grid.config.data[rownb][grid.config.columns[1].id];
 		colname = grid.config.columns[colnb].id;
 		colid = grid.config.columns[1].id;
-		entry = grid.config.data[rownb][grid.config.columns[colnb].id];
 
 		cell.addEventListener("keypress", handler, false);
 		document.addEventListener("mousedown", handler, false);
