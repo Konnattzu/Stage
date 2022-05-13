@@ -131,7 +131,9 @@ window.addEventListener("load", function(){
 		
 		comments(header, rows);
 		
-		colortype(rows);
+		if(rows.length>0){
+			colortype(rows);
+		}
 	}
 	
 	/*Afficher les commentaires*/

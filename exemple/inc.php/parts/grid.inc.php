@@ -189,15 +189,14 @@ grid.export.csv();
 }
 /*import file*/
 if (id === "fileOpen") {
+            console.log("oui");
 let input = document.createElement("input");
   input.type = "file";
   input.onchange = _ => {
-            let files =   Array.from(input.files);
-            console.log(files);
+            let files = Array.from(input.files);
 			var data = new FormData();
 		
 		data.append("table", input.files[0]);
-		console.log(data);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
