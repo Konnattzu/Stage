@@ -209,10 +209,6 @@ window.addEventListener("load", function(){
 		colname = grid.config.columns[colnb].id;
 		colid = grid.config.columns[1].id;
 		entry = grid.config.data[rownb][grid.config.columns[colnb].id];
-		console.log("colid "+colid);
-		console.log("rowid "+rowid);
-		console.log("colname "+colname);
-		console.log("celltext "+entry);
 
 		cell.addEventListener("keypress", handler, false);
 		document.addEventListener("mousedown", handler, false);
