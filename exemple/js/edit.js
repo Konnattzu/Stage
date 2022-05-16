@@ -94,6 +94,8 @@ window.addEventListener("load", function(){
 					comcontain[i][j].style.left =  80*(j+1)+40+"px";
 					comcontain[i][j].style.top =  40*i+5+"px";
 					comcontain[i][j].appendChild(phyl[i][j]);
+					console.log(phyl[i][j]);
+					console.log(comcontain[i][j]);
 					comcontain[i][j].appendChild(comment[i][j]);
 					comcontain[i][j].addEventListener('click', comdisp, false);
 				}
@@ -165,7 +167,6 @@ window.addEventListener("load", function(){
 						if(typeof(results[i]) != "undefined" && typeof(results[i][j]) != "undefined" && results[i][j] != null){
 							comment[i][j].innerText = "*"+(i*j)+" //"+results[i][j];
 						}
-						note.style.color = "grey";
 					}
 				}
 				

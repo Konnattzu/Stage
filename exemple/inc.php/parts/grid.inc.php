@@ -189,7 +189,6 @@ grid.export.csv();
 }
 /*import file*/
 if (id === "fileOpen") {
-            console.log("oui");
 let input = document.createElement("input");
   input.type = "file";
   input.onchange = _ => {
