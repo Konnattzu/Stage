@@ -9,12 +9,13 @@
 				include("inc.php/parts/datatype.func.php");
 				include("inc.php/parts/clear.func.php");
 				echo'<a id="savetable">Sauvegarder</a>';
-				if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
-					mysqli_query($_SESSION["mysqli"], "DROP TABLE step2;");
-				}
-			if(file_exists("documents/datafile.csv")){
-				$_SESSION["path"] = "documents/datafile.csv";
-			}
+		
+		if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
+			mysqli_query($_SESSION["mysqli"], "DROP TABLE step2;");
+		}
+		if(file_exists("documents/datafile.csv")){
+			$_SESSION["path"] = "documents/datafile.csv";
+		}
 		if(isset($_SESSION["path"]) && file_exists($_SESSION["path"])) {
 			$csv = array_map("str_getcsv", file($_SESSION["path"]));
 			if(isset($_SESSION["csv"]) && $csv != $_SESSION["csv"]){
@@ -39,6 +40,7 @@
 				include("inc.php/parts/add_data.inc.php");
 			}
 		}
+		
 		if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'step2';"))>=1){
 			$infotable = mysqli_query($mysqli, 'SELECT 
 									TABLE_CATALOG,
@@ -71,6 +73,7 @@
 				$row++;
 			}
 		}
+		
 		if(isset($array)){
 		$color = array();
 		echo'<script>

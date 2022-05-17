@@ -25,9 +25,11 @@ function redim(){
     {
         "id": "file",
         "value": "File",
-        "items": [
-            { "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },
-            { "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
+        "items": [';
+		if($_SESSION["currentpage"] == "saisie") {
+            echo'{ "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },';
+		}
+            echo'{ "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
 
             "items": [
               {
