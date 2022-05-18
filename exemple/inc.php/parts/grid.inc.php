@@ -171,12 +171,15 @@ cols: [
 
 menu.events.on("click", function (id) {
 if (id === "add") {
-  const newId = grid.data.add({ //data a renseigner
-      A: "",
-      B: "",
-      average_rating: "",
-      publication_date: ""
-  });
+  const newId = grid.data.add({';
+  if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+	  for($i=0;$i<count($header)-1;$i++){
+			echo $header[$i].': "",';
+		}
+			echo $header[$i].': "",';
+  }
+ echo'});
+ init();
 }
 
 //export xlsx

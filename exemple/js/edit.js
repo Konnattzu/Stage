@@ -8,11 +8,8 @@ window.addEventListener("load", function(){
 	currenturl = currenturl.replace(/\/$/, "");
 	currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
 	
-	var editbtn = document.querySelectorAll("[data-dhx-id = edit]")[0];
+	var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
 	
-	
-	
-	console.log(editbtn);
 	
 	init();
 	
@@ -22,25 +19,7 @@ window.addEventListener("load", function(){
 	
 	dispgrid.addEventListener("mousewheel", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 	tabbody.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
-	if(typeof(editbtn) != 'undefined' && editbtn != null){
-		editbtn.addEventListener("mouseenter", function(){delay = setTimeout(function(){
-			var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
-			console.log('add');
-			addbtn.addEventListener("click", newrow, false);
-		}, 100);}, false);
-	}
-		
-	// editbtn.addEventListener("mouseleave", function(){
-		// var addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
-		// console.log('rem');
-		// addbtn.removeEventListener("click", newrow, false);
-		// }, false);
-	
-	function newrow(){
-		delay = setTimeout(function(){init();}, 100); 
-		addbtn.removeEventListener("click", newrow, false);
-		console.log("oui");
-	}
+	addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 	
 	
 	
@@ -94,8 +73,8 @@ window.addEventListener("load", function(){
 					comcontain[i][j].style.left =  80*(j+1)+40+"px";
 					comcontain[i][j].style.top =  40*i+5+"px";
 					comcontain[i][j].appendChild(phyl[i][j]);
-					console.log(phyl[i][j]);
-					console.log(comcontain[i][j]);
+					// console.log(phyl[i][j]);
+					// console.log(comcontain[i][j]);
 					comcontain[i][j].appendChild(comment[i][j]);
 					comcontain[i][j].addEventListener('click', comdisp, false);
 				}
@@ -198,6 +177,7 @@ window.addEventListener("load", function(){
 	}
 	
 	function edit(){
+		console.log("edit");
 		cell = this;
 		for(var i=0; i<rows.length; i++){
 			for(var j=0; j<header.length; j++){

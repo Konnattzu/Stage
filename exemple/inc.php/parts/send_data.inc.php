@@ -24,6 +24,10 @@
 			$charlength[$column] = $infos["CHARACTER_MAXIMUM_LENGTH"];
 			$i++;
 		}
+		echo $column;
+		echo $value;
+		echo $idcolumn;
+		echo $row;
 		if(!empty($charlength[$column]) && strlen($value) > $charlength[$column]){
 			$type = preg_replace("/[^A-Za-z]/", "", $coltype);
 			$len = $string = preg_replace("/[^0-9]/", "", $coltype);
@@ -32,10 +36,13 @@
 		}
 		if($column != $idcolumn && ($row != "" && !empty($row))){
 			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$idcolumn."='".$row."';"))>=1){
+				echo"UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';";
 				mysqli_query($mysqli, "UPDATE step1 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';");
 			}
-		}else if($column == $idcolumn && ($row != "" && !empty($row))){
+		}else if($column == $idcolumn && ($row == "" || empty($row))){
+			echo"SELECT * FROM step1 WHERE ".$column."='".$value."';";
 			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column."='".$value."';"))==0){
+				echo"INSERT INTO step1 (".$column.") VALUES ('".$value."');";
 				mysqli_query($mysqli, "INSERT INTO step1 (".$column.") VALUES ('".$value."');");
 			}
 		}
@@ -66,7 +73,7 @@
 			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step2 WHERE ".$idcolumn."='".$row."';"))>=1){
 				mysqli_query($mysqli, "UPDATE step2 SET ".$column."='".$value."' WHERE ".$idcolumn."='".$row."';");
 			}
-		}else if($column == $idcolumn && ($row != "" && !empty($row))){
+		}else if($column == $idcolumn && ($row == "" || empty($row))){
 			if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step2 WHERE ".$column."='".$value."';"))==0){
 				mysqli_query($mysqli, "INSERT INTO step2 (".$column.") VALUES ('".$value."');");
 			}
