@@ -139,10 +139,8 @@ window.addEventListener("load", function(){
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				var results = JSON.parse(request.responseText);
-				console.log(results);
 				for(var i=0; i<comment.length; i++){
 					for(var j=0; j<comment[i].length; j++){
-						note = document.getElementById(i+'_'+j);
 						if(typeof(results[i]) != "undefined" && typeof(results[i][j]) != "undefined" && results[i][j] != null){
 							comment[i][j].innerText = "*"+(i*j)+" //"+results[i][j];
 						}
