@@ -23,12 +23,11 @@
 			if(count($header) >= count($column)){
 				$rightcol = Array();
 				for($i=0;$i<count($column);$i++){
-					
 					if($header[$i] != $column[$i]){
 						$matching = 50;
 						$overflow = 0;
-							$type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
-							$len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
+						$type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
+						$len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$i]);
 						for($k=0;$k<count($header);$k++){
 							$datatype[$k] = "";
 							$datalength[$k] = 0;
@@ -39,8 +38,6 @@
 									$datalength[$k] = datalength($array[$nbcol[$k]][$j], $datatype[$k], $datalength[$k]);
 								}
 							}
-							
-				
 							if($datatype[$k] == $type[$i]){
 								similar_text($header[$k], $column[$i], $perc);
 								if($matching < $perc){
@@ -49,16 +46,13 @@
 											$occupied = true;
 										}
 									}
-									
 									if($occupied == false){
 										$rightcol[$i] = $k;
 										$matching = $perc;
 									}
-						
 								}
 							}
 						}
-						
 					}else{
 						$rightcol[$i] = $i;
 					}
