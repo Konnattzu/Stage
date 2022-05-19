@@ -160,18 +160,16 @@ color: #5bcedb;   /*Modif 09/05*/
   
   .dhx_grid-comcell .dhx_grid-comment{
 	  background: none;
-		display: none;
 	  color: grey;
   }
   
   .dhx_grid-comcell{
-	  background: none;
 	  position: absolute;
-		display: inline;
+		display: block;
 	  color: grey;
   }
   .dhx_grid-comcell img{
-		display: inline;
+		display: block;
   }
 
   .btnchart{

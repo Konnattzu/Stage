@@ -59,6 +59,7 @@ window.addEventListener("load", function(){
 					comment[i][j] = document.createElement("div");
 					comment[i][j].innerText =  "*"+(i*header.length+j);
 					comment[i][j].classList.add("dhx_grid-comment");
+					comment[i][j].style.display = "block";
 					phyl[i][j] = document.createElement("img");
 					phyl[i][j].setAttribute("src", "images/bulle.svg");
 					phyl[i][j].setAttribute("alt", "o");
@@ -155,17 +156,21 @@ window.addEventListener("load", function(){
 	}
 	
 	function comdisp(){
-		cell = this;
-		console.log(cell.parentElement);
+		var cell = this;
 		event.stopPropagation();
 		colnb = cell.getAttribute("aria-colindex");
 		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
-		console.log(rownb);
-		console.log(colnb);
-		comment[rownb][colnb].style = "display: inline;";
-		console.log(comment);
-		console.log(comcontain[colnb][rownb]);
-		console.log(comment[colnb][rownb]);
+		console.log(comment[rownb][colnb]);
+		console.log(comment[rownb][colnb].style.display);
+		if(comment[rownb][colnb].style.display == "block"){
+			console.log("disappear");
+			comment[rownb][colnb].style.display = "none";
+			cell.style.background = "none";
+		}else if(comment[rownb][colnb].style.display == "none"){
+			console.log("appear");
+			comment[rownb][colnb].style.display = "block";
+			cell.style.background = "#ededed";
+		}
 	}
 
 	/*Editer une case*/
