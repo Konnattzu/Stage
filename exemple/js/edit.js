@@ -18,7 +18,12 @@ window.addEventListener("load", function(){
 	}
 	
 	dispgrid.addEventListener("mousewheel", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
-	tabbody.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
+	tabbody.addEventListener("click", function(){
+		console.log(event.target);
+		if(!event.target.classList.contains("dhx_string-cell") && !event.target.classList.contains("dhx_grid-comment")){
+			delay = setTimeout(function(){ init(); }, 100)
+		}
+	}, false);
 	addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 	
 	
@@ -59,7 +64,8 @@ window.addEventListener("load", function(){
 					comment[i][j] = document.createElement("div");
 					comment[i][j].innerText =  "*"+(i*header.length+j);
 					comment[i][j].classList.add("dhx_grid-comment");
-					comment[i][j].style.display = "block";
+					comment[i][j].style.display = "none";
+					comment[i][j].addEventListener("click", comedit, false);
 					phyl[i][j] = document.createElement("img");
 					phyl[i][j].setAttribute("src", "images/bulle.svg");
 					phyl[i][j].setAttribute("alt", "o");
@@ -77,7 +83,7 @@ window.addEventListener("load", function(){
 					// console.log(phyl[i][j]);
 					// console.log(comcontain[i][j]);
 					comcontain[i][j].appendChild(comment[i][j]);
-					comcontain[i][j].addEventListener('click', comdisp, false);
+					phyl[i][j].addEventListener('click', comdisp, false);
 				}
 			}
 				
@@ -156,7 +162,20 @@ window.addEventListener("load", function(){
 	}
 	
 	function comdisp(){
-		var cell = this;
+		  const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'></textarea><input type='submit' value='&#9989;'></form>";
+    const dhxwindow = new dhx.Window({
+        width: 440,
+        height: 520,
+        title: "Commentaire",
+        html: windowHtml
+	});
+
+    dhxwindow.show();	
+	comwindow = document.getElementsByClassName("dhx_popup--window")[0];
+	console.log(comwindow);
+    comwindow.addEventListener("focusout", function(){ comwindow.remove(); }, false);
+	
+		var cell = this.parentElement;
 		event.stopPropagation();
 		colnb = cell.getAttribute("aria-colindex");
 		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
@@ -171,6 +190,70 @@ window.addEventListener("load", function(){
 			comment[rownb][colnb].style.display = "block";
 			cell.style.background = "#ededed";
 		}
+	}
+	
+	/*Editer un commentaire*/
+	
+	function comhandler(){
+		console.log("edited");
+		comedited(event, inptcom);
+	}
+	
+	function comedit(){
+		console.log("edit");
+		comt = this;
+		comtxt = comt.innerText;
+		inptcom = document.createElement("input");
+		inptcom.setAttribute("type", "text");
+		inptcom.setAttribute("value", comtxt);
+		comt.parentElement.replaceChild(inptcom, comt);
+
+		inptcom.addEventListener("keypress", comhandler, false);
+		document.addEventListener("mousedown", comhandler, false);
+	}
+	
+	function comedited(event, inptcom){
+		event.stopImmediatePropagation();
+		e = event;
+		if (e.key == "Enter"){
+			delay = setTimeout(function(){sendcom(e.path[1]);}, 1);
+			inptcom.removeEventListener("keypress", comhandler, false);
+			document.removeEventListener("mousedown", comhandler, false);
+		}else if(e.target.parentElement != inptcom){
+			delay = setTimeout(function(){sendcom(inptcom);}, 1);
+			inptcom.removeEventListener("keypress", comhandler, false);
+			document.removeEventListener("mousedown", comhandler, false);
+		}
+	}
+	
+	function sendcom(el){
+		clearTimeout(delay);
+		newtext = el.innerText;
+		// var rowid = ;
+		// var colname = ;
+		// console.log(el.parentElement);
+		// var data = new FormData();
+		// data.append("row", rowid);
+		// data.append("column", colname);
+		// var request = new XMLHttpRequest();
+		// request.onreadystatechange = function () {
+			// if (request.readyState === 4) {
+				// var results = request.responseText;
+				// console.log(results);
+				// console.log(request.responseText);
+				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
+				// if(typeof(config) != "undefined"){
+					// if(config.scales.left.max < results*1.2){
+						// config.scales.left.max = results*1.2;
+						// //window.location.reload();
+					// }
+				// }
+				// init();
+			// }
+		// }
+		// request.open("POST", "inc.php/parts/send_data.inc.php", true);
+		// request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		// request.send(data);	
 	}
 
 	/*Editer une case*/

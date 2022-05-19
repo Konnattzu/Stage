@@ -159,17 +159,20 @@ color: #5bcedb;   /*Modif 09/05*/
   }
   
   .dhx_grid-comcell .dhx_grid-comment{
-	  background: none;
+	  background: #ededed;
 	  color: grey;
+		display: flex;
+		z-index: 100;
   }
   
   .dhx_grid-comcell{
 	  position: absolute;
-		display: block;
+		display: flex;
 	  color: grey;
   }
   .dhx_grid-comcell img{
-		display: block;
+		display: flex;
+		width: 30px;
   }
 
   .btnchart{
