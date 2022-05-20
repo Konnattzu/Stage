@@ -77,7 +77,8 @@ window.addEventListener("load", function(){
 					comcontain[i][j].setAttribute("aria-colindex", j);
 					comcontain[i][j].setAttribute("aria-readonly", "false");
 					comcontain[i][j].setAttribute("tabindex", "-1");
-					comcontain[i][j].style.left =  80*(j+1)+40+"px";
+					console.log(rows[i][j].getBoundingClientRect().left);
+					comcontain[i][j].style.left =  (rows[i][j].getBoundingClientRect().left+window.scrollX)+"px";
 					comcontain[i][j].style.top =  40*i+5+"px";
 					comcontain[i][j].appendChild(phyl[i][j]);
 					// console.log(phyl[i][j]);
@@ -170,7 +171,7 @@ window.addEventListener("load", function(){
         html: windowHtml
 	});
 
-    dhxwindow.show();	
+    dhxwindow.show();
 	comwindow = document.getElementsByClassName("dhx_popup--window")[0];
 	console.log(comwindow);
     comwindow.addEventListener("focusout", function(){ comwindow.remove(); }, false);
