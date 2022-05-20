@@ -1,7 +1,6 @@
 
 window.addEventListener("load", function(){
 	dispgrid = document.getElementsByClassName("dhx_grid_data")[0];
-	tabbody = document.getElementsByClassName("dhx_grid-body")[0];
 	savebtn = document.getElementById("savetable");
 	
 	var currenturl = document.location.href;
@@ -18,10 +17,12 @@ window.addEventListener("load", function(){
 	}
 	
 	dispgrid.addEventListener("mousewheel", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
-	tabbody.addEventListener("click", function(){
+	document.addEventListener("click", function(){
 		console.log(event.target);
 		if(!event.target.classList.contains("dhx_string-cell") && !event.target.classList.contains("dhx_grid-comment")){
-			delay = setTimeout(function(){ init(); }, 100)
+			target = event.target;
+			console.log(target);
+			delay = setTimeout(function(){ init(target); }, 100);
 		}
 	}, false);
 	addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
@@ -29,99 +30,116 @@ window.addEventListener("load", function(){
 	
 	
 	
-	function init(){
-		if(typeof(delay) != 'undefined' && delay != null){
-			clearTimeout(delay);
-		}
-		
-		console.log("init");
-		rows = document.getElementsByClassName("dhx_grid-row");
-		header = document.getElementsByClassName("dhx_grid-header-cell");
-		header = Array.from(header);
-		header.splice(header.length/2, header.length);
-		header.splice(0, 1);
-		cells = Array();
-		cross = document.querySelectorAll(".remove-button");
-		rembtn = Array();
-		comment = Array();
-		phyl = Array();
-		comcontain = Array();
-		for(var i=0; i<rows.length; i++){
-			comment[i] = Array();
-			phyl[i] = Array();
-			comcontain[i] = Array();
-		}
-		
-		for(var i=0; i<rows.length; i++){
-			cells = rows[i].getElementsByClassName("dhx_grid-cell");
-			for(var j=1; j<cells.length; j++){
-				rows[i][j-1] = cells[j];
+	function init(target){
+		if(typeof(comwindow) == "undefined"){
+			console.log(typeof(comwindow));
+			if(typeof(delay) != 'undefined' && delay != null){
+				clearTimeout(delay);
 			}
-		}
+			
+			console.log("init");
+			rows = document.getElementsByClassName("dhx_grid-row");
+			header = document.getElementsByClassName("dhx_grid-header-cell");
+			header = Array.from(header);
+			header.splice(header.length/2, header.length);
+			header.splice(0, 1);
+			cells = Array();
+			cross = document.querySelectorAll(".remove-button");
+			rembtn = Array();
+			comment = Array();
+			phyl = Array();
+			comcontain = Array();
+			for(var i=0; i<rows.length; i++){
+				comment[i] = Array();
+				phyl[i] = Array();
+				comcontain[i] = Array();
+			}
 			
 			for(var i=0; i<rows.length; i++){
-				for(var j=0; j<header.length; j++){
-					comment[i][j] = document.createElement("div");
-					comment[i][j].innerText =  "*"+(i*header.length+j);
-					comment[i][j].classList.add("dhx_grid-comment");
-					comment[i][j].style.display = "none";
-					comment[i][j].addEventListener("click", comedit, false);
-					phyl[i][j] = document.createElement("img");
-					phyl[i][j].setAttribute("src", "images/bulle.svg");
-					phyl[i][j].setAttribute("alt", "o");
-					comcontain[i][j] = document.createElement("div");
-					comcontain[i][j].classList.add("dhx_string-cell");
-					comcontain[i][j].classList.add("dhx_grid-comcell");
-					comcontain[i][j].setAttribute("data-dhx-col-id", header[j].innerText);
-					comcontain[i][j].setAttribute("role", "gridcell");
-					comcontain[i][j].setAttribute("aria-colindex", j);
-					comcontain[i][j].setAttribute("aria-readonly", "false");
-					comcontain[i][j].setAttribute("tabindex", "-1");
-					console.log(rows[i][j].getBoundingClientRect().left);
-					comcontain[i][j].style.left =  (rows[i][j].getBoundingClientRect().left+window.scrollX)+"px";
-					comcontain[i][j].style.top =  40*i+5+"px";
-					comcontain[i][j].appendChild(phyl[i][j]);
-					// console.log(phyl[i][j]);
-					// console.log(comcontain[i][j]);
-					comcontain[i][j].appendChild(comment[i][j]);
-					phyl[i][j].addEventListener('click', comdisp, false);
+				cells = rows[i].getElementsByClassName("dhx_grid-cell");
+				for(var j=1; j<cells.length; j++){
+					rows[i][j-1] = cells[j];
 				}
 			}
 				
-		for(var i=0; i<rows.length; i++){
-			for(var j=0; j<header.length; j++){
-				rows[i][j].addEventListener("click", edit, false);
+				for(var i=0; i<rows.length; i++){
+					for(var j=0; j<header.length; j++){
+						comment[i][j] = document.createElement("div");
+						comment[i][j].classList.add("dhx_grid-comment");
+						comment[i][j].style.display = "none";
+						comment[i][j].addEventListener("click", comedit, false);
+						phyl[i][j] = document.createElement("img");
+						phyl[i][j].setAttribute("src", "images/bulle.svg");
+						phyl[i][j].setAttribute("alt", "o");
+						comcontain[i][j] = document.createElement("div");
+						comcontain[i][j].classList.add("dhx_string-cell");
+						comcontain[i][j].classList.add("dhx_grid-comcell");
+						comcontain[i][j].setAttribute("data-dhx-col-id", header[j].innerText);
+						comcontain[i][j].setAttribute("role", "gridcell");
+						comcontain[i][j].setAttribute("aria-colindex", j);
+						comcontain[i][j].setAttribute("aria-readonly", "false");
+						comcontain[i][j].setAttribute("tabindex", "-1");
+						console.log(rows[i][j].getBoundingClientRect().left);
+						comcontain[i][j].style.left =  (rows[i][j].getBoundingClientRect().left+window.scrollX)+"px";
+						comcontain[i][j].style.top =  40*i+5+"px";
+						comcontain[i][j].appendChild(phyl[i][j]);
+						// console.log(phyl[i][j]);
+						// console.log(comcontain[i][j]);
+						comcontain[i][j].appendChild(comment[i][j]);
+						phyl[i][j].addEventListener('click', function(){ comdisp(event) }, false);
+					}
+				}
+					
+			for(var i=0; i<rows.length; i++){
+				for(var j=0; j<header.length; j++){
+					rows[i][j].addEventListener("click", edit, false);
+				}
 			}
-		}
-		oldChild = Array();
-		for(var i=0; i<rows.length; i++){
-			oldChild[i] = Array();
-			for(var j=0; j<header.length; j++){
-				oldChild[i][j] = rows[i][j].parentElement.childNodes[header.length+j+1];
+			oldChild = Array();
+			for(var i=0; i<rows.length; i++){
+				oldChild[i] = Array();
+				for(var j=0; j<header.length; j++){
+					oldChild[i][j] = rows[i][j].parentElement.childNodes[header.length+j+1];
+				}
 			}
-		}
-		for(var i=0; i<rows.length; i++){
-			for(var j=0; j<header.length; j++){
-				rows[i][j].parentElement.appendChild(comcontain[i][j]);
-				if(typeof(oldChild[i][j]) != "undefined" && oldChild[i][j] != null){
-					if(oldChild[i][j].classList.contains("dhx_grid-comcell")){
-						rows[i][j].parentElement.removeChild(oldChild[i][j]);
+			for(var i=0; i<rows.length; i++){
+				for(var j=0; j<header.length; j++){
+					rows[i][j].parentElement.appendChild(comcontain[i][j]);
+					if(typeof(oldChild[i][j]) != "undefined" && oldChild[i][j] != null){
+						if(oldChild[i][j].classList.contains("dhx_grid-comcell")){
+							rows[i][j].parentElement.removeChild(oldChild[i][j]);
+						}
 					}
 				}
 			}
+						
+		
+			
+			for(var i=0; i<cross.length;i++){
+				rembtn[i] = cross[i].parentElement.parentElement;
+				rembtn[i].addEventListener("click", remrow, false);
+			}
+			if(currentref == "liste"){
+				comments(header, rows);
+			}
+			if(rows.length>0){
+				colortype(rows);
+			}
 		}
-					
-	
 		
-		for(var i=0; i<cross.length;i++){
-			rembtn[i] = cross[i].parentElement.parentElement;
-			rembtn[i].addEventListener("click", remrow, false);
-		}
-		
-		comments(header, rows);
-		
-		if(rows.length>0){
-			colortype(rows);
+		if(typeof(comwindow) != "undefined"){
+			comarea = comwindow.getElementsByTagName("TEXTAREA")[0];
+			comrownb = comwindow.getAttribute("rowindex");
+			comcolnb = comwindow.getAttribute("colindex");
+			console.log(comrownb);
+			console.log(comcolnb);
+			console.log(comment[comrownb][comcolnb]);
+			comarea.innerText = comment[comrownb][comcolnb].getAttribute("commentaire");
+			console.log(comarea);
+			console.log(target);
+			if(!comarea.hasFocus && target != comarea){
+				comwindow.focus();
+			}
 		}
 	}
 	
@@ -150,7 +168,9 @@ window.addEventListener("load", function(){
 				for(var i=0; i<comment.length; i++){
 					for(var j=0; j<comment[i].length; j++){
 						if(typeof(results[i]) != "undefined" && typeof(results[i][j]) != "undefined" && results[i][j] != null){
-							comment[i][j].innerText = "*"+(i*j)+" //"+results[i][j];
+							console.log(results[i][j]);
+							comment[i][j].setAttribute("commentaire", results[i][j]);
+							console.log(comment[i][j].getAttribute("commentaire"));
 						}
 					}
 				}
@@ -162,7 +182,9 @@ window.addEventListener("load", function(){
 		request.send(data);
 	}
 	
-	function comdisp(){
+	function comdisp(e, i, j){
+		console.log(i);
+		console.log(j);
 		  const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'></textarea><input type='submit' value='&#9989;'></form>";
     const dhxwindow = new dhx.Window({
         width: 440,
@@ -171,26 +193,15 @@ window.addEventListener("load", function(){
         html: windowHtml
 	});
 
-    dhxwindow.show();
-	comwindow = document.getElementsByClassName("dhx_popup--window")[0];
-	console.log(comwindow);
-    comwindow.addEventListener("focusout", function(){ comwindow.remove(); }, false);
-	
-		var cell = this.parentElement;
-		event.stopPropagation();
-		colnb = cell.getAttribute("aria-colindex");
-		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
-		console.log(comment[rownb][colnb]);
-		console.log(comment[rownb][colnb].style.display);
-		if(comment[rownb][colnb].style.display == "block"){
-			console.log("disappear");
-			comment[rownb][colnb].style.display = "none";
-			cell.style.background = "none";
-		}else if(comment[rownb][colnb].style.display == "none"){
-			console.log("appear");
-			comment[rownb][colnb].style.display = "block";
-			cell.style.background = "#ededed";
-		}
+		dhxwindow.show();
+		comwindow = document.getElementsByClassName("dhx_popup--window")[0];
+		comwindow.setAttribute("rowindex", event.target.parentElement.parentElement.getAttribute("aria-rowindex")-1);
+		comwindow.setAttribute("colindex", event.target.parentElement.getAttribute("aria-colindex"));
+		console.log(e.target);
+		rowid = e.target.parentElement.parentElement.querySelector("[aria-colindex='2']").innerText;
+		colname = e.target.parentElement.getAttribute("data-dhx-col-id");
+		comedit(rowid, colname, comwindow);
+
 	}
 	
 	/*Editer un commentaire*/
@@ -200,7 +211,9 @@ window.addEventListener("load", function(){
 		comedited(event, inptcom);
 	}
 	
-	function comedit(){
+	function comedit(rowid, colname, comwindow){
+			console.log(comwindow);
+			comwindow.addEventListener("blur", function(event){ if(!event.currentTarget.contains(event.relatedTarget)){ comedited(rowid, colname, comarea); } }, false);
 		console.log("edit");
 		comt = this;
 		comtxt = comt.innerText;
@@ -208,53 +221,33 @@ window.addEventListener("load", function(){
 		inptcom.setAttribute("type", "text");
 		inptcom.setAttribute("value", comtxt);
 		comt.parentElement.replaceChild(inptcom, comt);
-
-		inptcom.addEventListener("keypress", comhandler, false);
-		document.addEventListener("mousedown", comhandler, false);
 	}
 	
-	function comedited(event, inptcom){
-		event.stopImmediatePropagation();
-		e = event;
-		if (e.key == "Enter"){
-			delay = setTimeout(function(){sendcom(e.path[1]);}, 1);
-			inptcom.removeEventListener("keypress", comhandler, false);
-			document.removeEventListener("mousedown", comhandler, false);
-		}else if(e.target.parentElement != inptcom){
-			delay = setTimeout(function(){sendcom(inptcom);}, 1);
-			inptcom.removeEventListener("keypress", comhandler, false);
-			document.removeEventListener("mousedown", comhandler, false);
+	function comedited(rowid, colname, comarea){
+		comt = comarea.value;
+		sendcom(rowid, colname, comt);
+		comwindow.remove();
+	}
+	
+	function sendcom(rowid, colname, comt){
+		console.log(rowid);
+		console.log(colname);
+		var data = new FormData();
+		data.append("row", rowid);
+		data.append("column", colname);
+		data.append("comt", comt);
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			if (request.readyState === 4) {
+				var results = request.responseText;
+				console.log(results);
+				console.log(request.responseText);
+				init();
+			}
 		}
-	}
-	
-	function sendcom(el){
-		clearTimeout(delay);
-		newtext = el.innerText;
-		// var rowid = ;
-		// var colname = ;
-		// console.log(el.parentElement);
-		// var data = new FormData();
-		// data.append("row", rowid);
-		// data.append("column", colname);
-		// var request = new XMLHttpRequest();
-		// request.onreadystatechange = function () {
-			// if (request.readyState === 4) {
-				// var results = request.responseText;
-				// console.log(results);
-				// console.log(request.responseText);
-				// grid.config.data[rownb][grid.config.columns[colnb].id] = results;
-				// if(typeof(config) != "undefined"){
-					// if(config.scales.left.max < results*1.2){
-						// config.scales.left.max = results*1.2;
-						// //window.location.reload();
-					// }
-				// }
-				// init();
-			// }
-		// }
-		// request.open("POST", "inc.php/parts/send_data.inc.php", true);
-		// request.setRequestHeader("X-Requested-With", "xmlhttprequest");
-		// request.send(data);	
+		request.open("POST", "inc.php/parts/send_com.inc.php", true);
+		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
+		request.send(data);	
 	}
 
 	/*Editer une case*/
