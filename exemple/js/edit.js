@@ -31,13 +31,13 @@ window.addEventListener("load", function(){
 	
 	
 	function init(target){
+			console.log("init");
 		if(typeof(comwindow) == "undefined"){
 			console.log(typeof(comwindow));
 			if(typeof(delay) != 'undefined' && delay != null){
 				clearTimeout(delay);
 			}
 			
-			console.log("init");
 			rows = document.getElementsByClassName("dhx_grid-row");
 			header = document.getElementsByClassName("dhx_grid-header-cell");
 			header = Array.from(header);
@@ -69,7 +69,7 @@ window.addEventListener("load", function(){
 						comment[i][j].style.display = "none";
 						comment[i][j].addEventListener("click", comedit, false);
 						phyl[i][j] = document.createElement("img");
-						phyl[i][j].setAttribute("src", "images/bulle.svg");
+						phyl[i][j].setAttribute("src", "images/V2-2.svg");
 						phyl[i][j].setAttribute("alt", "o");
 						comcontain[i][j] = document.createElement("div");
 						comcontain[i][j].classList.add("dhx_string-cell");
