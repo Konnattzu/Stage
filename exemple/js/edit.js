@@ -69,7 +69,7 @@ window.addEventListener("load", function(){
 						comment[i][j].style.display = "none";
 						comment[i][j].addEventListener("click", comedit, false);
 						phyl[i][j] = document.createElement("img");
-						phyl[i][j].setAttribute("src", "images/V2-2.svg");
+						phyl[i][j].setAttribute("src", "images/bulle.svg");
 						phyl[i][j].setAttribute("alt", "o");
 						comcontain[i][j] = document.createElement("div");
 						comcontain[i][j].classList.add("dhx_string-cell");
