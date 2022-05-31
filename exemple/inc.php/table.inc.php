@@ -57,10 +57,12 @@
 			$header = array();
 			$nbcol = array();
 			$array = array();
+			$datatype = array();
 			while($infos = $infotable->fetch_assoc()){
 				$header[$col] = $infos["COLUMN_NAME"];
 				$charlength[$header[$col]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
 				$nbcol[$col] = $col;
+				$datatype[$col] = $infos["DATA_TYPE"];
 				$col++;
 			}
 			
