@@ -160,9 +160,7 @@
 			for($j=0;$j<$row;$j++){
 				$querydata[$j] = "INSERT INTO step2 (";
 				for($i=0;$i<count($header);$i++){
-					if(!empty($array[$nbcol[$i]][$j])){
-						$querydata[$j] .= $header[$i].", ";
-					}
+					$querydata[$j] .= $header[$i].", ";
 				}
 				$querydata[$j][strlen($querydata[$j])-2] = " ";
 				$querydata[$j][strlen($querydata[$j])-1] = " ";
@@ -181,8 +179,25 @@
 					}
 				}
 				for($i=0;$i<count($header);$i++){
-					if(!empty($array[$nbcol[$i]][$j])){
-						$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+					echo $header[$i];
+					echo $datatype[$i];
+					if($datatype[$i] == "boolean"){
+						$array[$nbcol[$i]][$j] = str_replace("oui", "1", $array[$nbcol[$i]][$j]);	
+						$array[$nbcol[$i]][$j] = str_replace("non", "0", $array[$nbcol[$i]][$j]);	
+						if(empty($array[$nbcol[$i]][$j])){
+							$array[$nbcol[$i]][$j] = "0";
+						}
+					}
+					if($datatype[$i] == "date"){
+						if(!empty($array[$nbcol[$i]][$j])){
+							$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+						}
+					}else{
+						if(!empty($array[$nbcol[$i]][$j])){
+							$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+						}else{
+							$querydata[$j] .= "NULL, ";
+						}
 					}
 				}
 				$querydata[$j] .= ");";
@@ -202,12 +217,8 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
+				echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
-			}
-			for($i=0;$i<count($column);$i++){
-					if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step2 WHERE ".$column[$i]." IS NULL")) == $row-1){
-						mysqli_query($mysqli, "ALTER TABLE step2 DROP COLUMN ".$column[$i].";");
-					}
 			}
 		}
 	else die("");
