@@ -179,8 +179,6 @@
 					}
 				}
 				for($i=0;$i<count($header);$i++){
-					echo $header[$i];
-					echo $datatype[$i];
 					if($datatype[$i] == "boolean"){
 						$array[$nbcol[$i]][$j] = str_replace("oui", "1", $array[$nbcol[$i]][$j]);	
 						$array[$nbcol[$i]][$j] = str_replace("non", "0", $array[$nbcol[$i]][$j]);	
@@ -217,7 +215,6 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
-				echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
 			}
 		}

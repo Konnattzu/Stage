@@ -30,8 +30,6 @@
 					$comment = trim($comment);
 					$array[$nbcol[$i]][$j] == str_replace($comment, " ", $array[$nbcol[$i]][$j]);
 					$array[$nbcol[$i]][$j] == trim($array[$nbcol[$i]][$j]);
-					/*echo $array[$nbcol[$i]][$j];
-					echo $comment;*/
 				}
 			}
 			if(count($array[0])>16){
@@ -68,7 +66,6 @@
 		}
 		$querytable[strlen($querytable)-3] = ";";
 		$querytable[strlen($querytable)-4] = ")";
-		echo $querytable;
 		mysqli_query($mysqli, $querytable);
 		
 		mysqli_query($mysqli, "CREATE TABLE IF NOT EXISTS step2 LIKE step1;");
