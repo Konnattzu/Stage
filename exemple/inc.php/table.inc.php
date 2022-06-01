@@ -9,12 +9,13 @@
 				include("inc.php/parts/datatype.func.php");
 				include("inc.php/parts/clear.func.php");
 				echo'<a id="savetable">Sauvegarder</a>';
-				if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
-					mysqli_query($_SESSION["mysqli"], "DROP TABLE step2;");
-				}
-			if(file_exists("documents/datafile.csv")){
-				$_SESSION["path"] = "documents/datafile.csv";
-			}
+		
+		if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
+			mysqli_query($_SESSION["mysqli"], "DROP TABLE step2;");
+		}
+		if(file_exists("documents/datafile.csv")){
+			$_SESSION["path"] = "documents/datafile.csv";
+		}
 		if(isset($_SESSION["path"]) && file_exists($_SESSION["path"])) {
 			$csv = array_map("str_getcsv", file($_SESSION["path"]));
 			if(isset($_SESSION["csv"]) && $csv != $_SESSION["csv"]){
@@ -33,12 +34,12 @@
 				}
 				$row++;
 			}
-			
 			if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'step2';"))==0){
 				include("inc.php/parts/create_table.inc.php");
 				include("inc.php/parts/add_data.inc.php");
 			}
 		}
+		
 		if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'step2';"))>=1){
 			$infotable = mysqli_query($mysqli, 'SELECT 
 									TABLE_CATALOG,
@@ -55,10 +56,12 @@
 			$header = array();
 			$nbcol = array();
 			$array = array();
+			$datatype = array();
 			while($infos = $infotable->fetch_assoc()){
 				$header[$col] = $infos["COLUMN_NAME"];
 				$charlength[$header[$col]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
 				$nbcol[$col] = $col;
+				$datatype[$col] = $infos["DATA_TYPE"];
 				$col++;
 			}
 			
@@ -71,34 +74,37 @@
 				$row++;
 			}
 		}
+		
+		if(isset($array)){
 		$color = array();
 		echo'<script>
 		function colortype(rows){
 			color = Array();
 			';
-		for($i=0;$i<count($array);$i++){
+			for($i=0;$i<count($array);$i++){
+				echo'
+				color['.$i.'] = Array();';
+				for($j=0;$j<count($array[$nbcol[$i]]);$j++){
+					if(datatype($array[$nbcol[$i]][$j], "", 0) == "varchar"){
+						$color[$nbcol[$i]][$j] = "red";
+					}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "int"){
+						$color[$nbcol[$i]][$j] = "blue";
+					}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "date"){
+						$color[$nbcol[$i]][$j] = "green";					
+					}else{
+						$color[$nbcol[$i]][$j] = "black";
+					}
 			echo'
-			color['.$i.'] = Array();';
-			for($j=0;$j<count($array[$nbcol[$i]]);$j++){
-				if(datatype($array[$nbcol[$i]][$j], "", 0) == "varchar"){
-					$color[$nbcol[$i]][$j] = "red";
-				}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "int"){
-					$color[$nbcol[$i]][$j] = "blue";
-				}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "date"){
-					$color[$nbcol[$i]][$j] = "green";					
-				}else{
-					$color[$nbcol[$i]][$j] = "black";
+					color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
+					if(typeof(rows['.$j.']) != "undefined" && typeof(rows['.$j.']['.$i.']) != "undefined"){
+						rows['.$j.']['.$i.'].style.color = color['.$i.']['.$j.'];
+					}
+				';
 				}
-		echo'
-				color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
-				if(typeof(rows['.$j.']) != "undefined" && typeof(rows['.$j.']['.$i.']) != "undefined"){
-					rows['.$j.']['.$i.'].style.color = color['.$i.']['.$j.'];
-				}
-			';
 			}
+			echo'}
+			</script>';
 		}
-		echo'}
-		</script>';
 		
 		
 			include("inc.php/parts/grid.inc.php");

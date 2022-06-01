@@ -45,8 +45,6 @@
 	$i = 0;
 	$col2 = 0;
 	$row2 = 0;
-	$column2 = array();
-	$array2 = array();
 	while($infos2 = $infotable2->fetch_assoc()){
 		$column2[$col2] = $infos2["COLUMN_NAME"];
 		$coltype2[$col2] = $infos2["COLUMN_TYPE"];
@@ -113,18 +111,14 @@
 		}	
 		
 		for($i=0;$i<count($array2[0]);$i++){
-			if(isset($array1[0][$i])){
+			if(isset($array1[0][$i]) && $array2[0][$i] == $array1[0][$i]){
 				if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column2[0]."='".$array2[0][$i]."';"))>=1){
 					for($j=0;$j<count($column2);$j++){
-						echo'case 1
-						';
 						echo"UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';
 						";
 						mysqli_query($mysqli, "UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';");
 					}
 				}else{
-								echo'case 2
-								';
 					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
 					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');
@@ -136,8 +130,6 @@
 				}
 			}else if(isset($array1[0][$i]) && $array2[0][$i] != $array1[0][$i]){
 				if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step1 WHERE ".$column2[0]."='".$array2[0][$i]."';"))==0){
-								echo'case 3
-								';
 					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
 					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');
@@ -148,16 +140,12 @@
 					}		
 				}else{
 					for($j=0;$j<count($column2);$j++){
-						echo'case 4
-						';
 						echo"UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';
 						";
 						mysqli_query($mysqli, "UPDATE step1 SET ".$column2[$j]."='".$array2[$j][$i]."' WHERE ".$column2[0]."='".$array2[0][$i]."';");
 					}
 				}
 			}else{
-				echo'case 5
-						';
 					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");
 					';
 					mysqli_query($mysqli, 'INSERT INTO step1 ('.$column2[0].') VALUES ("'.$array2[0][$i].'");');

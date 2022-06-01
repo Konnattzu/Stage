@@ -2,6 +2,13 @@
 echo'<section>
       <div id="parent">
 <!-- component container -->
+<div id="form">
+            <div id="croix" onclick="closeForm()">&#10060;</div>
+            <form>
+                <label>Entrer le nombre de lignes</label>
+                <input id="ligne" type="number" min="1" placeholder="nombre de lignes">
+            </form>
+        </div>
 <div id="layout" style="height: 100%;">
 
 </div>
@@ -25,9 +32,11 @@ function redim(){
     {
         "id": "file",
         "value": "File",
-        "items": [
-            { "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },
-            { "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
+        "items": [';
+		if($_SESSION["currentpage"] == "saisie") {
+            echo'{ "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },';
+		}
+            echo'{ "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
 
             "items": [
               {
@@ -67,7 +76,9 @@ function redim(){
 	$balise4_a= "<div class='dhx_menu-button__text btnchart' onclick='Gaire()'><span class='dhx_menu-button__text' > Aires</span></div>";
     $balise4_b= "<div class='dhx_menu-button__text btnchart' onclick='Gcourbe()'><span class='dhx_menu-button__text' > Courbe</span></div>";
     $balise4_c= "<div class='dhx_menu-button__text btnchart' onclick='Gnuage()'><span class='dhx_menu-button__text' > Nuage de points</span></div>";
-	echo'{
+	$balise5 = "<span class='dhx_menu-button__text'> Ajouter une/des lignes</span>";
+    $balise6 = "<span class='dhx_menu-button__text' onclick='openForm()'> Ajouter plusieurs lignes</span>";
+    echo'{
         "id": "charts",
         "html": "'.$balise1.'",
         "items": [
@@ -131,14 +142,24 @@ function redim(){
         ]
     },
     {
-        id: "add",
-        type: "button",
-        circle: true,
-        value: "Add a new row",
-        size: "small",
-        icon: "mdi mdi-plus",
-        full: true
-    }
+        "id": "lignes",
+        "html": "'.$balise5.'",
+        "items": [
+        {
+            id: "add",
+            type: "button",
+            circle: true,
+            value: "Add a new row",
+            size: "small",
+            icon: "mdi mdi-plus",
+            full: true
+        },
+        {
+            id: "addmore",
+            icon: "dxi dxi-plus",
+            "html": "'.$balise6.'"
+        }
+    ]}
 ]
 const menu = new dhx.Menu("menu", {
 css: "dhx_widget--bg_white dhx_widget--bordered"
@@ -166,15 +187,26 @@ cols: [
   }
 ]
 });
-
+var timer = -1;
 menu.events.on("click", function (id) {
 if (id === "add") {
-  const newId = grid.data.add({ //data a renseigner
-      A: "",
-      B: "",
-      average_rating: "",
-      publication_date: ""
-  });
+  const newId = grid.data.add({';
+  if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+	  for($i=0;$i<count($header)-1;$i++){
+			echo $header[$i].': "",';
+		}
+			echo $header[$i].': "",';
+  }
+ echo'});
+dhx.message({
+        text: "Une ligne a été ajoutée.", // the text content
+    });
+    timer++;
+    setTimeout(function(){
+     document.getElementsByClassName("dhx_message")[timer].remove();
+        timer--;
+}, 2000);
+ init();
 }
 
 //export xlsx
@@ -192,15 +224,15 @@ if (id === "fileOpen") {
 let input = document.createElement("input");
   input.type = "file";
   input.onchange = _ => {
-            let files =   Array.from(input.files);
-            console.log(files);
+
+            let files = Array.from(input.files);
 			var data = new FormData();
 		
 		data.append("table", input.files[0]);
-		console.log(data);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
+				console.log(request);
 				fileresults = request.responseText;
 				console.log(request.responseText);
 				window.location.reload();
@@ -233,7 +265,17 @@ columns: [
       }
 	  },';
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true }, ';
+				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
+                if($datatype[$i] == "date"){
+                    echo', type: "date", dateFormat: "%Y-%m-%d"';
+                }else if($datatype[$i] == "int"){
+                    echo', type: "number"';
+                }else if($datatype[$i] == "enum"){
+                    echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+                }else if($datatype[$i] == "boolean"){
+                    echo', type: "boolean"';
+                }
+                echo' }, ';
 		}
 			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
     echo'
@@ -1063,6 +1105,32 @@ function Gnuage(){
 ';
 }
 echo'
+    function openForm() {
+        document.getElementById("form").style.display = "block";
+    }
+    function closeForm() {
+        document.getElementById("form").style.display = "none";
+    }
+    const ligne = document.getElementById("ligne");
+
+    ligne.addEventListener("keypress", (event)=> {
+    if (event.keyCode === 13) { // key code of the keybord key
+    event.preventDefault();
+    nbLigne = ligne.value;
+    console.log(nbLigne);
+    for(i=0;i<nbLigne;i++){
+    const newId = grid.data.add({});
+    }
+    document.getElementById("form").style.display = "none";
+    dhx.message({
+        text: nbLigne + " lignes ont été ajoutées.", // the text content
+    }); 
+    timer++;
+    setTimeout(function(){
+    document.getElementsByClassName("dhx_message")[timer].remove();
+        timer--;
+    }, 2000);}
+    });
 
 </script>
 

@@ -64,7 +64,7 @@ echo'[';
 	}
 	}
 	
-	for($j=0;$j<$row-1;$j++){
+		for($j=0;$j<$row-1;$j++){
 			echo'{ ';
 			for($i=0;$i<count($header)-1;$i++){
 					echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'", 
@@ -81,8 +81,7 @@ echo'[';
 		}
 		echo '"'.$header[$i].'": "'.$array[$nbcol[$i]][$j].'"
 		';
-		echo'}';
+		echo'}];';
+
 	
-    echo'
-	];';
 ?>

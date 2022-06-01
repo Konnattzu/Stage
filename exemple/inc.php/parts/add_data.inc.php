@@ -21,34 +21,6 @@
 			}
 			
 			if(count($header) >= count($column)){
-				/*
-				Pour chaque colonne
-					si le header est différent de la colonne
-						on détermine le type de la colonne
-						pour chaque header
-							pour chaque ligne
-								on détermine le type de la valeur
-							si le type colonne = valeur
-								si le match est supérieur au précédent
-									pour chaque colonne
-										si cette colonne est déjà attribuée
-											true
-												
-										si false
-											on attribue cette colonne
-						
-						si une colonne est attribuée
-							le header est égal à la colonne attribuée
-						sinon
-							nombre de dépassement ++
-							la colonne attribuée est égale a taille de column + nombre de dépassement
-							pour la taille de column a la taille de header
-								on détermine le type et la size
-								on insère une colonne dans la bdd
-								
-						on récupère les infos de la bdd
-			*/
-				
 				$rightcol = Array();
 				for($i=0;$i<count($column);$i++){
 					
@@ -93,7 +65,7 @@
 				}
 				for($i=0;$i<count($header);$i++){
 					if(isset($rightcol[$i])){
-						$header[$i] = $column[$i];
+						$header[$rightcol[$i]] = $column[$i];
 					}else{
 						$overflow++;
 						$rightcol[$i] = count($column)-1 + $overflow;
@@ -188,8 +160,10 @@
 			for($j=0;$j<$row;$j++){
 				$querydata[$j] = "INSERT INTO step2 (";
 				for($i=0;$i<count($header);$i++){
-					if(!empty($array[$nbcol[$i]][$j])){
+					if($header[$i] != ""){
 						$querydata[$j] .= $header[$i].", ";
+					}else{
+						$querydata[$j] .= "colonne".$i.", ";						
 					}
 				}
 				$querydata[$j][strlen($querydata[$j])-2] = " ";
@@ -209,8 +183,23 @@
 					}
 				}
 				for($i=0;$i<count($header);$i++){
-					if(!empty($array[$nbcol[$i]][$j])){
-						$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+					if($datatype[$i] == "boolean"){
+						$array[$nbcol[$i]][$j] = str_replace("oui", "1", $array[$nbcol[$i]][$j]);	
+						$array[$nbcol[$i]][$j] = str_replace("non", "0", $array[$nbcol[$i]][$j]);	
+						if(empty($array[$nbcol[$i]][$j])){
+							$array[$nbcol[$i]][$j] = "0";
+						}
+					}
+					if($datatype[$i] == "date"){
+						if(!empty($array[$nbcol[$i]][$j])){
+							$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+						}
+					}else{
+						if(!empty($array[$nbcol[$i]][$j])){
+							$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+						}else{
+							$querydata[$j] .= "NULL, ";
+						}
 					}
 				}
 				$querydata[$j] .= ");";
@@ -230,12 +219,8 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
+				echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
-			}
-			for($i=0;$i<count($column);$i++){
-					if(mysqli_num_rows(mysqli_query($mysqli, "SELECT * FROM step2 WHERE ".$column[$i]." IS NULL")) == $row-1){
-						mysqli_query($mysqli, "ALTER TABLE step2 DROP COLUMN ".$column[$i].";");
-					}
 			}
 		}
 	else die("");

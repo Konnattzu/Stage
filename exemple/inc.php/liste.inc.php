@@ -21,9 +21,11 @@
 									where TABLE_NAME = "step1";');
 			$col = 0;
 			$row = 0;
+			$datatype = Array();
 			while($infos = $infotable->fetch_assoc()){
 				$header[$col] = $infos["COLUMN_NAME"];
 				$nbcol[$col] = $col;
+				$datatype[$col] = $infos["DATA_TYPE"];
 				$col++;
 			}
 			
