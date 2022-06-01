@@ -6,10 +6,10 @@
 			$datalength = 0;
 			$datatype = "";
 			$header[$i] = clear($header[$i]);
-			if(!empty($header[$i])){
-				$querytable .= $header[$i].' ';
-			}else{
+			if($header[$i] == ""){
 				$querytable .= 'colonne'.$i.' ';
+			}else{
+				$querytable .= $header[$i].' ';
 			}
 			$enum = Array();
 			for($j=0;$j<$row;$j++){
@@ -30,7 +30,7 @@
 					$comment = trim($comment);
 					$array[$nbcol[$i]][$j] == str_replace($comment, " ", $array[$nbcol[$i]][$j]);
 					$array[$nbcol[$i]][$j] == trim($array[$nbcol[$i]][$j]);
-				}
+					}
 			}
 			if(count($array[0])>16){
 				if(count($enum)<8 && $datatype != "boolean"){

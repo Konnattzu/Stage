@@ -160,7 +160,11 @@
 			for($j=0;$j<$row;$j++){
 				$querydata[$j] = "INSERT INTO step2 (";
 				for($i=0;$i<count($header);$i++){
-					$querydata[$j] .= $header[$i].", ";
+					if($header[$i] != ""){
+						$querydata[$j] .= $header[$i].", ";
+					}else{
+						$querydata[$j] .= "colonne".$i.", ";						
+					}
 				}
 				$querydata[$j][strlen($querydata[$j])-2] = " ";
 				$querydata[$j][strlen($querydata[$j])-1] = " ";
@@ -215,6 +219,7 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
+				echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
 			}
 		}
