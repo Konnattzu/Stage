@@ -1,6 +1,6 @@
-numéro du patient,ouinon,peut etre,sexe,date de naissance,groupe sanguin,taux d’anticorps,je suis positif,je suis malicieux,je suis charlie
-12002,oui,0,M,2003-03-18,AB,20,oui,oui,1
-13300,non,0,M,1999-12-07,O,15,non,oui,2
-75020,non,0,M,1962-05-05,B,18,non,oui,3
-93030,oui,1,F,1964-07-07,A,12,oui,oui,4
-78451,oui,0,N/P,,,,oui,oui,1
+numéro du patient,prénom,nom,sexe,date de naissance,groupe sanguin,taux d’anticorps,je suis positif,je suis malicieux,je suis charlie
+12002,Hugo,Lefebvre,M,2003-03-18,AB,20,oui,oui,1
+13300,Thomas,Sansberro,M,1999-12-07,O,15,non,oui,2
+75020,Jean,Bernard,M,1962-05-05,B,18,non,oui,3
+93030,Jeanne,Bernardinande,F,1964-07-07,A,12,oui,oui,4
+78451,Loul,,,,,,oui,oui,5

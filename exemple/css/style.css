@@ -193,12 +193,6 @@ a:hover
   margin-left: 40vw;
 }
 
-.dhx_grid-comcell{
-  position: absolute;
-  width: 40px;
-  height: 30px;
-}
-
 @media (min-width: 1200px)
 {
 	.container

@@ -187,7 +187,7 @@ cols: [
   }
 ]
 });
-
+var timer = -1;
 menu.events.on("click", function (id) {
 if (id === "add") {
   const newId = grid.data.add({';
@@ -198,6 +198,14 @@ if (id === "add") {
 			echo $header[$i].': "",';
   }
  echo'});
+dhx.message({
+        text: "Une ligne a été ajoutée.", // the text content
+    });
+    timer++;
+    setTimeout(function(){
+     document.getElementsByClassName("dhx_message")[timer].remove();
+        timer--;
+}, 2000);
  init();
 }
 
@@ -216,6 +224,7 @@ if (id === "fileOpen") {
 let input = document.createElement("input");
   input.type = "file";
   input.onchange = _ => {
+
             let files = Array.from(input.files);
 			var data = new FormData();
 		
@@ -223,6 +232,7 @@ let input = document.createElement("input");
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
+				console.log(request);
 				fileresults = request.responseText;
 				console.log(request.responseText);
 				window.location.reload();
@@ -262,7 +272,7 @@ columns: [
                     echo', type: "number"';
                 }else if($datatype[$i] == "enum"){
                     echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-                }else if($datatype[$i] == "tinyint"){
+                }else if($datatype[$i] == "boolean"){
                     echo', type: "boolean"';
                 }
                 echo' }, ';

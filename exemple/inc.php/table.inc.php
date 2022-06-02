@@ -34,7 +34,6 @@
 				}
 				$row++;
 			}
-			
 			if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'step2';"))==0){
 				include("inc.php/parts/create_table.inc.php");
 				include("inc.php/parts/add_data.inc.php");
