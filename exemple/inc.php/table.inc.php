@@ -22,21 +22,12 @@
 				mysqli_query($_SESSION["mysqli"], "DROP TABLE step2;");
 			}
 			$_SESSION["csv"] = $csv;
-			$header = array_shift($csv);
+			$table = new Spreadsheet($csv);
 			
-			for($j=0;$j<count($header);$j++){
-				$nbcol[$j] = array_search($header[$j], $header, true);
-			}
-			$row=0;
-			foreach ($csv as $col) {
-				for($j=0;$j<count($header);$j++){
-					$array[$nbcol[$j]][$row] = $col[$nbcol[$j]];
-				}
-				$row++;
-			}
+			
 			if(mysqli_num_rows(mysqli_query($mysqli, "SHOW TABLES LIKE 'step2';"))==0){
-				include("inc.php/parts/create_table.inc.php");
-				include("inc.php/parts/add_data.inc.php");
+				$table->createTable();
+				$table->addData();
 			}
 		}
 		
