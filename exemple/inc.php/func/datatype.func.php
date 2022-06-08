@@ -21,6 +21,7 @@
 		}
 		function datatype($data, $datatype){
 			if($data != ""){
+				//print_r($data);
 				if(((substr($data, 0, 3) == "oui") || (substr($data, 0, 3) == "non")) || ((substr($data, strlen($data)-3, 3) == "oui") || (substr($data, strlen($data)-3, 3) == "non")) || (preg_match("/^(0|1)$/", $data) && $datatype != "int")){
 					$datatype = "boolean";
 				}else if(!intval($data)){

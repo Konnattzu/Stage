@@ -1,19 +1,18 @@
 <?php
-    class Spreadsheet{
+    class BDDsheet{
         private $header = Array();
         private $identifier = Array();
         private $row = Array();
         private $column = Array();
         private $cells = Array();
-        private $bddtable = "step2";
-        private $bddbase = "step1";
+        private $bddtable = "step1";
 
-        public function __construct($file){
-            $this->headerSet($file);
-            $this->dataSet($file, $this->header);
-            $this->idSet($this->cells);
-            $this->rowSet($this->identifier, $this->header, $this->cells);
-            $this->colSet($this->header, $this->identifier, $this->cells);
+        public function __construct(){
+            // $this->headerSet($file);
+            // $this->dataSet($file, $this->header);
+            // $this->idSet($this->cells);
+            // $this->rowSet($this->identifier, $this->header, $this->cells);
+            // $this->colSet($this->header, $this->identifier, $this->cells);
         }
 
         public function headerSet($file){
@@ -97,22 +96,90 @@
             return $this->bddtable;
         }
 
-        public function setBdB($bddbase){
-            $this->bddbase = $bddbase;
-        }
-        public function getBdB(){
-            return $this->bddbase;
-        }
-
-        public function createTable($pdo){
-            $query = 'CREATE TABLE IF NOT EXISTS '.$this->bddtable.' LIKE '.$this->bddbase.';';
-            $pdo->exec($query);
-        }
-        public function addData($file, $pdo){
-            
-			$infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "step2";');
-			$infotable->execute();
-			while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
+        public function createTable($bddtable, $file){
+            $querytable = "CREATE TABLE IF NOT EXISTS ".$bddtable."
+			 (";
+			for($i=0;$i<count($this->header);$i++){
+				$datalength = 0;
+				$datatype = "";
+				$header[$i] = clear($header[$i]);
+				if($header[$i] == ""){
+					$querytable .= 'colonne'.$i.' ';
+				}else{
+					$querytable .= $header[$i].' ';
+				}
+				$enum = Array();
+				for($j=0;$j<$row;$j++){
+					if($array[$nbcol[$i]][$j] != ""){
+						$enum[count($enum)] = $array[$nbcol[$i]][$j];
+						if(count($enum)>0){
+							for($k=0;$k<count($enum)-1;$k++){
+								if($enum[$k] == $array[$nbcol[$i]][$j]){
+									unset($enum[count($enum)-1]);
+								}
+							}
+						}
+					}
+					$datalength = datalength($array[$nbcol[$i]][$j], $datatype, $datalength);
+					$datatype = datatype($array[$nbcol[$i]][$j], $datatype, $datalength);
+					if(($datatype == "boolean") && ($array[$nbcol[$i]][$j] != "oui") && ($array[$nbcol[$i]][$j] != "non") && ($array[$nbcol[$i]][$j] != "1") && ($array[$nbcol[$i]][$j] != "0")){
+						$comment = preg_replace("/(oui|non|1|0)/", " ", $array[$nbcol[$i]][$j]);
+						$comment = trim($comment);
+						$array[$nbcol[$i]][$j] == str_replace($comment, " ", $array[$nbcol[$i]][$j]);
+						$array[$nbcol[$i]][$j] == trim($array[$nbcol[$i]][$j]);
+						}
+				}
+				if(count($array[0])>16){
+					if(count($enum)<8 && $datatype != "boolean"){
+						$datatype = "enum";
+						$datalength = "";
+						for($k=0;$k<count($enum)-1;$k++){
+							$datalength .= "'".$enum[$k]."', ";
+						}
+						$datalength .= "'".$enum[$k]."'";
+					}
+				}else{
+					if(count($enum)<(count($array[0])*0.75) && $datatype != "boolean"){
+						$datatype = "enum";
+						$datalength = "";
+						for($k=0;$k<count($enum)-1;$k++){
+							$datalength .= "'".$enum[$k]."', ";
+						}
+						$datalength .= "'".$enum[$k]."'";
+					}
+				}
+				if(($datatype != "date") && ($datatype != "boolean")){
+					$datatype .= "(";
+				}
+				if(preg_match("/[(]/", $datatype)){
+					$querytable .= $datatype.''.$datalength.'), ';
+				}else{
+					$querytable .= $datatype.', ';
+				}
+			}
+			$querytable .= ');';
+			for($i=1;$i<=3;$i++){
+				$querytable[strlen($querytable)-$i] = " ";
+			}
+			$querytable[strlen($querytable)-3] = ";";
+			$querytable[strlen($querytable)-4] = ")";
+			mysqli_query($mysqli, $querytable);
+		}
+		public function addData($file){
+			$infotable = mysqli_query($_SESSION["mysqli"], 'SELECT 
+									TABLE_CATALOG,
+									TABLE_SCHEMA,
+									TABLE_NAME, 
+									COLUMN_NAME, 
+									DATA_TYPE, 
+									COLUMN_TYPE, 
+									CHARACTER_MAXIMUM_LENGTH
+									FROM INFORMATION_SCHEMA.COLUMNS
+									where TABLE_NAME = "step2";');
+									$i = 0;
+									$datatype = Array();
+									$datalength = Array();
+			while($infos = $infotable->fetch_assoc()){
 				$column[$i] = $infos["COLUMN_NAME"];
 				$coltype[$i] = $infos["COLUMN_TYPE"];
 				$charlength[$column[$i]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
@@ -177,19 +244,27 @@
 									$datalength[$k] = datalength($array[$nbcol[$i]][$l], $datatype[$k], $datalength[$k]);
 								}
 							}
-                            $req = $pdo->prepare('ALTER TABLE step2 ADD '.$header[$k].' '.$datatype[$k].' ('.$datalength[$k].');');
-                            $req->execute();
+							mysqli_query($mysqli, "ALTER TABLE step2 ADD ".$header[$k]." ".$datatype[$k]." (".$datalength[$k].");");
 						}
 						$column[$i] = $header[$rightcol[$i]];
 					}
 					
 				}
 				
-				
-                $infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "step2";');
-                $infotable->execute();
-				while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
-                    //print_r($infos);
+				$infotable = mysqli_query($_SESSION["mysqli"], 'SELECT 
+										TABLE_CATALOG,
+										TABLE_SCHEMA,
+										TABLE_NAME, 
+										COLUMN_NAME, 
+										DATA_TYPE, 
+										COLUMN_TYPE, 
+										CHARACTER_MAXIMUM_LENGTH
+										FROM INFORMATION_SCHEMA.COLUMNS
+										where TABLE_NAME = "step2";');
+										$i = 0;
+										$coltype = Array();
+										$charlength = Array();
+				while($infos = $infotable->fetch_assoc()){
 					$coltype[$i] = $infos["COLUMN_TYPE"];
 					$charlength[$column[$i]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
 					$i++;					
@@ -264,8 +339,7 @@
 						$array[$nbcol[$i]][$j] = date_format(date_create_from_format($datalength[$i], $array[$nbcol[$i]][$j]), "Y-m-d");
 					}
 					if(!empty($charlength[$header[$i]]) && $datalength[$i] > $charlength[$header[$i]]){
-                        $req = $pdo->prepare('ALTER TABLE step2 MODIFY '.$header[$i].' '.$datatype[$i].' ('.$datalength[$i].');');
-                        $req->execute();
+						mysqli_query($mysqli, "ALTER TABLE step2 MODIFY ".$header[$i]." ".$datatype[$i]." (".$datalength[$i].");");
 					}
 				}
 				for($i=0;$i<count($header);$i++){
@@ -306,10 +380,8 @@
 					}
 				}
 				echo $querydata[$j];
-                $req = $pdo->prepare($querydata[$j]);
-                $req->execute();
+				mysqli_query($mysqli, $querydata[$j]);
 			}
-            echo $querydata[0];
         }
     }
 ?>

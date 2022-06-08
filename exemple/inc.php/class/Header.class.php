@@ -27,14 +27,14 @@
         }
 
         public function setType($value){
-            $this->datatype = datatype($value);
+            $this->datatype = datatype($value, "");
         }
         public function getType(){
             return $this->datatype;
         }
 
         public function setLen($value){
-            $this->datalength = datalength($value);
+            $this->datalength = datalength($value, "", 0);
         }
         public function getLen(){
             return $this->datalength;

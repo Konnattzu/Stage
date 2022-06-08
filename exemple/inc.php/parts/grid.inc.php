@@ -13,9 +13,9 @@ echo'<section>
 
 </div>
 <div id="chart"></div>
-
 </div>
 <script>
+console.log("oui");
 function redim(){
   if(window.innerWidth>1100){
     document.getElementById("layout").style.width = "50vw";
@@ -192,10 +192,12 @@ menu.events.on("click", function (id) {
 if (id === "add") {
   const newId = grid.data.add({';
   if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
-	  for($i=0;$i<count($header)-1;$i++){
-			echo $header[$i].': "",';
-		}
-			echo $header[$i].': "",';
+    if(isset($header)){
+        for($i=0;$i<count($header)-1;$i++){
+            echo $header[$i].': "",';
+        }
+        echo $header[$i].': "",';
+    }
   }
  echo'});
 dhx.message({
@@ -249,6 +251,7 @@ let input = document.createElement("input");
 layout.getCell("menu").attach(menu);
 ';
 if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+    if(isset($header)&&isset($header[0]) && isset($array) && isset($array[0])){
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
@@ -264,6 +267,7 @@ columns: [
           echo'return "'.$span.'";
       }
 	  },';
+      if(isset($header)){
 		for($i=0;$i<count($header)-1;$i++){
 				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
                 if($datatype[$i] == "date"){
@@ -278,6 +282,7 @@ columns: [
                 echo' }, ';
 		}
 			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
+        }
     echo'
 ],
 autoWidth: true,
@@ -300,7 +305,7 @@ function importXlsx() {
 // loading data into Grid
 database = ';
 include("inc.php/parts/data.inc.php");
-echo'
+echo';
 grid.data.parse(database);
 
 // attaching widgets to Layout cells
@@ -1103,6 +1108,7 @@ function Gnuage(){
 		  document.getElementById("parent").style.display = "flex";
 }
 ';
+    }
 }
 echo'
     function openForm() {

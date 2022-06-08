@@ -1,18 +1,19 @@
 <?php
     class Cell{
         private $value;
-        private $headnumb;
         private $datatype;
         private $datalength;
         private $rownumb;
         private $colnumb;
         private $comment;
 
-        public function __construct($value, $numb){
+        public function __construct($value, $rownumb, $colnumb){
             $this->setValue($value);
-            $this->setNumb($numb);
             $this->setType($value);
             $this->setLen($value);
+            $this->setRownb($rownumb);
+            $this->setColnb($colnumb);
+            $this->setCom($rownumb, $colnumb);
         }
 
         public function setValue($value){
@@ -22,45 +23,39 @@
             return $this->value;
         }
 
-        public function setNumb($headnumb){
-            $this->headnumb = $headnumb;
-        }
-        public function getNumb(){
-            return $this->headnumb;
-        }
-
         public function setType($value){
-            $this->datatype = datatype($value);
+            $this->datatype = datatype($value, "");
         }
         public function getType(){
             return $this->datatype;
         }
 
         public function setLen($value){
-            $this->datalength = datalength($value);
+            $this->datalength = datalength($value, "", 0);
         }
         public function getLen(){
             return $this->datalength;
         }
 
-        public function setLen($numb){
-            $this->rownumb = datalength($numb);
+        public function setRownb($rownumb){
+            $this->rownumb = $rownumb;
         }
-        public function getLen(){
+        public function getRownb(){
             return $this->rownumb;
         }
 
-        public function setLen($numb){
-            $this->colnumb = datalength($numb);
+        public function setColnb($colnumb){
+            $this->colnumb = $colnumb;
         }
-        public function getLen(){
+        public function getColnb(){
             return $this->colnumb;
         }
 
-        public function setLen($rownumb, $colnumb){
-            $this->comment = datalength($numb);
+        public function setCom($rownumb, $colnumb){
+            $comtext = "jesuisuncommentaire";
+            $this->comment = new Comment($comtext, $rownumb, $colnumb);
         }
-        public function getLen(){
+        public function getCom(){
             return $this->comment;
         }
     }
