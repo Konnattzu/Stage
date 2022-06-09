@@ -272,7 +272,7 @@ columns: [
                     echo', type: "number"';
                 }else if($datatype[$i] == "enum"){
                     echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-                }else if($datatype[$i] == "boolean"){
+                }else if($datatype[$i] == "tinyint"){
                     echo', type: "boolean"';
                 }
                 echo' }, ';
