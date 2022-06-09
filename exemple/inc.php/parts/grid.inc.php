@@ -255,7 +255,7 @@ const grid = new dhx.Grid(null, {
 css: "dhx_demo-grid",
 columns: [
   {
-      id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
+      width: 75, id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
       htmlEnable: true, align: "center",
       editable: false,
       autoWidth: false,
@@ -265,7 +265,7 @@ columns: [
       }
 	  },';
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
+				echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
                 if($datatype[$i] == "date"){
                     echo', type: "date", dateFormat: "%Y-%m-%d"';
                 }else if($datatype[$i] == "int"){
@@ -277,7 +277,7 @@ columns: [
                 }
                 echo' }, ';
 		}
-			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
+			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
     echo'
 ],
 autoWidth: true,
