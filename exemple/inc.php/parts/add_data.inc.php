@@ -22,9 +22,14 @@
 			
 			if(count($header) >= count($column)){
 				$rightcol = Array();
+				if(count($header) == count($column)){
+					for($i=0;$i<count($column);$i++){
+							$rightcol[$i] = $i;
+					}
+				}
 				for($i=0;$i<count($column);$i++){
 					
-					if($header[$i] != $column[$i]){
+					if(($header[$i] != $column[$i]) && !isset($rightcol[$i])){
 						$matching = 50;
 						$overflow = 0;
 							$type[$i] = preg_replace("/[^A-Za-z]/", "", $coltype[$i]);
@@ -58,7 +63,6 @@
 								}
 							}
 						}
-						
 					}else{
 						$rightcol[$i] = $i;
 					}
@@ -156,7 +160,6 @@
 				}				
 			}
 			
-			
 			for($j=0;$j<$row;$j++){
 				$querydata[$j] = "INSERT INTO step2 (";
 				for($i=0;$i<count($header);$i++){
@@ -219,7 +222,7 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
-				echo $querydata[$j];
+				//echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
 			}
 		}

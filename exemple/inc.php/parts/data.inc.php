@@ -63,7 +63,6 @@ echo'[';
 		
 	}
 	}
-	
 		for($j=0;$j<$row-1;$j++){
 			echo'{ ';
 			for($i=0;$i<count($header)-1;$i++){
