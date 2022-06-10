@@ -178,8 +178,10 @@
 					$len[$i] = $string = preg_replace("/[^0-9]/", "", $coltype[$rightcol[$i]]);
 					$datatype[$i] = datatype($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
 					$datalength[$i] = datalength($array[$nbcol[$i]][$j], $type[$i], $len[$i]);
-					if($datatype[$i] == "date"){
-						$array[$nbcol[$i]][$j] = date_format(date_create_from_format($datalength[$i], $array[$nbcol[$i]][$j]), "Y-m-d");
+					if($datatype[$i] == "date" && $array[$nbcol[$i]][$j] != ""){
+						echo $array[$nbcol[$i]][$j];
+						echo $datalength[$i];
+						$array[$nbcol[$i]][$j] = date_format(date_create_from_format("Y-m-d", $array[$nbcol[$i]][$j]), "Y-m-d");
 					}
 					if(!empty($charlength[$header[$i]]) && $datalength[$i] > $charlength[$header[$i]]){
 						mysqli_query($mysqli, "ALTER TABLE step2 MODIFY ".$header[$i]." ".$datatype[$i]." (".$datalength[$i].");");
@@ -196,6 +198,8 @@
 					if($datatype[$i] == "date"){
 						if(!empty($array[$nbcol[$i]][$j])){
 							$querydata[$j] .= "'".$array[$nbcol[$i]][$j]."', ";	
+						}else{
+							$querydata[$j] .= "NULL, ";
 						}
 					}else{
 						if(!empty($array[$nbcol[$i]][$j])){
@@ -222,7 +226,7 @@
 						$idvalue = $array[$nbcol[$i]][$j];
 					}
 				}
-				//echo $querydata[$j];
+				echo $querydata[$j];
 				mysqli_query($mysqli, $querydata[$j]);
 			}
 		}
