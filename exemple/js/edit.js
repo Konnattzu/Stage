@@ -49,10 +49,12 @@ window.addEventListener("load", function(){
 			comment = Array();
 			phyl = Array();
 			comcontain = Array();
+			cellval = Array();
 			for(var i=0; i<rows.length; i++){
 				comment[i] = Array();
 				phyl[i] = Array();
 				comcontain[i] = Array();
+				cellval[i] = Array();
 			}
 			
 			for(var i=0; i<rows.length; i++){
@@ -79,8 +81,6 @@ window.addEventListener("load", function(){
 						comcontain[i][j].setAttribute("aria-readonly", "false");
 						comcontain[i][j].setAttribute("tabindex", "-1");
 						console.log(rows[i][j].getBoundingClientRect().left);
-						comcontain[i][j].style.left =  (rows[i][j].getBoundingClientRect().left+window.scrollX)+"px";
-						comcontain[i][j].style.top =  40*i+5+"px";
 						comcontain[i][j].appendChild(phyl[i][j]);
 						// console.log(phyl[i][j]);
 						// console.log(comcontain[i][j]);
@@ -92,27 +92,21 @@ window.addEventListener("load", function(){
 			for(var i=0; i<rows.length; i++){
 				for(var j=0; j<header.length; j++){
 					rows[i][j].addEventListener("click", edit, false);
-				}
-			}
-			oldChild = Array();
-			for(var i=0; i<rows.length; i++){
-				oldChild[i] = Array();
-				for(var j=0; j<header.length; j++){
-					oldChild[i][j] = rows[i][j].parentElement.childNodes[header.length+j+1];
-				}
-			}
-			for(var i=0; i<rows.length; i++){
-				for(var j=0; j<header.length; j++){
-					rows[i][j].parentElement.appendChild(comcontain[i][j]);
-					if(typeof(oldChild[i][j]) != "undefined" && oldChild[i][j] != null){
-						if(oldChild[i][j].classList.contains("dhx_grid-comcell")){
-							rows[i][j].parentElement.removeChild(oldChild[i][j]);
-						}
+					cellval[i][j] = rows[i][j].childNodes[0];
+					console.log(cellval[i][j]);
+					if(cellval[i][j].nodeName == "#text"){
+						var value = cellval[i][j].textContent;
+						console.log(value);
+						var newCellVal = document.createElement("div");
+						newCellVal.innerText = value;
+						console.log(newCellVal);
+						rows[i][j].replaceChild(newCellVal, cellval[i][j]);
+						console.log(rows[i][j]);
 					}
+					rows[i][j].appendChild(comcontain[i][j]);
 				}
 			}
-						
-		
+								
 			
 			for(var i=0; i<cross.length;i++){
 				rembtn[i] = cross[i].parentElement.parentElement;
