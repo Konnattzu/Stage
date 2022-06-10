@@ -1,0 +1,6 @@
+numéro du patient,prénom,nom,sexe,date de naissance,groupe sanguin,pourcent mutation,mutation,décès,date de décès
+12002,Hugo,Lefebvre,M,2003-03-18,AB,20,oui,non,
+13300,Thomas,Sansberro,M,1999-12-07,O,15,non,non,
+75020,Jean,Bernard,M,1962-05-05,B,18,non,non,
+93030,Jeanne,Bernardinande,F,1964-07-07,A,12,oui,non,
+78451,Pierre,Caillou,N/P,,,,non,oui,2022-06-13
