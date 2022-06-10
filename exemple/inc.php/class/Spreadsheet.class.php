@@ -49,8 +49,8 @@
         }
 
         public function idSet($cells){
-            for($j=0;$j<count($cells[0]);$j++){
-                $this->identifier[$j] = new Identifier($cells[0][$j], $j);
+            for($j=0;$j<count($cells[0])-1;$j++){
+                $this->identifier[$j] = new Identifier($cells[0][$j+1], $j);
             }
         }
         public function setId(){
@@ -109,6 +109,10 @@
             $pdo->exec($query);
         }
         public function addData($file, $pdo){
+			echo'<pre>';
+			print_r($this);
+			echo'</pre>';
+
             //récupérer infos table 1
             $infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "'.$this->bddbase.'";');
 			$infotable->execute();
