@@ -9,8 +9,13 @@
 				echo'<a id="savetable">Sauvegarder</a>';
 		
 		if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
-			$req = $pdo->prepare('DROP TABLE step2;');
-            $req->execute();
+			$query = $pdo->prepare('SHOW TABLES LIKE "step2";');
+			$query->execute();
+			$numrows = $query->fetch(PDO::FETCH_ASSOC);
+			if($numrows!=0){
+				$req = $pdo->prepare('DROP TABLE step2;');
+				$req->execute();
+			}
 		}
 		if(file_exists("documents/datafile.csv")){
 			$_SESSION["path"] = "documents/datafile.csv";
@@ -22,7 +27,7 @@
             	$req->execute();
 			}
 			$_SESSION["csv"] = $csv;
-			$table = new Spreadsheet($csv);
+			$table = new Spreadsheet($csv, $pdo);
 			// echo'<pre>';
 			// print_r($table);
 			// echo'</pre>';

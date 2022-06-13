@@ -1,13 +1,13 @@
 <?php
     class BDDsheet{
-        private $header = Array();
-        private $identifier = Array();
-        private $row = Array();
-        private $column = Array();
-        private $cells = Array();
-        private $bddtable = "step1";
+        public $header = Array();
+        public $identifier = Array();
+        public $row = Array();
+        public $column = Array();
+        public $cells = Array();
+        public $bddtable = "step1";
 
-        public function __construct(){
+        public function __construct($pdo){
             // $this->headerSet($file);
             // $this->dataSet($file, $this->header);
             // $this->idSet($this->cells);
@@ -21,8 +21,8 @@
                 $this->header[$j] = new Header($filehead[$j], $j);
             }
         }
-        public function setHeader(){
-            $this->header = $header;
+        public function setHeader($header, $pos){
+            $this->header[$pos] = $header;
         }
         public function getHeader(){
             return $this->header;
