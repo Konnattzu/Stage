@@ -276,12 +276,22 @@ columns: [
                     echo', type: "number"';
                 }else if($datatype[$i] == "enum"){
                     echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-                }else if($datatype[$i] == "boolean"){
+                }else if($datatype[$i] == "tinyint"){
                     echo', type: "boolean"';
                 }
                 echo' }, ';
 		}
-			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
+			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true';
+            if($datatype[$i] == "date"){
+                echo', type: "date", dateFormat: "%Y-%m-%d"';
+            }else if($datatype[$i] == "int"){
+                echo', type: "number"';
+            }else if($datatype[$i] == "enum"){
+                echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+            }else if($datatype[$i] == "tinyint"){
+                echo', type: "boolean"';
+            }
+            echo' }';
         }
     echo'
 ],

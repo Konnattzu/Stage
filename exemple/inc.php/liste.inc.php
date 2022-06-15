@@ -7,28 +7,8 @@
 				<a href="index.php?ref=saisie">Nouvelle entrée</a>
 				<h1>La liste</h1>';
 
-			$table = new BDDsheet();
-			$table->createTable("step1");
-			$infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "step2";');
-			$infotable->execute();
-			$col = 0;
-			$row = 0;
-			$datatype = Array();
-			while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
-				$header[$col] = $infos["COLUMN_NAME"];
-				$nbcol[$col] = $col;
-				$datatype[$col] = $infos["DATA_TYPE"];
-				$col++;
-				print_r($header);
-			}
-			$query = $pdo->prepare('SELECT * FROM step1');
-			$query->execute();
-			while($data = $query->fetch(PDO::FETCH_ASSOC)){
-				for($i=0;$i<count($header);$i++){
-					$array[$i][$row] = $data[$header[$i]];
-				}
-				$row++;
-			}
+			$table = new BDDsheet($pdo);
+			$table->createTable($pdo);
 			
 			$color = Array();
 			echo'<script>

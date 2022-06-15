@@ -7,7 +7,7 @@ echo'[';
 				$row = 0;
 				$query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "step1";';
 				$infotable = $pdo->query($query);
-				while($infos = $infotable->fetch_assoc()){
+				while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
 					$header[$col] = $infos["COLUMN_NAME"];
 					$nbcol[$col] = $col;
 					$col++;

@@ -34,8 +34,8 @@
             return $this->datatype;
         }
 
-        public function setLen($value){
-            $this->datalength = datalength($value, "", 0);
+        public function setLen(){
+            $this->datalength = datalength($this->value, $this->datatype, 0);
         }
         public function getLen(){
             return $this->datalength;

@@ -38,7 +38,6 @@
 			if($numrows==0){
 				$table->createTable($pdo);
 				$table->addData($csv, $pdo);
-				echo'oui';
 			}
 		}
 		$query = $pdo->prepare('SHOW TABLES LIKE "step2";');

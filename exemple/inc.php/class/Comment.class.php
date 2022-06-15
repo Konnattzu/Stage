@@ -5,17 +5,22 @@
         private $colid;
 
         public function __construct($rowid, $colid, $pdo){
-            $this->setValue($rowid, $colid, $pdo);
+            $this->valueInit($rowid, $colid, $pdo);
             $this->setRownb($rowid);
             $this->setColnb($colid);
         }
 
-        public function setValue($rowid, $colid, $pdo){
+        public function valueInit($rowid, $colid, $pdo){
             $req = $pdo->prepare('SELECT * FROM commentaires WHERE patient_id="'.$rowid.'" AND colonne="'.$colid.'";');
 			$req->execute();
 			while($com = $req->fetch(PDO::FETCH_ASSOC)){
 				$this->value = $com['commentaire'];
 			}
+        }
+        public function setValue($value){
+            $req = $pdo->prepare('INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');');
+			$req->execute();
+			$this->value = $value;
         }
         public function getValue(){
             return $this->value;
