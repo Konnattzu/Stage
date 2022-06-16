@@ -161,6 +161,13 @@ a:hover
 	background: #ededed;
 }
 
+.dhx_grid-comcell
+{
+	width: 50px;
+	height: 100%;
+	display: block;
+}
+
 .btnchart
 {
 	min-width: 15vw;
