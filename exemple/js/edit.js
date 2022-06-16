@@ -76,7 +76,6 @@ window.addEventListener("load", function(){
 						comcontain[i][j].setAttribute("aria-colindex", j);
 						comcontain[i][j].setAttribute("aria-readonly", "false");
 						comcontain[i][j].setAttribute("tabindex", "-1");
-						console.log(rows[i][j].getBoundingClientRect().left);
 						comcontain[i][j].appendChild(phyl[i][j]);
 						// console.log(phyl[i][j]);
 						// console.log(comcontain[i][j]);
