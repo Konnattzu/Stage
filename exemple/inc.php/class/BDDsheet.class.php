@@ -36,33 +36,33 @@
 				$this->identifier[$row] = new Identifier($this->cells[0][$row], $row);
 				$row++;
 			}
-			for($j=0;$j<count($cells[0]);$j++){
-                for($i=0;$i<count($header);$i++){
-                    $tempcells[$i] = $cells[$i][$j];
+			for($j=0;$j<count($this->cells[0]);$j++){
+                for($i=0;$i<count($this->header);$i++){
+                    $tempcells[$i] = $this->cells[$i][$j];
                 }
-                $this->row[$j] = new Row($identifier[$j], $j, $tempcells);
+                $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
             }
-			for($j=0;$j<count($header);$j++){
-                for($i=0;$i<count($identifier);$i++){
-                    $tempcells[$i] = $cells[$j][$i];
+			for($j=0;$j<count($this->header);$j++){
+                for($i=0;$i<count($this->identifier);$i++){
+                    $tempcells[$i] = $this->cells[$j][$i];
                 }
-                $this->column[$j] = new Column($j, $header[$j], $tempcells);
+                $this->column[$j] = new Column($j, $this->header[$j], $tempcells);
             }
-			echo'<pre>';
-			print_r($this->header);
-			echo'</pre>';
-			echo'<pre>';
-			print_r($this->cells);
-			echo'</pre>';
-			echo'<pre>';
-			print_r($this->identifier);
-			echo'</pre>';
-			echo'<pre>';
-			print_r($this->row);
-			echo'</pre>';
-			echo'<pre>';
-			print_r($this->column);
-			echo'</pre>';
+			// echo'<pre>';
+			// print_r($this->header);
+			// echo'</pre>';
+			// echo'<pre>';
+			// print_r($this->cells);
+			// echo'</pre>';
+			// echo'<pre>';
+			// print_r($this->identifier);
+			// echo'</pre>';
+			// echo'<pre>';
+			// print_r($this->row);
+			// echo'</pre>';
+			// echo'<pre>';
+			// print_r($this->column);
+			// echo'</pre>';
         }
 
 		//header
