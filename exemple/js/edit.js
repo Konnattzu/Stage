@@ -49,10 +49,12 @@ window.addEventListener("load", function(){
 			comment = Array();
 			phyl = Array();
 			comcontain = Array();
+			cellval = Array();
 			for(var i=0; i<rows.length; i++){
 				comment[i] = Array();
 				phyl[i] = Array();
 				comcontain[i] = Array();
+				cellval[i] = Array();
 			}
 			
 			for(var i=0; i<rows.length; i++){
@@ -64,10 +66,6 @@ window.addEventListener("load", function(){
 				
 				for(var i=0; i<rows.length; i++){
 					for(var j=0; j<header.length; j++){
-						comment[i][j] = document.createElement("div");
-						comment[i][j].classList.add("dhx_grid-comment");
-						comment[i][j].style.display = "none";
-						comment[i][j].addEventListener("click", comedit, false);
 						phyl[i][j] = document.createElement("div");
 						phyl[i][j].innerHTML = '<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 841.9 1190.6" style="enable-background:new 0 0 841.9 1190.6;" xml:space="preserve">	<style type="text/css"> .st4{fill:#02b5ce;stroke:#000000;stroke-width:3;stroke-miterlimit:10;}  .st4:hover{ fill:#5bcedb;} .st5{fill:none;stroke:#000000;stroke-width:7;stroke-miterlimit:10;}.st0{fill:#fff;stroke:#000000;stroke-width:3;stroke-miterlimit:10;}</style><g><path class="st4" d="M373.5,455.1l200-1c0,0,56.9,4.7,56.9-34s0-173,0-173s2.2-36-33-36c-35.2,0-405.2-0.7-405.2-0.7s-35.7-3.9-35.8,36.1S156,419.1,156,419.1s-4.8,35.7,30.2,36c3.1,0,12.3,7.2,13.6,8.7c32.8,38.6,70.2,192.3,70.2,192.3L373.5,455.1z"/><polyline class="st0" points="186.2,455.1 206.5,455.1 248.2,577.5     "/></g><line id="LFinal1" class="st5" x1="240.5" y1="264.7" x2="545.7" y2="264.7"/><line id="LFinal2" class="st5" x1="240.5" y1="324.8" x2="545.7" y2="324.8"/><line id="LFinal3" class="st5" x1="240.5" y1="384.9" x2="545.7" y2="384.9"/></svg>';
 						comcontain[i][j] = document.createElement("div");
@@ -78,41 +76,38 @@ window.addEventListener("load", function(){
 						comcontain[i][j].setAttribute("aria-colindex", j);
 						comcontain[i][j].setAttribute("aria-readonly", "false");
 						comcontain[i][j].setAttribute("tabindex", "-1");
-						console.log(rows[i][j].getBoundingClientRect().left);
-						comcontain[i][j].style.left =  (rows[i][j].getBoundingClientRect().left+window.scrollX)+"px";
-						comcontain[i][j].style.top =  40*i+5+"px";
 						comcontain[i][j].appendChild(phyl[i][j]);
 						// console.log(phyl[i][j]);
 						// console.log(comcontain[i][j]);
-						comcontain[i][j].appendChild(comment[i][j]);
 						phyl[i][j].addEventListener('click', function(){ comdisp(event) }, false);
 					}
 				}
-					
+				console.log(rows);
 			for(var i=0; i<rows.length; i++){
 				for(var j=0; j<header.length; j++){
 					rows[i][j].addEventListener("click", edit, false);
-				}
-			}
-			oldChild = Array();
-			for(var i=0; i<rows.length; i++){
-				oldChild[i] = Array();
-				for(var j=0; j<header.length; j++){
-					oldChild[i][j] = rows[i][j].parentElement.childNodes[header.length+j+1];
-				}
-			}
-			for(var i=0; i<rows.length; i++){
-				for(var j=0; j<header.length; j++){
-					rows[i][j].parentElement.appendChild(comcontain[i][j]);
-					if(typeof(oldChild[i][j]) != "undefined" && oldChild[i][j] != null){
-						if(oldChild[i][j].classList.contains("dhx_grid-comcell")){
-							rows[i][j].parentElement.removeChild(oldChild[i][j]);
+					cellval[i][j] = rows[i][j].childNodes[0];
+					console.log(rows[i][j]);
+					console.log(cellval[i][j]);
+					if(typeof(cellval[i][j]) != "undefined" && cellval[i][j].nodeName == "#text"){
+						var value = cellval[i][j].textContent;
+						var newCellVal = document.createElement("div");
+						newCellVal.innerText = value;
+						rows[i][j].replaceChild(newCellVal, cellval[i][j]);
+					}
+					if(rows[i][j].childNodes.length < 2){
+						if(typeof(rows[i][j].childNodes[0]) != "undefined"){
+							if(!rows[i][j].childNodes[0].classList.contains("dhx_grid-comcell")){
+								rows[i][j].appendChild(comcontain[i][j]);
+							}
+							console.log(rows[i][j].childNodes);
+						}else{
+							rows[i][j].appendChild(comcontain[i][j]);
 						}
 					}
 				}
 			}
-						
-		
+								
 			
 			for(var i=0; i<cross.length;i++){
 				rembtn[i] = cross[i].parentElement.parentElement;
@@ -132,8 +127,6 @@ window.addEventListener("load", function(){
 			comcolnb = comwindow.getAttribute("colindex");
 			console.log(comrownb);
 			console.log(comcolnb);
-			console.log(comment[comrownb][comcolnb]);
-			comarea.innerText = comment[comrownb][comcolnb].getAttribute("commentaire");
 			console.log(comarea);
 			console.log(target);
 			if(!comarea.hasFocus && target != comarea){
