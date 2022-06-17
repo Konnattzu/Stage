@@ -25,7 +25,7 @@ window.addEventListener("load", function(){
 			delay = setTimeout(function(){ init(target); }, 100);
 		}
 	}, false);
-	addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
+	//addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 	
 	
 	
