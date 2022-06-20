@@ -71,7 +71,6 @@
 		}
 		for($i=0;$i<count($column2);$i++){
 			if(!empty($charlength2[$column2[$i]]) && $charlength2[$column2[$i]] > $charlength1[$column1[$i]]){
-				echo $array2[$i][0].'trop long';
 				$type = preg_replace("/[^A-Za-z]/", "", $coltype2[$i]);
 				$len = preg_replace("/[^0-9]/", "", $coltype2[$i]);
 				echo "ALTER TABLE step1 MODIFY ".$column2[$i]." ".$type." (".$len.");";

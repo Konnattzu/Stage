@@ -67,6 +67,10 @@
 				}
 				$row++;
 			}
+			echo'<pre>';
+				print_r($header);
+				print_r($array);
+			echo'</pre>';
 		}
 		
 		if(isset($array)){

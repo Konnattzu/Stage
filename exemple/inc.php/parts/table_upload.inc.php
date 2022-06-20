@@ -28,7 +28,6 @@ error_reporting(E_ALL);
 
 								$objPHPExcel->setActiveSheetIndex($index);
 
-								// write out each worksheet to it's name with CSV extension
 								$outFile = "datafile.csv";
 								$objWriter->setSheetIndex($index);
 								$objWriter->save($outFile);
