@@ -2,18 +2,41 @@
 echo'<section>
       <div id="parent">
 <!-- component container -->
-<div id="layout" style="height: 100%;"></div>
+<div id="form">
+            <div id="croix" onclick="closeForm()">&#10060;</div>
+            <form>
+                <label>Entrer le nombre de lignes</label>
+                <input id="ligne" type="number" min="1" placeholder="nombre de lignes">
+            </form>
+        </div>
+<div id="layout" style="height: 100%;">
+
+</div>
 <div id="chart"></div>
 </div>
 <script>
+console.log("oui");
+function redim(){
+  if(window.innerWidth>1100){
+    document.getElementById("layout").style.width = "50vw";
+    document.getElementById("chart").style.width = "50vw";
+    document.getElementById("parent").style.display = "flex";
+  }else{
+    document.getElementById("layout").style.width = "100vw";
+    document.getElementById("chart").style.width = "100vw";
+    document.getElementById("parent").style.display = "block";
+  }
+}
 
   var datasetmenu = [
     {
         "id": "file",
         "value": "File",
-        "items": [
-            { "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },
-            { "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
+        "items": [';
+		if($_SESSION["currentpage"] == "saisie") {
+            echo'{ "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },';
+		}
+            echo'{ "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
 
             "items": [
               {
@@ -53,7 +76,9 @@ echo'<section>
 	$balise4_a= "<div class='dhx_menu-button__text btnchart' onclick='Gaire()'><span class='dhx_menu-button__text' > Aires</span></div>";
     $balise4_b= "<div class='dhx_menu-button__text btnchart' onclick='Gcourbe()'><span class='dhx_menu-button__text' > Courbe</span></div>";
     $balise4_c= "<div class='dhx_menu-button__text btnchart' onclick='Gnuage()'><span class='dhx_menu-button__text' > Nuage de points</span></div>";
-	echo'{
+	$balise5 = "<span class='dhx_menu-button__text'> Ajouter une/des lignes</span>";
+    $balise6 = "<span class='dhx_menu-button__text' onclick='openForm()'> Ajouter plusieurs lignes</span>";
+    echo'{
         "id": "charts",
         "html": "'.$balise1.'",
         "items": [
@@ -117,14 +142,24 @@ echo'<section>
         ]
     },
     {
-        id: "add",
-        type: "button",
-        circle: true,
-        value: "Add a new row",
-        size: "small",
-        icon: "mdi mdi-plus",
-        full: true
-    }
+        "id": "lignes",
+        "html": "'.$balise5.'",
+        "items": [
+        {
+            id: "add",
+            type: "button",
+            circle: true,
+            value: "Add a new row",
+            size: "small",
+            icon: "mdi mdi-plus",
+            full: true
+        },
+        {
+            id: "addmore",
+            icon: "dxi dxi-plus",
+            "html": "'.$balise6.'"
+        }
+    ]}
 ]
 const menu = new dhx.Menu("menu", {
 css: "dhx_widget--bg_white dhx_widget--bordered"
@@ -152,15 +187,28 @@ cols: [
   }
 ]
 });
-
+var timer = -1;
 menu.events.on("click", function (id) {
 if (id === "add") {
-  const newId = grid.data.add({ //data a renseigner
-      A: "",
-      B: "",
-      average_rating: "",
-      publication_date: ""
-  });
+  const newId = grid.data.add({';
+  if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+    if(isset($header)){
+        for($i=0;$i<count($header)-1;$i++){
+            echo $header[$i].': "",';
+        }
+        echo $header[$i].': "",';
+    }
+  }
+ echo'});
+ init();
+dhx.message({
+        text: "Une ligne a été ajoutée.", // the text content
+    });
+    timer++;
+    setTimeout(function(){
+        document.getElementsByClassName("dhx_message")[timer].remove();
+        timer--;
+    }, 2000);
 }
 
 //export xlsx
@@ -178,15 +226,15 @@ if (id === "fileOpen") {
 let input = document.createElement("input");
   input.type = "file";
   input.onchange = _ => {
-            let files =   Array.from(input.files);
-            console.log(files);
+
+            let files = Array.from(input.files);
 			var data = new FormData();
 		
 		data.append("table", input.files[0]);
-		console.log(data);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
+				console.log(request);
 				fileresults = request.responseText;
 				console.log(request.responseText);
 				window.location.reload();
@@ -203,13 +251,14 @@ let input = document.createElement("input");
 layout.getCell("menu").attach(menu);
 ';
 if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+    if(isset($header)&&isset($header[0]) && isset($array) && isset($array[0])){
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
 css: "dhx_demo-grid",
 columns: [
   {
-      id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
+      width: 75, id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
       htmlEnable: true, align: "center",
       editable: false,
       autoWidth: false,
@@ -218,10 +267,32 @@ columns: [
           echo'return "'.$span.'";
       }
 	  },';
+      if(isset($header)){
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true }, ';
+				echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
+                if($table->getCol()[$i]->getType() == "date"){
+                    echo', type: "date", dateFormat: "%Y-%m-%d"';
+                }else if($table->getCol()[$i]->getType() == "int"){
+                    echo', type: "number"';
+                }else if($table->getCol()[$i]->getType() == "enum"){
+                    echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+                }else if($table->getCol()[$i]->getType() == "tinyint"){
+                    echo', type: "boolean"';
+                }
+                echo' }, ';
 		}
-			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
+			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true';
+            if($table->getCol()[$i]->getType() == "date"){
+                echo', type: "date", dateFormat: "%Y-%m-%d"';
+            }else if($table->getCol()[$i]->getType() == "int"){
+                echo', type: "number"';
+            }else if($table->getCol()[$i]->getType() == "enum"){
+                echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+            }else if($table->getCol()[$i]->getType() == "tinyint"){
+                echo', type: "boolean"';
+            }
+            echo' }';
+        }
     echo'
 ],
 autoWidth: true,
@@ -244,7 +315,7 @@ function importXlsx() {
 // loading data into Grid
 database = ';
 include("inc.php/parts/data.inc.php");
-echo'
+echo';
 grid.data.parse(database);
 
 // attaching widgets to Layout cells
@@ -268,6 +339,7 @@ function Hsimple(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -348,6 +420,7 @@ function Hempile(){
       window.location.hash = "chart";
     }
     window.onload = reloadUsingLocationHash();
+	window.onresize = redim;
     //rechargement du graphe
     const data = database;
 
@@ -428,6 +501,7 @@ function Hhorizontal(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -509,6 +583,7 @@ function Ganneau(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -568,6 +643,7 @@ function Gradar(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -632,6 +708,7 @@ function Gsecteur(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 
@@ -691,6 +768,7 @@ function Gaire(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
   
@@ -770,6 +848,7 @@ function Gcourbe(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;  
 		  
@@ -847,6 +926,7 @@ function Gnuage(){
       window.location.hash = "chart";
     }
   window.onload = reloadUsingLocationHash();
+  window.onresize = redim;
       //rechargement du graphe
   const data = database;
 		  
@@ -925,6 +1005,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" },';
           			}
           		}
@@ -951,6 +1034,9 @@ function Gnuage(){
 									$val2 = $header[$i];
 								}
 							}
+						}
+						if(!isset($val2)){
+							$val2 = $val1;
 						}
           				echo '{ id: "'.$val1.'_'.$val2.'", type: "scatter", value: "'.$val1.'", valueY: "'.$val2.'", color: "#81C4E8", fill: "#81C4E8", pointType: "circle" }';
           			}
@@ -983,6 +1069,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '"'.$val1.'_'.$val2.'",';
           			}
           		}
@@ -1011,6 +1100,9 @@ function Gnuage(){
 								}
 							}
 						}
+						if(!isset($val2)){
+							$val2 = $val1;
+						}
           				echo '"'.$val1.'_'.$val2.'"';
           			}
           		echo'],
@@ -1026,10 +1118,39 @@ function Gnuage(){
 		  document.getElementById("parent").style.display = "flex";
 }
 ';
+    }
 }
 echo'
+    function openForm() {
+        document.getElementById("form").style.display = "block";
+    }
+    function closeForm() {
+        document.getElementById("form").style.display = "none";
+    }
+    const ligne = document.getElementById("ligne");
+
+    ligne.addEventListener("keypress", (event)=> {
+    if (event.keyCode === 13) { // key code of the keybord key
+    event.preventDefault();
+    nbLigne = ligne.value;
+    console.log(nbLigne);
+    for(i=0;i<nbLigne;i++){
+    const newId = grid.data.add({});
+    }
+    document.getElementById("form").style.display = "none";
+    dhx.message({
+        text: nbLigne + " lignes ont été ajoutées.", // the text content
+    }); 
+    timer++;
+    setTimeout(function(){
+    document.getElementsByClassName("dhx_message")[timer].remove();
+        timer--;
+    }, 2000);}
+    });
 
 </script>
+
+
 <!--tableur-->';
 			echo'<script type="text/javascript" src="js/edit.js"></script>';
 ?>

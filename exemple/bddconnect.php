@@ -1,10 +1,5 @@
-<?php	
-	$BDD = array();
-	$BDD['host'] = "localhost";
-	$BDD['user'] = "root";
-	$BDD['pass'] = "bagnoletmmi76";
-	$BDD['db'] = "exemple";
-	$mysqli = mysqli_connect($BDD['host'], $BDD['user'], $BDD['pass'], $BDD['db']);
-	$mysqli->set_charset("utf8");
-	$_SESSION["mysqli"] = $mysqli;
+<?php
+	$pdo = new PDO('mysql:host=localhost;dbname=exemple','root','bagnoletmmi76');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+	$pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 ?>
