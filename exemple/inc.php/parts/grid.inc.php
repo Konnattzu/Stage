@@ -200,15 +200,15 @@ if (id === "add") {
     }
   }
  echo'});
+ init();
 dhx.message({
         text: "Une ligne a été ajoutée.", // the text content
     });
     timer++;
     setTimeout(function(){
-     document.getElementsByClassName("dhx_message")[timer].remove();
+        document.getElementsByClassName("dhx_message")[timer].remove();
         timer--;
-}, 2000);
- init();
+    }, 2000);
 }
 
 //export xlsx
@@ -270,25 +270,25 @@ columns: [
       if(isset($header)){
 		for($i=0;$i<count($header)-1;$i++){
 				echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
-                if($datatype[$i] == "date"){
+                if($table->getCol()[$i]->getType() == "date"){
                     echo', type: "date", dateFormat: "%Y-%m-%d"';
-                }else if($datatype[$i] == "int"){
+                }else if($table->getCol()[$i]->getType() == "int"){
                     echo', type: "number"';
-                }else if($datatype[$i] == "enum"){
+                }else if($table->getCol()[$i]->getType() == "enum"){
                     echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-                }else if($datatype[$i] == "tinyint"){
+                }else if($table->getCol()[$i]->getType() == "tinyint"){
                     echo', type: "boolean"';
                 }
                 echo' }, ';
 		}
 			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true';
-            if($datatype[$i] == "date"){
+            if($table->getCol()[$i]->getType() == "date"){
                 echo', type: "date", dateFormat: "%Y-%m-%d"';
-            }else if($datatype[$i] == "int"){
+            }else if($table->getCol()[$i]->getType() == "int"){
                 echo', type: "number"';
-            }else if($datatype[$i] == "enum"){
+            }else if($table->getCol()[$i]->getType() == "enum"){
                 echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-            }else if($datatype[$i] == "tinyint"){
+            }else if($table->getCol()[$i]->getType() == "tinyint"){
                 echo', type: "boolean"';
             }
             echo' }';

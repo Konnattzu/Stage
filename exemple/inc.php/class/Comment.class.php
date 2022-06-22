@@ -17,10 +17,13 @@
 				$this->value = $com['commentaire'];
 			}
         }
-        public function setValue($value){
-            $req = $pdo->prepare('INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');');
-			$req->execute();
-			$this->value = $value;
+        public function setValue($value, $pdo){
+            if($value != ""){
+                echo'INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');';
+                $req = $pdo->prepare('INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');');
+                $req->execute();
+                $this->value = $value;
+            }
         }
         public function getValue(){
             return $this->value;

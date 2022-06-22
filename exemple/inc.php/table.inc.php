@@ -39,69 +39,66 @@
 				$table->createTable($pdo);
 				$table->addData($csv, $pdo);
 			}
-		}
-		$query = $pdo->prepare('SHOW TABLES LIKE "step2";');
-		$query->execute();
-		$numrows = $query->fetch(PDO::FETCH_ASSOC);
-		if($numrows>=1){
-			$col = 0;
-			$row = 0;
-			$header = array();
-			$nbcol = array();
-			$array = array();
-			$datatype = array();
-			$infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "step2";');
-			$infotable->execute();
-			while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
-				$header[$col] = $infos["COLUMN_NAME"];
-				$charlength[$header[$col]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
-				$nbcol[$col] = $col;
-				$datatype[$col] = $infos["DATA_TYPE"];
-				$col++;
-			}
-			$query = $pdo->prepare('SELECT * FROM step2');
+			$query = $pdo->prepare('SHOW TABLES LIKE "step2";');
 			$query->execute();
-			while($data = $query->fetch(PDO::FETCH_ASSOC)){
-				for($i=0;$i<count($header);$i++){
-					$array[$i][$row] = $data[$header[$i]];
+			$numrows = $query->fetch(PDO::FETCH_ASSOC);
+			if($numrows>=1){
+				$col = 0;
+				$row = 0;
+				$header = array();
+				$nbcol = array();
+				$array = array();
+				$datatype = array();
+				$infotable = $pdo->prepare('SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = "step2";');
+				$infotable->execute();
+				while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
+					$header[$col] = $infos["COLUMN_NAME"];
+					$charlength[$header[$col]] = $infos["CHARACTER_MAXIMUM_LENGTH"];
+					$nbcol[$col] = $col;
+					$datatype[$col] = $infos["DATA_TYPE"];
+					$col++;
 				}
-				$row++;
+				$query = $pdo->prepare('SELECT * FROM step2');
+				$query->execute();
+				while($data = $query->fetch(PDO::FETCH_ASSOC)){
+					for($i=0;$i<count($header);$i++){
+						$array[$i][$row] = $data[$header[$i]];
+					}
+					$row++;
+				}
 			}
-			echo'<pre>';
-				print_r($header);
-				print_r($array);
-			echo'</pre>';
-		}
-		
-		if(isset($array)){
-		$color = array();
-		echo'<script>
-		function colortype(rows){
-			color = Array();
-			';
-			for($i=0;$i<count($array);$i++){
-				echo'
-				color['.$i.'] = Array();';
-				for($j=0;$j<count($array[$nbcol[$i]]);$j++){
-					if(datatype($array[$nbcol[$i]][$j], "", 0) == "varchar"){
-						$color[$nbcol[$i]][$j] = "red";
-					}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "int"){
-						$color[$nbcol[$i]][$j] = "blue";
-					}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "date"){
-						$color[$nbcol[$i]][$j] = "green";					
-					}else{
-						$color[$nbcol[$i]][$j] = "black";
-					}
-			echo'
-					color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
-					if(typeof(rows['.$j.']) != "undefined" && typeof(rows['.$j.']['.$i.']) != "undefined"){
-						rows['.$j.']['.$i.'].style.color = color['.$i.']['.$j.'];
-					}
+			
+			if(isset($array)){
+			$color = array();
+			echo'<script>
+			function colortype(rows){
+				color = Array();
 				';
+				for($i=0;$i<count($array);$i++){
+					echo'
+					color['.$i.'] = Array();';
+					for($j=0;$j<count($array[$nbcol[$i]]);$j++){
+						if(datatype($array[$nbcol[$i]][$j], "", 0) == "varchar"){
+							$color[$nbcol[$i]][$j] = "red";
+						}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "int"){
+							$color[$nbcol[$i]][$j] = "blue";
+						}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "date"){
+							$color[$nbcol[$i]][$j] = "green";					
+						}else{
+							$color[$nbcol[$i]][$j] = "black";
+						}
+				echo'
+						color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
+						if(typeof(rows['.$j.']) != "undefined" && typeof(rows['.$j.']['.$i.']) != "undefined"){
+							rows['.$j.']['.$i.'].style.color = color['.$i.']['.$j.'];
+						}
+					';
+					}
 				}
+				echo'}
+				</script>';
 			}
-			echo'}
-			</script>';
+			$table->json_encode_private();
 		}
 		include("inc.php/parts/grid.inc.php");
 	}

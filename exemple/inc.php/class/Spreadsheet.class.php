@@ -1,5 +1,5 @@
 <?php
-    class Spreadsheet{
+    class Spreadsheet implements \JsonSerializable{
         public $header = Array();
         public $cells = Array();
         public $identifier = Array();
@@ -13,7 +13,7 @@
             $this->initData($file, $this->header, $pdo);
             $this->initId($this->cells);
             $this->initRow($this->identifier, $this->header, $this->cells);
-            $this->initCol($this->header, $this->identifier, $this->cells);
+            $this->initCol($this->header, $this->identifier, $this->cells, $pdo);
 			// echo'<pre>';
 			// print_r($this->header);
 			// echo'</pre>';
@@ -109,12 +109,12 @@
         }
 
 		//column
-        public function initCol($header, $identifier, $cells){
+        public function initCol($header, $identifier, $cells, $pdo){
             for($j=0;$j<count($header);$j++){
                 for($i=0;$i<count($identifier);$i++){
                     $tempcells[$i] = $cells[$j][$i];
                 }
-                $this->column[$j] = new Column($j, $header[$j], $tempcells);
+                $this->column[$j] = new Column($j, $header[$j], $tempcells, $pdo);
             }
         }
         public function setCol($col, $pos){
@@ -145,6 +145,53 @@
             $query = 'CREATE TABLE IF NOT EXISTS '.$this->bddtable.' LIKE '.$this->bddbase.';';
             $pdo->exec($query);
         }
+		public function jsonSerialize(){
+			$vars = get_object_vars($this);
+			return $vars;
+		}
+		function json_encode_private() {
+			function stackVal($value, $name) {
+				if(is_array($value)) {
+					$public[$name] = [];
+	
+					foreach ($value as $item) {
+						if (is_object($item)) {
+							$itemArray = extract_props($item);
+							$public[$name][] = $itemArray;
+						} else {
+							$itemArray = stackVal($item, $name);
+				 			$public[$name][] = $itemArray;
+						}
+					}
+				} else if(is_object($value)) {
+					$public[$name] = extract_props($value);
+				} else $public[$name] = $value;
+				return $public[$name];
+			}
+			function extract_props($object) {
+				$publicObj = [];
+		
+				$reflection = new ReflectionClass(get_class($object));
+		
+				
+				
+				foreach ($reflection->getProperties() as $property) {
+					$property->setAccessible(true);
+		
+					$value = $property->getValue($object);
+					$name = $property->getName();
+					$publicObj[$name] = stackVal($value, $name);
+				}
+				// echo'<pre>';
+				// print_r($publicObj[$name]);
+				// echo'</pre>';
+		
+				return $publicObj;
+			}
+			echo'<script>
+			spreadsheet = '.json_encode(extract_props($this)).';
+			</script>';
+		}
         public function addData($file, $pdo){
             //récupérer header table 1
 			$basetable = new BDDsheet($pdo);
@@ -161,7 +208,7 @@
 					$len[0] = "";
 				}
 				$basetable->setHeader(new Header($infos["Field"], $i), $i);
-				$basetable->setCol(new Column($i, $basetable->getHeader($i)->getValue(), Array()), $i);
+				$basetable->setCol(new Column($i, $basetable->getHeader()[$i]->getValue(), Array(), $pdo), $i);
 				$basetable->column[$i]->setType($type[0]);
 				$basetable->column[$i]->setLen($len[0]);
 				$i++;
@@ -356,10 +403,10 @@
 						$idvalue = $this->cells[0][$j]->getValue();
 					}
 				}
+				// print_r($querydata);
                 $req = $pdo->prepare($querydata[$j]);
                 $req->execute();
 			}
-            // print_r($querydata);
         }
     }
 ?>

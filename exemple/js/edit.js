@@ -15,16 +15,19 @@ window.addEventListener("load", function(){
 	if(typeof(savebtn) != 'undefined' && savebtn != null){
 		savebtn.addEventListener("click", function(){delay = setTimeout(function(){sendtable();}, 120);}, false);
 	}
+
+	menuItems = document.getElementsByClassName("dhx_nav-menu-button");
+	menuItems[2].addEventListener("mouseover", function(){ var item = this; delay = setTimeout(function(){ seekMenu(item); }, 100); }, false);
 	
-	dispgrid.addEventListener("mousewheel", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
-	document.addEventListener("click", function(){
-		console.log(event.target);
-		if(!event.target.classList.contains("dhx_string-cell") && !event.target.classList.contains("dhx_grid-comment")){
-			target = event.target;
-			console.log(target);
-			delay = setTimeout(function(){ init(target); }, 100);
-		}
-	}, false);
+	// dispgrid.addEventListener("mousewheel", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
+	// document.addEventListener("click", function(){
+	// 	console.log(event.target);
+	// 	if(!event.target.classList.contains("dhx_string-cell") && !event.target.classList.contains("dhx_grid-comment")){
+	// 		target = event.target;
+	// 		console.log(target);
+	// 		delay = setTimeout(function(){ init(target); }, 100);
+	// 	}
+	// }, false);
 	//addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 	
 	
@@ -32,12 +35,6 @@ window.addEventListener("load", function(){
 	
 	function init(target){
 			console.log("init");
-		if(typeof(comwindow) == "undefined"){
-			console.log(typeof(comwindow));
-			if(typeof(delay) != 'undefined' && delay != null){
-				clearTimeout(delay);
-			}
-			
 			rows = document.getElementsByClassName("dhx_grid-row");
 			header = document.getElementsByClassName("dhx_grid-header-cell");
 			header = Array.from(header);
@@ -79,16 +76,24 @@ window.addEventListener("load", function(){
 						comcontain[i][j].appendChild(phyl[i][j]);
 						// console.log(phyl[i][j]);
 						// console.log(comcontain[i][j]);
-						phyl[i][j].addEventListener('click', function(){ comdisp(event) }, false);
+						console.log(i, j);
+						console.log(phyl[i][j]);
+						phyl[i][j].addEventListener('click', function(){ comdisp(spreadsheet, i, j); }, false);
 					}
 				}
-				console.log(rows);
+				//console.log(rows);
 			for(var i=0; i<rows.length; i++){
 				for(var j=0; j<header.length; j++){
-					rows[i][j].addEventListener("click", edit, false);
-					cellval[i][j] = rows[i][j].childNodes[0];
+					console.log(comcontain[i][j]);
+					rows[i][j].addEventListener("click", function(){ edit(comcontain); }, false);
+					console.log(i);
+					console.log(j);
 					console.log(rows[i][j]);
-					console.log(cellval[i][j]);
+					
+					//rows[i][j].addEventListener("mousedown", function(){ console.log(comcontain[i][j]); edit(comcontain[i][j]); }, false);
+					cellval[i][j] = rows[i][j].childNodes[0];
+					// console.log(rows[i][j]);
+					// console.log(cellval[i][j]);
 					if(typeof(cellval[i][j]) != "undefined" && cellval[i][j].nodeName == "#text"){
 						var value = cellval[i][j].textContent;
 						var newCellVal = document.createElement("div");
@@ -100,7 +105,7 @@ window.addEventListener("load", function(){
 							if(!rows[i][j].childNodes[0].classList.contains("dhx_grid-comcell")){
 								rows[i][j].appendChild(comcontain[i][j]);
 							}
-							console.log(rows[i][j].childNodes);
+							// console.log(rows[i][j].childNodes);
 						}else{
 							rows[i][j].appendChild(comcontain[i][j]);
 						}
@@ -113,190 +118,165 @@ window.addEventListener("load", function(){
 				rembtn[i] = cross[i].parentElement.parentElement;
 				rembtn[i].addEventListener("click", remrow, false);
 			}
-			if(currentref == "liste"){
-				comments(header, rows);
-			}
 			if(rows.length>0){
 				colortype(rows);
 			}
-		}
 		
-		if(typeof(comwindow) != "undefined"){
-			comarea = comwindow.getElementsByTagName("TEXTAREA")[0];
-			comrownb = comwindow.getAttribute("rowindex");
-			comcolnb = comwindow.getAttribute("colindex");
-			console.log(comrownb);
-			console.log(comcolnb);
-			console.log(comarea);
-			console.log(target);
-			if(!comarea.hasFocus && target != comarea){
-				comwindow.focus();
-			}
+		// if(typeof(comwindow) != "undefined"){
+		// 	comarea = comwindow.getElementsByTagName("TEXTAREA")[0];
+		// 	comrownb = comwindow.getAttribute("rowindex");
+		// 	comcolnb = comwindow.getAttribute("colindex");
+		// 	console.log(comrownb);
+		// 	console.log(comcolnb);
+		// 	console.log(comarea);
+		// 	console.log(target);
+		// 	if(!comarea.hasFocus && target != comarea){
+		// 		comwindow.focus();
+		// 	}
+		// }
+	}
+	/*Gérer le menu*/
+	function seekMenu(item){
+		clearTimeout(delay);
+		addbtn = document.querySelectorAll("[data-dhx-id = add]")[0];
+		if(typeof(addbtn) != "null"){
+			addbtn.addEventListener("click", function(){delay = setTimeout(function(){ init(); }, 100)}, false);
 		}
 	}
-	
+
 	/*Afficher les commentaires*/
 	
-	function comments(header, rows){
-		headval = Array();
-		rowval = Array();
-		for(var i=0;i<header.length;i++){
-			headval[i] = header[i].innerText;
+	function comhandler(comwindow, spreadsheet, i, j, cover){
+		if(event.target.classList.contains("popup-cover")){
+			document.removeEventListener("click", function(){  }, false);
+			sendcom(comwindow, spreadsheet, i, j, cover);
 		}
-		for(var j=0;j<rows.length;j++){
-		rowval[j] = Array();
-			for(var i=0;i<header.length;i++){
-				rowval[j][i] = rows[j][i].innerText;
-			}	
-		}
-		
-		var data = new FormData();
-		data.append("header", JSON.stringify(headval));
-		data.append("rows", JSON.stringify(rowval));
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function () {
-			if (request.readyState === 4) {
-				var results = JSON.parse(request.responseText);
-				for(var i=0; i<comment.length; i++){
-					for(var j=0; j<comment[i].length; j++){
-						if(typeof(results[i]) != "undefined" && typeof(results[i][j]) != "undefined" && results[i][j] != null){
-							console.log(results[i][j]);
-							comment[i][j].setAttribute("commentaire", results[i][j]);
-							console.log(comment[i][j].getAttribute("commentaire"));
-						}
-					}
-				}
-				
-			}
-		}
-		request.open("POST", "inc.php/parts/comment.inc.php", true);
-		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
-		request.send(data);
 	}
 	
-	function comdisp(e, i, j){
+	function comUndisp(contain){
+		contain.remove();
+	}
+	
+	function comdisp(spreadsheet, i, j){
+		event.stopImmediatePropagation();
+		comt = spreadsheet.cells[2][0].comment.value;
+		const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'>"+comt+"</textarea><input type='submit' value='&#9989;'></form>";
+		const dhxwindow = new dhx.Window({
+			width: 440,
+			height: 520,
+			title: "Commentaire",
+			html: windowHtml
+		});
+		dhxwindow.show();
+		comwindow = dhxwindow._popup;
+		comwindow.style.zIndex = "50";
+		cover = document.createElement("div"); 
+		if(document.body.getElementsByClassName("popup-cover").length == 0){
+			cover.classList.add("popup-cover"); 
+			document.body.insertBefore(cover, document.body.children[1]); 
+		}
+		document.addEventListener("click", function(){ comhandler(comwindow, spreadsheet, i, j, cover); }, false);
+	}
+	
+	/*Commentaire*/
+	function sendcom(comwindow, spreadsheet, i, j, cover){
+		console.log(comwindow);
+		newval = comwindow.firstChild.childNodes[1].firstChild.firstChild.getElementsByTagName("TEXTAREA")[0].value;
+		console.log(comwindow.firstChild.childNodes[1].firstChild.firstChild.getElementsByTagName("TEXTAREA")[0]);
 		console.log(i);
 		console.log(j);
-		  const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'></textarea><input type='submit' value='&#9989;'></form>";
-    const dhxwindow = new dhx.Window({
-        width: 440,
-        height: 520,
-        title: "Commentaire",
-        html: windowHtml
-	});
-
-		dhxwindow.show();
-		comwindow = document.getElementsByClassName("dhx_popup--window")[0];
-		comwindow.setAttribute("rowindex", event.target.parentElement.parentElement.getAttribute("aria-rowindex")-1);
-		comwindow.setAttribute("colindex", event.target.parentElement.getAttribute("aria-colindex"));
-		console.log(e.target);
-		rowid = e.target.parentElement.parentElement.querySelector("[aria-colindex='2']").innerText;
-		colname = e.target.parentElement.getAttribute("data-dhx-col-id");
-		comedit(rowid, colname, comwindow);
-
-	}
-	
-	/*Editer un commentaire*/
-	
-	function comhandler(){
-		console.log("edited");
-		comedited(event, inptcom);
-	}
-	
-	function comedit(rowid, colname, comwindow){
-			console.log(comwindow);
-			comwindow.addEventListener("blur", function(event){ if(!event.currentTarget.contains(event.relatedTarget)){ comedited(rowid, colname, comarea); } }, false);
-		console.log("edit");
-		comt = this;
-		comtxt = comt.innerText;
-		inptcom = document.createElement("input");
-		inptcom.setAttribute("type", "text");
-		inptcom.setAttribute("value", comtxt);
-		comt.parentElement.replaceChild(inptcom, comt);
-	}
-	
-	function comedited(rowid, colname, comarea){
-		comt = comarea.value;
-		sendcom(rowid, colname, comt);
-		comwindow.remove();
-	}
-	
-	function sendcom(rowid, colname, comt){
-		console.log(rowid);
-		console.log(colname);
+		console.log(spreadsheet.cells[2][0]);
 		var data = new FormData();
-		data.append("row", rowid);
-		data.append("column", colname);
-		data.append("comt", comt);
+		data.append("row", spreadsheet.cells[2][0].rowid);
+		data.append("column", spreadsheet.cells[2][0].colid);
+		data.append("comt", newval);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				var results = request.responseText;
 				console.log(results);
 				console.log(request.responseText);
-				init();
+				//init();
 			}
 		}
 		request.open("POST", "inc.php/parts/send_com.inc.php", true);
 		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
 		request.send(data);	
+		cover.remove();
+		comwindow.remove();
+		window.location.reload();
 	}
 
 	/*Editer une case*/
 
-	function handler(){
-		edited(event, cell);
+	function handler(cell, com, rowid, colname){
+		edited(cell, com, rowid, colname);
 	}
 	
-	function edit(){
+	function edit(comt){
 		console.log("edit");
-		cell = this;
+		event.stopImmediatePropagation();
+		cell = event.target;
+		console.log(cell);
+		console.log(comt);
 		for(var i=0; i<rows.length; i++){
 			for(var j=0; j<header.length; j++){
 				rows[i][j].removeEventListener("click", edit, false);
 			}
 		}
+		console.log(this);
 		colnb = cell.getAttribute("aria-colindex")-1;
 		rownb = cell.parentElement.getAttribute("aria-rowindex")-1;
 		rowid = grid.config.data[rownb][grid.config.columns[1].id];
 		colname = grid.config.columns[colnb].id;
-		colid = grid.config.columns[1].id;
+		com = comt[colnb][rownb];
 
-		cell.addEventListener("keypress", handler, false);
-		document.addEventListener("mousedown", handler, false);
+		cell.addEventListener("keypress", function(){ edited(cell, com, rowid, colname); }, false);
+		document.addEventListener("mousedown", function(){ edited(cell, com, rowid, colname); }, false);
 		
-		cell.removeEventListener("click", edit, false);
+		cell.removeEventListener("click", function(){ edit(com); }, false);
 	}
 	
-	function edited(event, cell){
+	function edited(cell, com, rowid, colname){
 		event.stopImmediatePropagation();
 		e = event;
 		if (e.key == "Enter"){
-			delay = setTimeout(function(){senddata(e.path[1]);}, 1);
+			delay = setTimeout(function(){senddata(cell, rowid, colname);}, 100);
 			cell.removeEventListener("keypress", handler, false);
 			document.removeEventListener("mousedown", handler, false);
 			cell.addEventListener("click", edit, false);
 		}else if(e.target.parentElement != cell){
-			delay = setTimeout(function(){senddata(cell);}, 1);
+			delay = setTimeout(function(){senddata(cell, rowid, colname);}, 100);
 			cell.removeEventListener("keypress", handler, false);
 			document.removeEventListener("mousedown", handler, false);
 			cell.addEventListener("click", edit, false);
 		}
+		//cell.appendChild(com);
 	}
 	
-	function senddata(el){
+	function senddata(cell, rowid, colname){
 		clearTimeout(delay);
+		console.log(cell);
+		console.log(rowid);
+		console.log(colname);
 		// console.log(el.innerText);
-		newtext = el.innerText;
+		for(var i=0;i<cell.childNodes.length;i++){
+			console.log(cell.childNodes[i]);
+			if(cell.childNodes[i].nodeType == 3){
+				newtext = cell.childNodes[i].textContent;
+			}else if(colname == "sexe"){
+				newtext = "M";
+			}
+		}
+		
 		// console.log("newtext "+newtext);
 		var data = new FormData();
 		//graphable = false;
 		data.append("row", rowid);
 		data.append("column", colname);
-		data.append("idcolumn", colid);
 		data.append("value", newtext);
 		data.append("editplace", currentref);
-		console.log(currentref);
+		console.log(newtext);
 		// for(i=0;i<grid.config.columns;i++){
 			// if(grid.config.columns[1].id == colname){
 				// graphable = true;

@@ -10,6 +10,13 @@
 			$table = new BDDsheet($pdo);
 			$table->createTable($pdo);
 			
+			for($j=0;$j<count($table->getHeader());$j++){
+				$header[$j] = $table->getHeader()[$j]->getValue();
+				for($i=0;$i<count($table->getRow());$i++){
+					$array[$j][$i] = $table->getCell()[$j][$i]->getValue();
+				}
+			}
+
 			$color = Array();
 			echo'<script>
 			function colortype(rows){
@@ -19,15 +26,15 @@
 					for($i=0;$i<count($array);$i++){
 						echo'
 						color['.$i.'] = Array();';
-						for($j=0;$j<count($array[$nbcol[$i]]);$j++){
-							if(datatype($array[$nbcol[$i]][$j], "", 0) == "varchar"){
-								$color[$nbcol[$i]][$j] = "red";
-							}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "int"){
-								$color[$nbcol[$i]][$j] = "blue";
-							}else if(datatype($array[$nbcol[$i]][$j], "", 0) == "date"){
-								$color[$nbcol[$i]][$j] = "green";					
+						for($j=0;$j<count($array[$i]);$j++){
+							if(datatype($array[$i][$j], "", 0) == "varchar"){
+								$color[$i][$j] = "red";
+							}else if(datatype($array[$i][$j], "", 0) == "int"){
+								$color[$i][$j] = "blue";
+							}else if(datatype($array[$i][$j], "", 0) == "date"){
+								$color[$i][$j] = "green";					
 							}else{
-								$color[$nbcol[$i]][$j] = "black";
+								$color[$i][$j] = "black";
 							}
 						echo'
 							color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
@@ -40,6 +47,7 @@
 				}
 			echo'}
 			</script>';
+			$table->json_encode_private();
 			
 			
 

@@ -6,11 +6,11 @@
         private $datatype;
         private $datalength;
 
-        public function __construct($numb, $head, $cells){
+        public function __construct($numb, $head, $cells, $pdo){
             $this->initNumb($numb);
             $this->initHead($head);
             $this->initCells($cells);
-            $this->initType();
+            $this->initType($pdo);
             $this->initLen();
         }
 
@@ -56,7 +56,7 @@
         }
 
         //datatype
-        public function initType(){
+        public function initType($pdo){
             $cells = $this->cells;
             $type = Array();
             $enum = Array();
@@ -89,9 +89,9 @@
                         }
                     }
                     if(($this->datatype == "tinyint") && ($cells[$i]->getValue() != "oui") && ($cells[$i]->getValue() != "non") && ($cells[$i]->getValue() != "1") && ($cells[$i]->getValue() != "0")){
-                        $cells[$i]->getCom()->setValue(trim(preg_replace("/(oui|non|1|0)/", " ", $cells[$i]->getValue())));
-                        $cells[$i]->setValue(str_replace($comment, " ", $cells[$i]->getValue()));
-                        $cells[$i]->setValue(trim($cells[$i]->getValue()));
+                        $cells[$i]->getCom()->setValue(trim(preg_replace("/(oui|non|1|0)/", " ", $cells[$i]->getValue())), $pdo);
+                        // $cells[$i]->setValue(str_replace($comment, " ", $cells[$i]->getValue()));
+                        // $cells[$i]->setValue(trim($cells[$i]->getValue()));
                     }
                 }
                 if(count($cells)>16){

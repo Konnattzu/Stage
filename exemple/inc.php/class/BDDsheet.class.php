@@ -21,7 +21,7 @@
 					$len[0] = "";
 				}
 				$this->setHeader(new Header($infos["Field"], $i), $i);
-				$this->setCol(new Column($i, $this->getHeader($i)->getValue(), Array()), $i);
+				$this->setCol(new Column($i, $this->getHeader()[$i]->getValue(), Array(), $pdo), $i);
 				$this->column[$i]->setType($type[0]);
 				$this->column[$i]->setLen($len[0]);
 				$i++;
@@ -36,18 +36,22 @@
 				$this->identifier[$row] = new Identifier($this->cells[0][$row], $row);
 				$row++;
 			}
-			for($j=0;$j<count($this->cells[0]);$j++){
-                for($i=0;$i<count($this->header);$i++){
-                    $tempcells[$i] = $this->cells[$i][$j];
+            $tempcells = array();
+            if(isset($this->cells[0])){
+                for($j=0;$j<count($this->cells[0]);$j++){
+                    for($i=0;$i<count($this->header);$i++){
+                        $tempcells[$i] = $this->cells[$i][$j];
+                    }
+                    $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
                 }
-                $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
             }
-			for($j=0;$j<count($this->header);$j++){
-                for($i=0;$i<count($this->identifier);$i++){
-                    $tempcells[$i] = $this->cells[$j][$i];
+            $tempcells = array();
+                for($j=0;$j<count($this->header);$j++){
+                    for($i=0;$i<count($this->identifier);$i++){
+                        $tempcells[$i] = $this->cells[$j][$i];
+                    }
+                    $this->column[$j] = new Column($j, $this->header[$j], $tempcells, $pdo);
                 }
-                $this->column[$j] = new Column($j, $this->header[$j], $tempcells);
-            }
 			// echo'<pre>';
 			// print_r($this->header);
 			// echo'</pre>';
@@ -75,8 +79,8 @@
         public function setHeader($header, $pos){
             $this->header[$pos] = $header;
         }
-        public function getHeader($i){
-            return $this->header[$i];
+        public function getHeader(){
+            return $this->header;
         }
 
 		//cells
@@ -129,12 +133,12 @@
         }
 
 		//column
-        public function initCol($header, $identifier, $cells){
+        public function initCol($header, $identifier, $cells, $pdo){
             for($j=0;$j<count($header);$j++){
                 for($i=0;$i<count($identifier);$i++){
                     $tempcells[$j] = $cells[$j][$i];
                 }
-                $this->column[$j] = new Column($j, $header[$j]->getValue(), $tempcells);
+                $this->column[$j] = new Column($j, $header[$j]->getValue(), $tempcells, $pdo);
             }
         }
         public function setCol($col, $pos){
@@ -156,6 +160,49 @@
         public function createTable($pdo){
 			$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
             $req->execute();
+		}
+        function json_encode_private() {
+			function stackVal($value, $name) {
+				if(is_array($value)) {
+					$public[$name] = [];
+	
+					foreach ($value as $item) {
+						if (is_object($item)) {
+							$itemArray = extract_props($item);
+							$public[$name][] = $itemArray;
+						} else {
+							$itemArray = stackVal($item, $name);
+				 			$public[$name][] = $itemArray;
+						}
+					}
+				} else if(is_object($value)) {
+					$public[$name] = extract_props($value);
+				} else $public[$name] = $value;
+				return $public[$name];
+			}
+			function extract_props($object) {
+				$publicObj = [];
+		
+				$reflection = new ReflectionClass(get_class($object));
+		
+				
+				
+				foreach ($reflection->getProperties() as $property) {
+					$property->setAccessible(true);
+		
+					$value = $property->getValue($object);
+					$name = $property->getName();
+					$publicObj[$name] = stackVal($value, $name);
+				}
+				// echo'<pre>';
+				// print_r($publicObj[$name]);
+				// echo'</pre>';
+		
+				return $publicObj;
+			}
+			echo'<script>
+			spreadsheet = '.json_encode(extract_props($this)).';
+			</script>';
 		}
     }
 ?>
