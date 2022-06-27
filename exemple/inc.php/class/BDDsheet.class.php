@@ -201,7 +201,8 @@
 				return $publicObj;
 			}
 			echo'<script>
-			spreadsheet = '.json_encode(extract_props($this)).';
+			spreadsheet = new Spreadsheet();
+			spreadsheet.dataFill('.json_encode(extract_props($this)).');
 			</script>';
 		}
     }
