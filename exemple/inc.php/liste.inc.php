@@ -16,37 +16,7 @@
 					$array[$j][$i] = $table->getCell()[$j][$i]->getValue();
 				}
 			}
-
-			$color = Array();
-			echo'<script>
-			function colortype(rows){
-				color = Array();
-				';
-				if(isset($array)){
-					for($i=0;$i<count($array);$i++){
-						echo'
-						color['.$i.'] = Array();';
-						for($j=0;$j<count($array[$i]);$j++){
-							if(datatype($array[$i][$j], "", 0) == "varchar"){
-								$color[$i][$j] = "red";
-							}else if(datatype($array[$i][$j], "", 0) == "int"){
-								$color[$i][$j] = "blue";
-							}else if(datatype($array[$i][$j], "", 0) == "date"){
-								$color[$i][$j] = "green";					
-							}else{
-								$color[$i][$j] = "black";
-							}
-						echo'
-							color['.$i.']['.$j.'] = "'.$color[$i][$j].'";
-							if(typeof(rows['.$j.']) != "undefined" && typeof(rows['.$j.']['.$i.']) != "undefined"){
-								rows['.$j.']['.$i.'].style.color = color['.$i.']['.$j.'];
-							}
-						';
-						}
-					}
-				}
-			echo'}
-			</script>';
+			
 			$table->json_encode_private();
 			
 			

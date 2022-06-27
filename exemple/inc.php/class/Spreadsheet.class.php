@@ -41,8 +41,8 @@
         public function setHeader($header, $pos){
             $this->header[$pos] = $header;
         }
-        public function getHeader($i){
-            return $this->header[$i];
+        public function getHeader(){
+            return $this->header;
         }
 
 		//cells
@@ -189,7 +189,8 @@
 				return $publicObj;
 			}
 			echo'<script>
-			spreadsheet = '.json_encode(extract_props($this)).';
+			spreadsheet = new Spreadsheet();
+			spreadsheet.dataFill('.json_encode(extract_props($this)).');
 			</script>';
 		}
         public function addData($file, $pdo){
