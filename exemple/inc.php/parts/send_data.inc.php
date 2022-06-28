@@ -6,6 +6,10 @@
 	$value = $_POST["value"];
 	$row = $_POST["row"];
 	$editplace = $_POST["editplace"];
+	echo $column;
+	echo $value;
+	echo $row;
+	echo $editplace;
 	if($editplace == "liste"){
 		$infotable = $pdo->prepare('SHOW COLUMNS FROM step1;');
 		$infotable->execute();
@@ -28,6 +32,7 @@
 			$len = $string = preg_replace("/[^0-9]/", "", $coltype);
 			$datatype = datatype($value, $type, $len);
 			$query = "ALTER TABLE step1 MODIFY ".$column." ".$datatype." (".strlen($value).");";
+			echo $query;
 			$pdo->exec($query);
 		}
 		if($row != "" && !empty($row)){
@@ -36,6 +41,7 @@
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows>=1){
 				$query = "UPDATE step1 SET ".$column."='".$value."' WHERE numero_du_patient='".$row."';";
+				echo $query;
 				$pdo->exec($query);
 			}
 		}else if($row == "" || empty($row) && $column == "numero_du_patient"){
@@ -45,6 +51,7 @@
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows==0){
 				$query = "INSERT INTO step1 (numero_du_patient) VALUES ('".$value."');";
+				echo $query;
 				$pdo->exec($query);
 			}
 		}
@@ -70,6 +77,7 @@
 			$len = $string = preg_replace("/[^0-9]/", "", $coltype);
 			$datatype = datatype($value, $type, $len);
 			$query = "ALTER TABLE step2 MODIFY ".$column." ".$datatype." (".strlen($value).");";
+			echo $query;
 			$pdo->exec($query);
 		}
 		if($row != "" && !empty($row)){
@@ -78,6 +86,7 @@
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows>=1){
 				$query = "UPDATE step2 SET ".$column."='".$value."' WHERE numero_du_patient='".$row."';";
+				echo $query;
 				$pdo->exec($query);
 			}
 		}else if($row == "" || empty($row) && $column == "numero_du_patient"){
@@ -86,6 +95,7 @@
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows==0){
 				$query = "INSERT INTO step2 (numero_du_patient) VALUES ('".$value."');";
+				echo $query;
 				$pdo->exec($query);
 			}
 		}

@@ -8266,7 +8266,7 @@ var Grid = /** @class */ (function (_super) {
                         }
                         e.preventDefault();
                         // to simulate on touch devices
-                        _this.events.fire(types_1.GridEvents.cellClick, [row, col, e]);
+                        _this.events.fire(types_1.GridEvents.cellDblClick, [row, col, e]);
                     }
                     _this._touch.timeStamp = null;
                 }
@@ -8336,7 +8336,7 @@ var Grid = /** @class */ (function (_super) {
             _this.editEnd();
             _this.paint();
         });
-        this.events.on(types_1.GridEvents.cellClick, function (row, col) {
+        this.events.on(types_1.GridEvents.cellDblClick, function (row, col) {
             if ((col.editable !== false && _this.config.editable) || col.editable) {
                 _this.editCell(row.id, col.id, col.editorType);
             }

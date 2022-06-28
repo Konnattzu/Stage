@@ -200,7 +200,6 @@ if (id === "add") {
     }
   }
  echo'});
- init();
 dhx.message({
         text: "Une ligne a été ajoutée.", // the text content
     });

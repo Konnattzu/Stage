@@ -7,34 +7,63 @@ class Spreadsheet {
         this.cells = new Array();
         this.html = "";
         this.savebtn = "";
-        this.menuItems = Array();
+        this.menuItems = new Array();
     }
     
     //Remplissage des données du tableau
+    initData(){
+        var that = this;
+        var rows = document.getElementsByClassName("dhx_grid-row");
+		var header = document.getElementsByClassName("dhx_grid-header-cell");
+		header = Array.from(header);
+		header.splice(header.length/2, header.length);
+		header.splice(0, 1);
+		var cells = Array();
+        for(var i=0; i<rows.length; i++){
+            cells[i] = Array();
+			for(var j=0; j<header.length; j++){
+				cells[i][j] = rows[i].getElementsByClassName("dhx_grid-cell")[j];
+			}
+            that.setRem(cells[i][0], i); 
+		}
+        for(var i=0;i<header.length;i++){
+			that.setHeader(header[i], i);
+		}
+		for(var i=0;i<rows.length;i++){
+			that.setId(cells[i][1], i);
+		}
+		for(var i=0;i<rows.length;i++){
+			for(var j=0;j<header.length;j++){
+				that.setCell(cells[i][j+1], i, j);
+			}
+		}
+        var that = this;
+        var delay = setTimeout(function(){ clearTimeout(delay); that.initHtml(); }, 100);
+    }
     dataFill(dataArray){
         for(var i=0;i<dataArray.header.length;i++){
             this.header[i] = new Header();
             this.header[i].setValue(dataArray.header[i].value);
             this.header[i].setNumb(dataArray.header[i].headnumb);
-            this.header[i].setHtml(document.getElementsByClassName("dhx_grid-header-cell")[i]);
+            this.header[i].setType(dataArray.column[i].datatype);
+            this.header[i].setLen(dataArray.column[i].datalength);
         }
         for(var i=0;i<dataArray.identifier.length;i++){
             this.identifiers[i] = new Identifier();
             this.identifiers[i].setValue(dataArray.identifier[i].value);
             this.identifiers[i].setNumb(dataArray.identifier[i].rownumb);
-            this.identifiers[i].setHtml(document.getElementsByClassName("dhx_grid-cell")[i+this.header.length]);
         }
-        for(var i=0;i<this.header.length;i++){
+        for(var i=0;i<this.identifiers.length;i++){
             this.cells[i] = new Array();
-            for(var j=0;j<this.identifiers.length;j++){
+            for(var j=0;j<this.header.length;j++){
                 this.cells[i][j] = new Cell();
-                this.cells[i][j].setValue(dataArray.cells[i][j].value);
-                this.cells[i][j].setType(dataArray.cells[i][j].datatype);
-                this.cells[i][j].setLen(dataArray.cells[i][j].datalength);
-                this.cells[i][j].setRownumb(dataArray.cells[i][j].rownumb);
-                this.cells[i][j].setColnumb(dataArray.cells[i][j].colnumb);
-                this.cells[i][j].setRowid(dataArray.cells[i][j].rowid);
-                this.cells[i][j].setColid(dataArray.cells[i][j].colid);
+                this.cells[i][j].setValue(dataArray.cells[j][i].value);
+                this.cells[i][j].setType(this.header[j].getType());
+                this.cells[i][j].setLen(this.header[j].getLen());
+                this.cells[i][j].setRownumb(dataArray.cells[j][i].rownumb);
+                this.cells[i][j].setColnumb(dataArray.cells[j][i].colnumb);
+                this.cells[i][j].setRowid(dataArray.cells[j][i].rowid);
+                this.cells[i][j].setColid(dataArray.cells[j][i].colid);
                 this.cells[i][j].initCom();
             }
         }
@@ -42,30 +71,48 @@ class Spreadsheet {
 
     //Définition des éléments html
     initHtml(){
+        //Tableau
         this.html = document.getElementsByClassName("dhx_grid_data")[0];
+        //Bouton de sauvegarde
         this.savebtn = document.getElementById("savetable");
         if(typeof(this.savebtn) != 'undefined' && this.savebtn != null){
             var that = this;
             this.savebtn.addEventListener("click", function(){that.sendTable();}, false);
         }
-        for(var i=1;i<(document.getElementsByClassName("dhx_grid-header-cell").length)/2;i++){
-            this.header[i].setHtml(document.getElementsByClassName("dhx_grid-header-cell")[i]);
+        //En-têtes
+        for(var i=0;i<(document.getElementsByClassName("dhx_grid-header-cell").length/2);i++){
+            this.header[i].setHtml(document.getElementsByClassName("dhx_grid-header-cell")[i+1]);
         }
+        //Identifiants
         for(var i=0;i<this.identifiers.length;i++){
-            this.identifiers[i].setHtml(document.getElementsByClassName("dhx_grid-cell")[i+this.header.length]);
+            this.identifiers[i].setHtml(this.html.getElementsByClassName("dhx_grid-cell")[(i*(this.header.length)-i)+1]);
         }
-        for(var i=0;i<this.identifiers.length;i++){
-            var row = this.html.querySelectorAll("[aria-rowindex = '"+(i+1)+"']")[0];
-            console.log(row);
-            for(var j=0;j<this.header.length;j++){
-                console.log(this.cells[j][i].value);
-                console.log(row.querySelectorAll("[aria-colindex = '"+(j+2)+"']")[0]);
-                this.cells[j][i].setHtml(row.querySelectorAll("[aria-colindex = '"+(j+2)+"']")[0]);
-                // console.log(this.cells[j][i].getHtml().getElementsByClassName("dhx_grid-comcell")[0]);
-                // this.cells[j][i].comment.setHtml(this.cells[j][i].getHtml().getElementsByClassName("dhx_grid-comcell")[0]);
-                this.cells[j][i].initColor();
+        //Cellules
+        var that = this;
+        var delay = setTimeout(function(){
+            clearTimeout(delay);
+            for(var i=0;i<that.identifiers.length;i++){
+                var row = that.html.querySelectorAll('[aria-rowindex = "'+(i+1)+'"]')[0];
+                for(var j=0;j<that.header.length;j++){
+                    if(typeof(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]) != "undefined"){
+                        that.cells[i][j].setHtml(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]);
+                        if(that.cells[i][j].comment.html == ""){
+                            that.cells[i][j].comment.initHtml(that.cells[i][j].colnumb);
+                        }
+                        if(typeof(that.cells[i][j].html) != "undefined"){
+                            that.cells[i][j].html.appendChild(that.cells[i][j].comment.html);
+                        }
+                        that.cells[i][j].initColor();
+                    }
+                }
             }
+        }, 100);
+        //Menu
+        var items = document.getElementsByClassName("dhx_nav-menu-button");
+        for(var i = 0;i<items.length;i++){
+            this.menuItems[i] = new MenuItem(items[i], items[i].getAttribute("data-dxh-id"), 0, this);
         }
+		console.log(this);
     }
 
     //En-têtes du tableau
@@ -73,9 +120,11 @@ class Spreadsheet {
         if(typeof(this.header[pos]) == "undefined"){
             this.header[pos] = new Header;
         }
-        this.header[pos].setValue(header.innerText);
-        this.header[pos].setNumb(pos);
-        this.header[pos].setHtml(header);
+        if(typeof(header) != "undefined"){
+            this.header[pos].setValue(header.innerText);
+            this.header[pos].setNumb(pos);
+            this.header[pos].setHtml(header);
+        }
     }
     getHeader(){
         return this.header;
@@ -86,9 +135,11 @@ class Spreadsheet {
         if(typeof(this.identifiers[pos]) == "undefined"){
             this.identifiers[pos] = new Identifier();
         }
-        this.identifiers[pos].setValue(identifier.innerText);
-        this.identifiers[pos].setNumb(pos);
-        this.identifiers[pos].setHtml(identifier);
+        if(typeof(identifier) != "undefined"){
+            this.identifiers[pos].setValue(identifier.innerText);
+            this.identifiers[pos].setNumb(pos);
+            this.identifiers[pos].setHtml(identifier);
+        }
     }
     getId(){
         return this.identifiers;
@@ -106,8 +157,6 @@ class Spreadsheet {
     remRow(row){
         var rowid = this.identifiers[row].value;
         var colid = this.header[0].value;
-		console.log(rowid);
-		console.log(colid);
 		var data = new FormData();
 		data.append("row", rowid);
 		data.append("idcolumn", colid);
@@ -156,8 +205,11 @@ class Spreadsheet {
         if(typeof(this.cells[row][col]) == "undefined"){
             this.cells[row][col] = new Cell();
         }
-        this.cells[row][col].setValue(cell.innerText);
-        this.cells[row][col].setHtml(cell);
+        if(typeof(cell) != "undefined"){
+            this.cells[row][col].setValue(cell.innerText);
+            this.cells[row][col].setHtml(cell);
+            this.cells[row][col].setPlace(this.currentref);
+        }
         this.cells[row][col].initCom();
     }
     getCell(){
