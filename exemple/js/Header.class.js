@@ -3,6 +3,8 @@ class Header {
         this.value = "";
         this.headnumb = 0;
         this.html = "";
+        this.datatype = "";
+        this.datalength = 0;
     }
 
     setValue(value){
@@ -17,6 +19,20 @@ class Header {
     }
     getNumb(){
         return this.headnumb;
+    }
+
+    setType(type){
+        this.datatype = type;
+    }
+    getType(){
+        return this.datatype;
+    }
+
+    setLen(len){
+        this.datalength = len;
+    }
+    getLen(){
+        return this.datalength;
     }
 
     setHtml(html){
