@@ -36,6 +36,7 @@
 			$query->execute();
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows==0){
+				$table->createBase($pdo);
 				$table->createTable($pdo);
 				$table->addData($csv, $pdo);
 			}

@@ -5,16 +5,32 @@
 			}else if($datatype == "varchar" && $datalength<strlen($data)){
 				$datalength = strlen($data);
 			}else if($datatype == "date"){
-				if(preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
-					$datalength = "Y-m-d";
-				}else if(preg_match("/[0-9]{2}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
-					$datalength = "y/m/d";
-				}else if(preg_match("#[0-9]{4}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
-					$datalength = "Y/m/d";
-				}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
-					$datalength = "d/m/y";
+				if(preg_match("#[0-9]{2}-[0-9]{2}-[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "m-d-y";
+				}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "m/d/Y";
 				}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 					$datalength = "d/m/Y";
+				}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "d/m/y";
+				}else if(preg_match("/[0-9]{2}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "d-m-y";
+				}else if(preg_match("/[0-9]{2}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "y-m-d";
+				}else if(preg_match("#[0-9]{4}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "Y/m/d";
+				}else if(preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "Y-m-d";
+				}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "d.m.Y";
+				}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "m.d.y";
+				}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "m.d.Y";
+				}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "d.m.y";
+				}else if(preg_match("#[0-9]{4}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					$datalength = "Y.m.d";
 				}
 			}
 			return $datalength;

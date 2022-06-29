@@ -1,7 +1,7 @@
 window.addEventListener("load", function(){	
 	var currenturl = document.location.href;
 	currenturl = currenturl.replace(/\/$/, "");
-	currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
+	var currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
 	spreadsheet.currentref = currentref;
 
 	function init(){

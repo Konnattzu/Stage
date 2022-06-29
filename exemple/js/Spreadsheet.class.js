@@ -12,6 +12,8 @@ class Spreadsheet {
     
     //Remplissage des données du tableau
     initData(){
+        console.log("init");
+        console.log(this);
         var that = this;
         var rows = document.getElementsByClassName("dhx_grid-row");
 		var header = document.getElementsByClassName("dhx_grid-header-cell");
@@ -71,12 +73,16 @@ class Spreadsheet {
 
     //Définition des éléments html
     initHtml(){
+        var that = this;
         //Tableau
         this.html = document.getElementsByClassName("dhx_grid_data")[0];
+        // var table = that.html.parentElement.parentElement.parentElement;
+        // table.addEventListener("click", function(){ var delay = setTimeout(function(){ clearTimeout(delay);	that.initData(); }, 100); }, false);
+        // table.addEventListener("mouseup", function(){ var delay = setTimeout(function(){ clearTimeout(delay);	that.initData(); }, 100); }, false);
+        // table.addEventListener("scroll", function(){ var delay = setTimeout(function(){ clearTimeout(delay);	that.initData(); }, 100); }, false);
         //Bouton de sauvegarde
         this.savebtn = document.getElementById("savetable");
         if(typeof(this.savebtn) != 'undefined' && this.savebtn != null){
-            var that = this;
             this.savebtn.addEventListener("click", function(){that.sendTable();}, false);
         }
         //En-têtes
@@ -88,7 +94,6 @@ class Spreadsheet {
             this.identifiers[i].setHtml(this.html.getElementsByClassName("dhx_grid-cell")[(i*(this.header.length)-i)+1]);
         }
         //Cellules
-        var that = this;
         var delay = setTimeout(function(){
             clearTimeout(delay);
             for(var i=0;i<that.identifiers.length;i++){

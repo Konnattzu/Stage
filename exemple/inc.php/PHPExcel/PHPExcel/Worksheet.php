@@ -393,6 +393,14 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
 		return $this->_cellCollection;
 	}	//	function getCellCacheController()
 
+	public function setHighestRow($row)
+    {
+      $this->_cachedHighestRow = $row;
+    }
+	public function setHighestColumn($column)
+    {
+      $this->_cachedHighestColumn = $column;
+    }
 
 	/**
 	 * Get array of invalid characters for sheet title
