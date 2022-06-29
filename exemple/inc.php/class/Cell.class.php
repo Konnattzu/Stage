@@ -11,8 +11,8 @@
 
         public function __construct($value, $rownumb, $colnumb, $colid, $rowid, $pdo){
             $this->setValue($value);
-            $this->setType($value);
-            $this->setLen($value);
+            $this->initType();
+            $this->initLen();
             $this->setRownb($rownumb);
             $this->setColnb($colnumb);
             $this->setRowid($rowid);
@@ -27,15 +27,21 @@
             return $this->value;
         }
 
+        public function initType(){
+            $this->datatype = datatype($this->value, "");
+        }
         public function setType($value){
-            $this->datatype = datatype($value, "");
+            $this->datatype = $value;
         }
         public function getType(){
             return $this->datatype;
         }
 
-        public function setLen(){
+        public function initLen(){
             $this->datalength = datalength($this->value, $this->datatype, 0);
+        }
+        public function setLen($len){
+            $this->datalength = $len;
         }
         public function getLen(){
             return $this->datalength;
