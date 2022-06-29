@@ -136,6 +136,7 @@
                     $tempcells[$i] = $cells[$j][$i];
                 }
                 $this->column[$j] = new Column($j, $header[$j], $tempcells, $pdo);
+				print_r($this->column[$j]);
             }
         }
         public function setCol($col, $pos){
@@ -196,9 +197,9 @@
 					$datalength = datalength($this->cells[$i][$j]->getValue(), $datatype, $datalength);
 					$datatype = datatype($this->cells[$i][$j]->getValue(), $datatype, $datalength);
 					if(($datatype == "tinyint") && ($this->cells[$i][$j]->getValue() != "oui") && ($this->cells[$i][$j]->getValue() != "non") && ($this->cells[$i][$j]->getValue() != "1") && ($this->cells[$i][$j]->getValue() != "0")){
-						$this->cells[$i][$j]->getCom()->setValue(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i][$j]->getValue()));
+						$this->cells[$i][$j]->getCom()->setValue(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i][$j]->getValue()), $this->pdo);
 						$this->cells[$i][$j]->getCom()->setValue($this->cells[$i][$j]->getCom()->getValue());
-						$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), " ", $this->cells[$i][$j]->getValue()));
+						$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), " ", $this->cells[$i][$j]->getValue()), $this->pdo);
 						$this->cells[$i][$j]->setValue(trim($this->cells[$i][$j]->getValue()));
 					}
 					if($datatype == ""){

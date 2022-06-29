@@ -20,7 +20,6 @@
 				if(!isset($len[0]) || $len[0] == ""){
 					$len[0] = 0;
 				}
-                print_r($type[0]);
 				$this->setHeader(new Header($infos["Field"], $i, ""), $i);
 				$this->setCol(new Column($i, $this->getHeader()[$i]->getValue(), Array(), $pdo), $i);
 				$this->column[$i]->setType($type[0]);
