@@ -2,6 +2,16 @@
 	if(defined("constante")){
 		session_start();
 		include("bddconnect.php");
+		include("inc.php/func/datatype.func.php");
+		include("inc.php/func/clear.func.php");
+		include("inc.php/class/Spreadsheet.class.php");
+		include("inc.php/class/BDDsheet.class.php");
+		include("inc.php/class/Header.class.php");
+		include("inc.php/class/Cell.class.php");
+		include("inc.php/class/Identifier.class.php");
+		include("inc.php/class/Row.class.php");
+		include("inc.php/class/Column.class.php");
+		include("inc.php/class/Comment.class.php");
 		echo'<!DOCTYPE html>
 		<html lang="fr">
 		<head>
@@ -39,7 +49,7 @@
 			}
 		} else { 
 			$page = "accueil";
-			header("Location: index.php?ref=".$page.""); 
+			include("inc.php/accueil.inc.php"); 
 		}
 		echo'<footer>';
 		include("inc.php/footer.inc.php");

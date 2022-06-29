@@ -13,9 +13,9 @@ echo'<section>
 
 </div>
 <div id="chart"></div>
-
 </div>
 <script>
+console.log("oui");
 function redim(){
   if(window.innerWidth>1100){
     document.getElementById("layout").style.width = "50vw";
@@ -192,10 +192,12 @@ menu.events.on("click", function (id) {
 if (id === "add") {
   const newId = grid.data.add({';
   if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
-	  for($i=0;$i<count($header)-1;$i++){
-			echo $header[$i].': "",';
-		}
-			echo $header[$i].': "",';
+    if(isset($header)){
+        for($i=0;$i<count($header)-1;$i++){
+            echo $header[$i].': "",';
+        }
+        echo $header[$i].': "",';
+    }
   }
  echo'});
 dhx.message({
@@ -203,10 +205,9 @@ dhx.message({
     });
     timer++;
     setTimeout(function(){
-     document.getElementsByClassName("dhx_message")[timer].remove();
+        document.getElementsByClassName("dhx_message")[timer].remove();
         timer--;
-}, 2000);
- init();
+    }, 2000);
 }
 
 //export xlsx
@@ -249,13 +250,14 @@ let input = document.createElement("input");
 layout.getCell("menu").attach(menu);
 ';
 if($_SESSION["currentpage"] != "saisie" || isset($_SESSION["csv"])) {
+    if(isset($header)&&isset($header[0]) && isset($array) && isset($array[0])){
 echo'
 // initializing Grid for data vizualization
 const grid = new dhx.Grid(null, {
 css: "dhx_demo-grid",
 columns: [
   {
-      id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
+      width: 75, id: "action", gravity: 1.5, header: [{ text: "Actions", align: "center" }],
       htmlEnable: true, align: "center",
       editable: false,
       autoWidth: false,
@@ -264,20 +266,32 @@ columns: [
           echo'return "'.$span.'";
       }
 	  },';
+      if(isset($header)){
 		for($i=0;$i<count($header)-1;$i++){
-				echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
-                if($datatype[$i] == "date"){
+				echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'", class: "numb"}, {content: "selectFilter"}], editable: true';
+                if($table->getCol()[$i]->getType() == "date"){
                     echo', type: "date", dateFormat: "%Y-%m-%d"';
-                }else if($datatype[$i] == "int"){
+                }else if($table->getCol()[$i]->getType() == "int"){
                     echo', type: "number"';
-                }else if($datatype[$i] == "enum"){
+                }else if($table->getCol()[$i]->getType() == "enum"){
                     echo', editorType: "combobox", options: ["M", "F", "N/P"]';
-                }else if($datatype[$i] == "boolean"){
+                }else if($table->getCol()[$i]->getType() == "tinyint"){
                     echo', type: "boolean"';
                 }
                 echo' }, ';
 		}
-			echo '{ id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true } ';
+			echo '{ width: 150, id: "'.$header[$i].'", header: [{ text: "'.$header[$i].'"}, {content: "selectFilter"}], editable: true';
+            if($table->getCol()[$i]->getType() == "date"){
+                echo', type: "date", dateFormat: "%Y-%m-%d"';
+            }else if($table->getCol()[$i]->getType() == "int"){
+                echo', type: "number"';
+            }else if($table->getCol()[$i]->getType() == "enum"){
+                echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+            }else if($table->getCol()[$i]->getType() == "tinyint"){
+                echo', type: "boolean"';
+            }
+            echo' }';
+        }
     echo'
 ],
 autoWidth: true,
@@ -300,7 +314,7 @@ function importXlsx() {
 // loading data into Grid
 database = ';
 include("inc.php/parts/data.inc.php");
-echo'
+echo';
 grid.data.parse(database);
 
 // attaching widgets to Layout cells
@@ -1103,6 +1117,7 @@ function Gnuage(){
 		  document.getElementById("parent").style.display = "flex";
 }
 ';
+    }
 }
 echo'
     function openForm() {
