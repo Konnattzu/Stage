@@ -195,10 +195,10 @@
 					}
 					$datalength = datalength($this->cells[$i][$j]->getValue(), $datatype, $datalength);
 					$datatype = datatype($this->cells[$i][$j]->getValue(), $datatype, $datalength);
-					if(($datatype == "boolean") && ($this->cells[$i][$j]->getValue() != "oui") && ($this->cells[$i][$j]->getValue() != "non") && ($this->cells[$i][$j]->getValue() != "1") && ($this->cells[$i][$j]->getValue() != "0")){
-						$this->cells[$i][$j]->getCom()->setValue(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i][$j]->getValue()));
+					if(($datatype == "tinyint") && ($this->cells[$i][$j]->getValue() != "oui") && ($this->cells[$i][$j]->getValue() != "non") && ($this->cells[$i][$j]->getValue() != "1") && ($this->cells[$i][$j]->getValue() != "0")){
+						$this->cells[$i][$j]->getCom()->setValue(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i][$j]->getValue()), $this->pdo);
 						$this->cells[$i][$j]->getCom()->setValue($this->cells[$i][$j]->getCom()->getValue());
-						$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), " ", $this->cells[$i][$j]->getValue()));
+						$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), " ", $this->cells[$i][$j]->getValue()), $this->pdo);
 						$this->cells[$i][$j]->setValue(trim($this->cells[$i][$j]->getValue()));
 					}
 					if($datatype == ""){
@@ -206,7 +206,7 @@
 					}
 				}
 				if(count($this->column[$i]->getCells())>16){
-					if(count($enum)<8 && $datatype != "boolean" && count($enum)>0){
+					if(count($enum)<8 && ($datatype == "varchar" || $datatype == "int") && count($enum)>0){
 						$datatype = "enum";
 						$datalength = "";
 						for($k=0;$k<count($enum)-1;$k++){
@@ -215,7 +215,7 @@
 						$datalength .= "'".$enum[$k]."'";
 					}
 				}else{
-					if(count($enum)<(count($array[0])*0.75) && $datatype != "boolean"){
+					if(count($enum)<(count($array[0])*0.75) && ($datatype == "varchar" || $datatype == "int") && count($enum)>0){
 						$datatype = "enum";
 						$datalength = "";
 						for($k=0;$k<count($enum)-1;$k++){
@@ -224,7 +224,7 @@
 						$datalength .= "'".$enum[$k]."'";
 					}
 				}
-				if(($datatype != "date") && ($datatype != "boolean")){
+				if(($datatype != "date") && ($datatype != "tinyint")){
 					$datatype .= "(";
 				}
 				if(preg_match("/[(]/", $datatype)){
