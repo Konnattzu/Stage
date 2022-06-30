@@ -63,6 +63,9 @@
 
         public function setRowid($rowid){
             $this->rowid = $rowid;
+            if(isset($this->comment)){
+                $this->comment->setRowid($rowid);
+            }
         }
         public function getRowid(){
             return $this->rowid;
@@ -70,9 +73,12 @@
 
         public function setColid($colid){
             $this->colid = $colid;
+            if(isset($this->comment)){
+                $this->comment->setColid($colid);
+            }
         }
         public function getColid(){
-            return $this->colnumb;
+            return $this->colid;
         }
 
         public function setCom($rowid, $colid, $pdo){

@@ -69,6 +69,9 @@
 				}
 			}
 			
+			echo'<pre>';
+			print_r($table);
+			echo'</pre>';
 			$table->json_encode_private();
 		}
 		include("inc.php/parts/grid.inc.php");
