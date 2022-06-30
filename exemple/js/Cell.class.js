@@ -64,7 +64,6 @@ class Cell {
 
     initColor(){
         switch(this.datatype){
-            
             case "varchar":
                 this.color = "red";
             break;
