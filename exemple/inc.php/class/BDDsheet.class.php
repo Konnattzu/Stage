@@ -10,6 +10,7 @@
 
         public function __construct($pdo, $bddtable){
             $this->bddtable = $bddtable;
+            $this->pdo = $pdo;
             $infotable = $pdo->prepare('SHOW COLUMNS FROM '.$this->bddtable.';');
 			$infotable->execute();
             $i=0;
@@ -125,7 +126,6 @@
             }
             for($i=0;$i<count($this->header);$i++){
                 for($j=0;$j<count($this->identifier);$j++){
-                    echo $this->identifier[$j]->getValue()->getValue();
                     $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
                 }
             }
@@ -231,8 +231,99 @@
 			spreadsheet.dataFill('.json_encode(extract_props($this)).');
 			</script>';
 		}
-		public function sendTable(){
-			
-		}
+        public function compareTablength($table1){
+            if(count($this->getHeader()) > count($table1->getHeader())){
+                for($i=count($table1->getHeader());$i<count($this->getHeader());$i++){
+                    echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
+                    $query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
+                    $pdo->exec($query);
+                }
+            }
+            for($i=0;$i<count($this->getHeader());$i++){
+                if(!empty($this->getCol()[$i]->getLen()) && $this->getCol()[$i]->getLen() > $table1->getCol()[$i]->getLen()){
+                    echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
+                    $query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
+                    $pdo->exec($query);
+                }
+            }
+        }
+        public function setNull($i){
+            for($j=0;$j<count($this->getCol());$j++){
+                echo $this->getCell()[$j][$i]->getValue();
+                echo $this->getCol()[$j]->getType();
+                echo $this->getCell()[$j][$i]->getColid()."<br>";
+                if($this->getCell()[$j][$i]->getValue() == ""){
+                    switch($this->getCol()[$j]->getType()){
+                        case "int":
+                            $this->getCell()[$j][$i]->setValue(0);
+                        break;
+                        case "tinyint":
+                            $this->getCell()[$j][$i]->setValue(0);
+                        break;
+                        case "date":
+                            $this->getCell()[$j][$i]->setValue("0001-01-01");
+                        break;
+                        case "varchar":
+                            $this->getCell()[$j][$i]->setValue("NULL");
+                        break;
+                        case "enum":
+                            $this->getCell()[$j][$i]->setValue("NULL");
+                        break;
+                    }
+                }else{
+                    switch($this->getCol()[$j]->getType()){
+                        case "varchar":
+                            $this->getCell()[$j][$i]->setValue("'".$this->getCell()[$j][$i]->getValue()."'");
+                        break;
+                        case "enum":
+                            $this->getCell()[$j][$i]->setValue("'".$this->getCell()[$j][$i]->getValue()."'");
+                        break;
+                    }
+                }
+                switch($this->getCol()[$j]->getType()){
+                    case "date":
+                        $this->getCell()[$j][$i]->setValue("'".$this->getCell()[$j][$i]->getValue()."'");
+                    break;
+                    case "tinyint":
+                        $this->getCell()[$j][$i]->setValue("'".$this->getCell()[$j][$i]->getValue()."'");
+                    break;
+                }
+            }
+        }
+        public function newLine($i, $table1){
+            $query = 'INSERT INTO '.$table1->getBdTab().' ('.$this->getId()[$i]->getValue()->getColid().') VALUES ('.$this->getId()[$i]->getValue()->getRowid().');';
+            echo $query;
+            $this->pdo->exec($query);
+        }
+        public function dataLine($i, $table1){
+            for($j=0;$j<count($this->getCol());$j++){
+                $query = "UPDATE ".$table1->getBdTab()." SET ".$this->getCol()[$j]->getHead()."=".$this->getCell()[$j][$i]->getValue()." WHERE ".$this->getId()[$i]->getValue()->getColid()."=".$this->getCell()[$j][$i]->getRowid().";";
+                echo $query;
+                print_r($this->pdo);
+                $this->pdo->exec($query);
+            }
+        }
+		public function sendTable($table1){
+            //pour chaque ligne
+            for($i=0;$i<count($this->getId());$i++){
+                print_r($this->getId()[$i]);
+                //si la ligne possède un ID
+                if(null !== $this->getId()[$i]->getValue()->getValue()){
+                    $this->setNull($i);
+                    $exists = false;
+                    for($j=0;$j<count($table1->getId());$j++){
+                        if($this->getId()[$i]->getValue()->getValue() == $table1->getId()[$j]->getValue()->getValue()){
+                            $exists = true;
+                        }
+                    }
+                    if($exists == true){
+                        $this->dataLine($i, $table1);
+                    }else{
+                        $this->newLine($i, $table1);
+                        $this->dataLine($i, $table1);
+                    }
+                }
+            }
+        }
     }
 ?>
