@@ -133,6 +133,8 @@
 									$pdo->exec($query);
 								}
 							}
+						}
+					}
 						}else{
 								echo 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');
 								';
@@ -145,8 +147,6 @@
 									$pdo->exec($query);
 							}
 						}
-					}
-				}
 			}
 		}
 	echo'oui';
