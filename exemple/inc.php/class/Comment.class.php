@@ -6,8 +6,8 @@
 
         public function __construct($rowid, $colid, $pdo){
             $this->valueInit($rowid, $colid, $pdo);
-            $this->setRownb($rowid);
-            $this->setColnb($colid);
+            $this->setRowid($rowid);
+            $this->setColid($colid);
         }
 
         public function valueInit($rowid, $colid, $pdo){
@@ -29,17 +29,17 @@
             return $this->value;
         }
 
-        public function setRownb($rowid){
+        public function setRowid($rowid){
             $this->rowid = $rowid;
         }
-        public function getRownb(){
+        public function getRowid(){
             return $this->rowid;
         }
 
-        public function setColnb($colid){
+        public function setColid($colid){
             $this->colid = $colid;
         }
-        public function getColnb(){
+        public function getColid(){
             return $this->colid;
         }
     }

@@ -64,7 +64,6 @@ class Cell {
 
     initColor(){
         switch(this.datatype){
-            
             case "varchar":
                 this.color = "red";
             break;
@@ -144,8 +143,8 @@ class Cell {
 			}
 		}
 		var data = new FormData();
-		data.append("row", that.rowid);
-		data.append("column", that.colid);
+		data.append("row", that.rownumb);
+		data.append("column", that.colnumb);
 		data.append("value", newtext);
         console.log(that.editplace);
 		data.append("editplace", that.editplace);

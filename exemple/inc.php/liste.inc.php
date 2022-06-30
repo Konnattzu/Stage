@@ -7,8 +7,8 @@
 				<a href="index.php?ref=saisie">Nouvelle entrée</a>
 				<h1>La liste</h1>';
 
-			$table = new BDDsheet($pdo);
-			$table->createTable($pdo);
+			$table = new BDDsheet($pdo, "step1");
+			// $table->createTable($pdo);
 			
 			for($j=0;$j<count($table->getHeader());$j++){
 				$header[$j] = $table->getHeader()[$j]->getValue();
@@ -18,9 +18,10 @@
 			}
 			
 			$table->json_encode_private();
+			// echo'<pre>';
+			// print_r($table);
+			// echo'</pre>';
 			
-			
-
 			include("inc.php/parts/grid.inc.php");
 
 			

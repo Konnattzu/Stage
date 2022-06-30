@@ -9,14 +9,16 @@
         public $bddtable = "step2";
         public $bddbase = "step1";
         public $file = Array();
+        public $pdo;
 
         public function __construct($file, $pdo){
 			$this->file = $file;
+			$this->pdo = $pdo;
             $this->initHeader();
-            $this->initData($this->header, $pdo);
-            $this->initId($this->cells);
-            $this->initRow($this->identifier, $this->header, $this->cells);
-            $this->initCol($this->header, $this->identifier, $this->cells, $pdo);
+            $this->initData();
+            $this->initId();
+            $this->initRow();
+            $this->initCol();
 			// echo'<pre>';
 			// print_r($this->header);
 			// print_r($this->cells);
@@ -66,11 +68,11 @@
         }
 
 		//cells
-        public function initData($header, $pdo){
+        public function initData(){
 			$file = $this->file;
             $row=0;
 			$rowid = Array();
-            for($j=0;$j<count($header);$j++){
+            for($j=0;$j<count($this->header);$j++){
                 $this->cells[$j] = Array();
             }
 			$colnb = 0;
@@ -85,8 +87,8 @@
 			$colnb = 0;
             foreach ($file as $col) {
 				if($colnb > 0){
-					for($j=0;$j<count($header);$j++){
-						$this->cells[$j][$row] = new Cell($col[$j], $row, $j, $header[$j]->getValue(), $rowid[$row], $pdo);
+					for($j=0;$j<count($this->header);$j++){
+						$this->cells[$j][$row] = new Cell($col[$j], $row, $j, $this->header[$j]->getValue(), $rowid[$row], $this->pdo);
 					}
 					$row++;
 				}
@@ -101,9 +103,36 @@
         }
 
 		//identifier
-        public function initId($cells){
-            for($j=0;$j<count($cells[0]);$j++){
-                $this->identifier[$j] = new Identifier($cells[0][$j], $j);
+        public function initId(){
+            $idcol = "";
+            for($i=0;$i<count($this->header);$i++){
+                if(!isset($idcol) || $idcol == ""){
+                    $data = Array();
+                    $uniquedata = Array();
+                    for($j=0;$j<count($this->cells[$i]);$j++){
+                        if(!in_array($this->cells[$i][$j]->getValue(), $data)){
+                            $uniquedata[$j] = $this->cells[$i][$j]->getValue();
+                        }
+                        $data[$j] = $this->cells[$i][$j]->getValue();
+                        // echo'<pre>unique';
+                        // print_r($uniquedata);
+                        // print_r($data);
+                        // echo'data</pre>';
+                    }
+                    if(count($uniquedata) == count($data)){
+                        $idcol = $i;
+						// echo $this->header[$idcol]->getValue();
+                    }
+                }
+            }
+            for($j=0;$j<count($this->cells[$idcol]);$j++){
+                $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
+            }
+            for($i=0;$i<count($this->header);$i++){
+                for($j=0;$j<count($this->identifier);$j++){
+                    // echo $this->identifier[$j]->getValue()->getValue();
+                    $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+                }
             }
         }
         public function setId(){
@@ -114,12 +143,12 @@
         }
 
 		//row
-        public function initRow($identifier, $header, $cells){
-            for($j=0;$j<count($cells[0]);$j++){
-                for($i=0;$i<count($header);$i++){
-                    $tempcells[$i] = $cells[$i][$j];
+        public function initRow(){
+            for($j=0;$j<count($this->cells[0]);$j++){
+                for($i=0;$i<count($this->header);$i++){
+                    $tempcells[$i] = $this->cells[$i][$j];
                 }
-                $this->row[$j] = new Row($identifier[$j], $j, $tempcells);
+                $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
             }
         }
         public function setRow(){
@@ -130,12 +159,12 @@
         }
 
 		//column
-        public function initCol($header, $identifier, $cells, $pdo){
-            for($j=0;$j<count($header);$j++){
-                for($i=0;$i<count($identifier);$i++){
-                    $tempcells[$i] = $cells[$j][$i];
+        public function initCol(){
+            for($j=0;$j<count($this->header);$j++){
+                for($i=0;$i<count($this->identifier);$i++){
+                    $tempcells[$i] = $this->cells[$j][$i];
                 }
-                $this->column[$j] = new Column($j, $header[$j], $tempcells, $pdo);
+                $this->column[$j] = new Column($j, $this->header[$j], $tempcells, $this->pdo);
             }
         }
         public function setCol($col, $pos){
@@ -162,11 +191,11 @@
         }
 
 		//methods
-        public function createTable($pdo){
+        public function createTable(){
             $query = 'CREATE TABLE IF NOT EXISTS '.$this->bddtable.' LIKE '.$this->bddbase.';';
-            $pdo->exec($query);
+            $this->pdo->exec($query);
         }
-        public function createBase($pdo){
+        public function createBase(){
 			$querytable = "CREATE TABLE IF NOT EXISTS step1
 			 (";
 			for($i=0;$i<count($this->header);$i++){
@@ -197,7 +226,7 @@
 					$datatype = datatype($this->cells[$i][$j]->getValue(), $datatype, $datalength);
 					if(($datatype == "tinyint") && ($this->cells[$i][$j]->getValue() != "oui") && ($this->cells[$i][$j]->getValue() != "non") && ($this->cells[$i][$j]->getValue() != "1") && ($this->cells[$i][$j]->getValue() != "0")){
 						$this->cells[$i][$j]->getCom()->setValue(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i][$j]->getValue()), $this->pdo);
-						$this->cells[$i][$j]->getCom()->setValue($this->cells[$i][$j]->getCom()->getValue());
+						$this->cells[$i][$j]->getCom()->setValue($this->cells[$i][$j]->getCom()->getValue(), $this->pdo);
 						$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), " ", $this->cells[$i][$j]->getValue()), $this->pdo);
 						$this->cells[$i][$j]->setValue(trim($this->cells[$i][$j]->getValue()));
 					}
@@ -240,7 +269,7 @@
 			$querytable[strlen($querytable)-3] = ";";
 			$querytable[strlen($querytable)-4] = ")";
             $query = $querytable;
-            $pdo->exec($query);
+            $this->pdo->exec($query);
         }
 		public function jsonSerialize(){
 			$vars = get_object_vars($this);
@@ -290,10 +319,92 @@
 			spreadsheet.dataFill('.json_encode(extract_props($this)).');
 			</script>';
 		}
-        public function addData($file, $pdo){
+		public function repartColumns($template){
+			$righthead = Array();
+			//Pour chaque colonne de 1
+			for($i=0;$i<count($template->getHeader());$i++){
+				if($this->getHeader()[$i] != $template->getHeader()[$i]){
+				// 	$matching = 0;
+				// 	$overflow = 0;
+				// 	$coltype = preg_replace("/[^A-Za-z]/", "", $basetable->column[$i]->getType());
+				// 	$collen = $string = preg_replace("/[^0-9]/", "", $basetable->column[$i]->getType());
+				// 	for($k=0;$k<count($basetable->header);$k++){
+				// 		$headtype = "";
+				// 		$headlen = 0;
+				// 		for($j=0;$j<count($this->row);$j++){
+				// 			$occupied = false;
+				// 			if(!empty($this->cells[$k][$j]->value)){
+				// 				$headtype = datatype($this->cells[$k][$j]->value, $headtype, $headlen);
+				// 				$headlen = datalength($this->cells[$k][$j]->value, $headtype, $headlen);
+				//                 $this->cells[$k][$j]->setType($headtype);
+				//                 $this->cells[$k][$j]->setLen($headlen);
+				// 			}
+				// 		}
+				//         $this->column[$k]->setType($this->cells[$k][count($this->cells[$k])-1]->getType());
+				//         $this->column[$k]->setLen($this->cells[$k][count($this->cells[$k])-1]->getLen());
+				// 		echo'<pre>';
+				// 			print_r($this->column[$k]->getHead());
+				// 			print_r($basetable->column[$k]->getHead());
+				// 		echo'</pre>';
+				// 		if($this->column[$k]->getType() == $basetable->column[$i]->getType()){
+				// 			similar_text($this->header[$k]->getValue(), $basetable->header[$k]->getValue(), $perc);
+				// 			if($matching < $perc){
+				// 				for($r=0;$r<count($this->header);$r++){
+				// 					if(isset($righthead[$r]) && $righthead[$r] == $this->header){
+				// 						$occupied = true;
+				// 					}
+				// 				}
+				// 				if($occupied == false){
+				// 					$righthead[$i] = $basetable->header[$k];
+				// 					$matching = $perc;
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				}else{
+					$righthead[$i] = $template->getHeader()[$i];
+				}
+			}
+			for($i=0;$i<count($this->header);$i++){
+				if(isset($righthead[$i])){
+					$this->header[$i] = $righthead[$i];
+				}else{
+					$overflow++;
+					// print_r($this->header[count($basetable->column)-1 + $overflow]);
+					$righthead[$i] = $this->header[count($basetable->column)-1 + $overflow];
+				}
+			}
+			for($k=count($basetable->column);$k<count($this->header);$k++){
+				$basetable->column[$k] = $righthead[$k];
+				$header[$k] = $righthead[$k];
+				$headtype = "";
+				$headlen = 0;
+				for($l=0;$l<count($this->row);$l++){
+					if(!empty($this->cells[$k][$l]->getValue())){
+						$headtype = datatype($this->cells[$k][$l]->getValue(), $headtype, $headlen);
+						$headlen = datalength($this->cells[$k][$l]->getValue(), $headtype, $headlen);
+						$this->cells[$k][$l]->setType($headtype);
+						$this->cells[$k][$l]->setLen($datalength);
+					}else{
+						$this->cells[$k][$l]->setType("varchar");
+						$this->cells[$k][$l]->setLen(16);
+					}
+				}
+				$this->column[$k]->setType($basetable->column[$k]->getType());
+				$this->column[$k]->setLen($basetable->column[$k]->getLen());
+				// echo strlen($this->header[$k]->getValue());
+				if(strlen($this->header[$k]->getValue()) > 64){
+					$this->header[$k]->setValue(substr($this->header[$k]->getValue(), 0, 64));
+				}
+				echo 'ALTER TABLE step2 ADD '.$this->header[$k]->getValue().' '.$this->column[$k]->getType().'('.$this->column[$k]->getLen().');';
+				$req = $pdo->prepare('ALTER TABLE step2 ADD '.$this->header[$k]->getValue().' '.$this->column[$k]->getType().'('.$this->column[$k]->getLen().');');
+				$req->execute();
+			}
+		}
+        public function addData($file){
             //récupérer header table 1
-			$basetable = new BDDsheet($pdo);
-            $infotable = $pdo->prepare('SHOW COLUMNS FROM '.$this->bddbase.';');
+			$basetable = new BDDsheet($this->pdo, $this->bddbase);
+            $infotable = $this->pdo->prepare('SHOW COLUMNS FROM '.$this->bddbase.';');
 			$infotable->execute();
             $i=0;
 			while($infos = $infotable->fetch(PDO::FETCH_ASSOC)){
@@ -306,139 +417,60 @@
 					$len[0] = "";
 				}
 				$basetable->setHeader(new Header($infos["Field"], $i, ""), $i);
-				$basetable->setCol(new Column($i, $basetable->getHeader()[$i]->getValue(), Array(), $pdo), $i);
+				$basetable->setCol(new Column($i, $basetable->getHeader()[$i]->getValue(), Array(), $this->pdo), $i);
 				$basetable->column[$i]->setType($type[0]);
 				$basetable->column[$i]->setLen($len[0]);
 				$i++;
 			}
-			
-            //si table 2 plus grande que table 1
-			if(count($this->header) >= count($basetable->header)){
-				$righthead = Array();
-				//Pour chaque colonne de 1
-				for($i=0;$i<count($basetable->header);$i++){
-					// if($this->header[$i] != $basetable->header[$i]){
-					// 	$matching = 0;
-					// 	$overflow = 0;
-					// 	$coltype = preg_replace("/[^A-Za-z]/", "", $basetable->column[$i]->getType());
-					// 	$collen = $string = preg_replace("/[^0-9]/", "", $basetable->column[$i]->getType());
-					// 	for($k=0;$k<count($basetable->header);$k++){
-					// 		$headtype = "";
-					// 		$headlen = 0;
-					// 		for($j=0;$j<count($this->row);$j++){
-					// 			$occupied = false;
-					// 			if(!empty($this->cells[$k][$j]->value)){
-					// 				$headtype = datatype($this->cells[$k][$j]->value, $headtype, $headlen);
-					// 				$headlen = datalength($this->cells[$k][$j]->value, $headtype, $headlen);
-                    //                 $this->cells[$k][$j]->setType($headtype);
-                    //                 $this->cells[$k][$j]->setLen($headlen);
-					// 			}
-					// 		}
-                    //         $this->column[$k]->setType($this->cells[$k][count($this->cells[$k])-1]->getType());
-                    //         $this->column[$k]->setLen($this->cells[$k][count($this->cells[$k])-1]->getLen());
-					// 		echo'<pre>';
-					// 			print_r($this->column[$k]->getHead());
-					// 			print_r($basetable->column[$k]->getHead());
-					// 		echo'</pre>';
-					// 		if($this->column[$k]->getType() == $basetable->column[$i]->getType()){
-					// 			similar_text($this->header[$k]->getValue(), $basetable->header[$k]->getValue(), $perc);
-					// 			if($matching < $perc){
-					// 				for($r=0;$r<count($this->header);$r++){
-					// 					if(isset($righthead[$r]) && $righthead[$r] == $this->header){
-					// 						$occupied = true;
-					// 					}
-					// 				}
-					// 				if($occupied == false){
-					// 					$righthead[$i] = $basetable->header[$k];
-					// 					$matching = $perc;
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }else{
-						$righthead[$i] = $basetable->header[$i];
-						$overflow = 0;
-					// }
-				}
-				for($i=0;$i<count($this->header);$i++){
-					if(isset($righthead[$i])){
-						$this->header[$i] = $righthead[$i];
-					}else{
-						$overflow++;
-						print_r($this->header[count($basetable->column)-1 + $overflow]);
-						$righthead[$i] = $this->header[count($basetable->column)-1 + $overflow];
-					}
-				}
-				for($k=count($basetable->column);$k<count($this->header);$k++){
-					$basetable->column[$k] = $righthead[$k];
-					$header[$k] = $righthead[$k];
-					$headtype = "";
-					$headlen = 0;
-					for($l=0;$l<count($this->row);$l++){
-						if(!empty($this->cells[$k][$l]->getValue())){
-							$headtype = datatype($this->cells[$k][$l]->getValue(), $headtype, $headlen);
-							$headlen = datalength($this->cells[$k][$l]->getValue(), $headtype, $headlen);
-							$this->cells[$k][$l]->setType($headtype);
-							$this->cells[$k][$l]->setLen($datalength);
-						}else{
-							$this->cells[$k][$l]->setType("varchar");
-							$this->cells[$k][$l]->setLen(16);
-						}
-					}
-					$this->column[$k]->setType($basetable->column[$k]->getType());
-					$this->column[$k]->setLen($basetable->column[$k]->getLen());
-					echo strlen($this->header[$k]->getValue());
-					if(strlen($this->header[$k]->getValue()) > 64){
-						$this->header[$k]->setValue(substr($this->header[$k]->getValue(), 0, 64));
-					}
-					echo 'ALTER TABLE step2 ADD '.$this->header[$k]->getValue().' '.$this->column[$k]->getType().'('.$this->column[$k]->getLen().');';
-					$req = $pdo->prepare('ALTER TABLE step2 ADD '.$this->header[$k]->getValue().' '.$this->column[$k]->getType().'('.$this->column[$k]->getLen().');');
-					$req->execute();
-				}
+            // //si table 2 plus grande que table 1
+			// if(count($this->getHeader()) >= count($basetable->getHeader())){
+			// 	$basetable->repartColumns($this);
+            // //si table 1 plus grande que table 2
+			// }else if(count($this->getHeader()) <= count($basetable->getHeader())){
+			// 	$this->repartColumns($basetable);
 
-            //si table 1 plus grande que table 2
-			}else if(count($this->header) <= count($column)){
-				$righthead = Array();
-				for($i=0;$i<count($this->header);$i++){
-					if($this->header[$i] != $basetable->header[$i]){
-						$matching = 0;
-						$coltype = preg_replace("/[^A-Za-z]/", "", $basetable->column[$i]->getType());
-						$collen = $string = preg_replace("/[^0-9]/", "", $basetable->column[$i]->getType());
-						for($k=0;$k<count($this->header);$k++){
-							$headtype = "";
-							$headlen = 0;
-							for($j=0;$j<count($this->row);$j++){
-								$occupied = false;
-								if(!empty($this->cells[$k][$j]->value)){
-									$headtype = datatype($this->cells[$k][$j]->getValue(), $headtype, $headlen);
-									$headlen = datalength($this->cells[$k][$j]->getValue(), $headtype, $headlen);
-                                    $this->cells[$k][$j]->setType($headtype);
-                                    $this->cells[$k][$j]->setLen($headlen);
-								}
-							}
-                            $this->column[$k]->setType($basetable->column[$k]->getType());
-                            $this->column[$k]->setLen($this->cells[$k][count($this->cells[$k])-1]->getLen());
-							if($this->column[$k]->getType() == $basetable->column[$k]->getType()){
-								similar_text($this->header[$k]->getValue(), $basetable->header[$k]->getValue(), $perc);
-								if($matching < $perc){
-									for($r=0;$r<count($this->header);$r++){
-										if(isset($righthead[$r]) && $righthead[$r] == $this->header){
-											$occupied = true;
-										}
-									}
-									if($occupied == false){
-										$righthead[$i] = $basetable->header[$k];
-										$matching = $perc;
-									}
-								}
-							}
-						}
+
+			// 	$righthead = Array();
+			// 	for($i=0;$i<count($this->header);$i++){
+			// 		if($this->header[$i] != $basetable->header[$i]){
+			// 			$matching = 0;
+			// 			$coltype = preg_replace("/[^A-Za-z]/", "", $basetable->column[$i]->getType());
+			// 			$collen = $string = preg_replace("/[^0-9]/", "", $basetable->column[$i]->getType());
+			// 			for($k=0;$k<count($this->header);$k++){
+			// 				$headtype = "";
+			// 				$headlen = 0;
+			// 				for($j=0;$j<count($this->row);$j++){
+			// 					$occupied = false;
+			// 					if(!empty($this->cells[$k][$j]->value)){
+			// 						$headtype = datatype($this->cells[$k][$j]->getValue(), $headtype, $headlen);
+			// 						$headlen = datalength($this->cells[$k][$j]->getValue(), $headtype, $headlen);
+            //                         $this->cells[$k][$j]->setType($headtype);
+            //                         $this->cells[$k][$j]->setLen($headlen);
+			// 					}
+			// 				}
+            //                 $this->column[$k]->setType($basetable->column[$k]->getType());
+            //                 $this->column[$k]->setLen($this->cells[$k][count($this->cells[$k])-1]->getLen());
+			// 				if($this->column[$k]->getType() == $basetable->column[$k]->getType()){
+			// 					similar_text($this->header[$k]->getValue(), $basetable->header[$k]->getValue(), $perc);
+			// 					if($matching < $perc){
+			// 						for($r=0;$r<count($this->header);$r++){
+			// 							if(isset($righthead[$r]) && $righthead[$r] == $this->header){
+			// 								$occupied = true;
+			// 							}
+			// 						}
+			// 						if($occupied == false){
+			// 							$righthead[$i] = $basetable->header[$k];
+			// 							$matching = $perc;
+			// 						}
+			// 					}
+			// 				}
+			// 			}
 						
-					}else{
-						$righthead[$i] = $basetable->header[$i];
-					}
-				}
-			}
+			// 		}else{
+			// 			$righthead[$i] = $basetable->header[$i];
+			// 		}
+			// 	}
+			// }
 			for($j=0;$j<count($this->row);$j++){
 				$querydata[$j] = "INSERT INTO step2 (";
 				for($i=0;$i<count($this->column)-1;$i++){
@@ -472,7 +504,7 @@
 						$this->cells[$i][$j]->setValue(date_format(date_create_from_format($this->cells[$i][$j]->getLen(), $this->cells[$i][$j]->getValue()), "Y-m-d"));
 					}
 					if(!empty($this->column[$i]->getLen()) && $this->column[$i]->getLen() > $basetable->column[$i]->getLen()){
-                        $req = $pdo->prepare('ALTER TABLE step2 MODIFY '.$this->header[$i]->getValue().' '.$this->column[$i]->getType().' ('.$this->column[$i]->getLen().');');
+                        $req = $this->pdo->prepare('ALTER TABLE step2 MODIFY '.$this->header[$i]->getValue().' '.$this->column[$i]->getType().' ('.$this->column[$i]->getLen().');');
                         $req->execute();
 					}
 				}
@@ -492,7 +524,7 @@
 						}
 					}else if($this->column[$i]->getType() == "int"){
 						if(datatype($this->cells[$i][$j]->getValue(), $this->cells[$i][$j]->getType()) == "varchar"){
-							$this->cells[$i][$j]->getCom()->setValue(preg_replace("/[^A-Za-z]/", "", $this->cells[$i][$j]->getValue()));
+							$this->cells[$i][$j]->getCom()->setValue(preg_replace("/[^A-Za-z]/", "", $this->cells[$i][$j]->getValue()), $this->pdo);
 							$this->cells[$i][$j]->setValue(str_replace($this->cells[$i][$j]->getCom()->getValue(), "", $this->cells[$i][$j]->getValue()));
 						}
 						if(!empty($this->cells[$i][$j]->getValue())){
@@ -534,7 +566,7 @@
 					}
 				}
 				// print_r($querydata[$j]);
-                $req = $pdo->prepare($querydata[$j]);
+                $req = $this->pdo->prepare($querydata[$j]);
                 $req->execute();
 			}
         }
