@@ -274,7 +274,7 @@ columns: [
                 }else if($table->getCol()[$i]->getType() == "int"){
                     echo', type: "number"';
                 }else if($table->getCol()[$i]->getType() == "enum"){
-                    echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+                    echo', editorType: "combobox", options: ['.$table->getCol()[$i]->getLen().']';
                 }else if($table->getCol()[$i]->getType() == "tinyint"){
                     echo', type: "boolean"';
                 }
@@ -286,7 +286,7 @@ columns: [
             }else if($table->getCol()[$i]->getType() == "int"){
                 echo', type: "number"';
             }else if($table->getCol()[$i]->getType() == "enum"){
-                echo', editorType: "combobox", options: ["M", "F", "N/P"]';
+                echo', editorType: "combobox", options: ['.$table->getCol()[$i]->getLen().']';
             }else if($table->getCol()[$i]->getType() == "tinyint"){
                 echo', type: "boolean"';
             }
