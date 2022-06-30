@@ -3,187 +3,150 @@
 	include("../../bddconnect.php");
 	include("../func/clear.func.php");
 	include("../func/datatype.func.php");
+	include("../class/Spreadsheet.class.php");
+	include("../class/BDDsheet.class.php");
+	include("../class/Header.class.php");
+	include("../class/Cell.class.php");
+	include("../class/Identifier.class.php");
+	include("../class/Row.class.php");
+	include("../class/Column.class.php");
+	include("../class/Comment.class.php");
 	
-	$infotable = $pdo->prepare('SHOW COLUMNS FROM step1;');
-	$infotable->execute();
-	$i = 0;
-	$col1 = 0;
-	$row1 = 0;
-	while($infos1 = $infotable->fetch(PDO::FETCH_ASSOC)){
-		preg_match('/[a-z]+/', $infos1['Type'], $type);
-		preg_match('/\d+/', $infos1['Type'], $len);
-		if(!isset($type[0]) || $type[0] == ""){
-			$type[0] = "";
-		}
-		if(!isset($len[0]) || $len[0] == ""){
-			$len[0] = "";
-		}
-		$column1[$col1] = $infos1["Field"];
-		$coltype1[$col1] = $type[0];
-		$charlength1[$column1[$col1]] = $len[0];
-		$col1++;
-	}
-	
-	$req = $pdo->prepare('SELECT * FROM step1;');
-	$req->execute();
-	while($data1 = $req->fetch(PDO::FETCH_ASSOC)){
-		for($i=0;$i<count($column1);$i++){
-			if($data1[$column1[$i]] == ""){
-				$array1[$i][$row1] = "NULL";
-			}else{
-				$array1[$i][$row1] = "'".$data1[$column1[$i]]."'";
-			}
-		}
-		$row1++;
-	}
-	
-	$infotable = $pdo->prepare('SHOW COLUMNS FROM step2;');
-	$infotable->execute();
-	$i = 0;
-	$col2 = 0;
-	$row2 = 0;
-	while($infos2 = $infotable->fetch(PDO::FETCH_ASSOC)){
-		preg_match('/[a-z]+/', $infos2['Type'], $type);
-		preg_match('/\d+/', $infos2['Type'], $len);
-		if(!isset($type[0]) || $type[0] == ""){
-			$type[0] = "";
-		}
-		if(!isset($len[0]) || $len[0] == ""){
-			$len[0] = "";
-		}
-		$column2[$col2] = $infos2["Field"];
-		$coltype2[$col2] = $type[0];
-		$charlength2[$column2[$col2]] = $len[0];
-		$col2++;
-	}
-	
-	$req = $pdo->prepare('SELECT * FROM step2;');
-	$req->execute();
-	while($data2 = $req->fetch(PDO::FETCH_ASSOC)){
-		for($i=0;$i<count($column2);$i++){
-			if($data2[$column1[$i]] == ""){
-				$array2[$i][$row2] = "NULL";
-			}else{
-				$array2[$i][$row2] = "'".$data2[$column2[$i]]."'";
-			}
-		}
-		$row2++;
-	}
-	
-	
-		if(count($column2) > count($column1)){
-			for($i=count($column1);$i<count($column2);$i++){
-				$type = preg_replace("/[^A-Za-z]/", "", $coltype2[$i]);
-				$len = preg_replace("/[^0-9]/", "", $coltype2[$i]);
-				echo "ALTER TABLE step1 ADD ".$column2[$i]." ".$type." (".$len.");";
-				$query = "ALTER TABLE step1 ADD ".$column2[$i]." ".$type." (".$len.");";
+	$table1 = new BDDsheet($pdo, "step1");
+	$table2 = new BDDsheet($pdo, "step2");
+
+		if(count($table2->getHeader()) > count($table1->getHeader())){
+			for($i=count($table1->getHeader());$i<count($table2->getHeader());$i++){
+				echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$table2->getCol()[$i]->getHead()." ".$table2->getCol()[$i]->getType()." (".$table2->getCol()[$i]->getLen().");";
+				$query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$table2->getCol()[$i]->getHead()." ".$table2->getCol()[$i]->getType()." (".$table2->getCol()[$i]->getLen().");";
 				$pdo->exec($query);
 			}
 		}
-		for($i=0;$i<count($column2);$i++){
-			if(!empty($charlength2[$column2[$i]]) && $charlength2[$column2[$i]] > $charlength1[$column1[$i]]){
-				$type = preg_replace("/[^A-Za-z]/", "", $coltype2[$i]);
-				$len = preg_replace("/[^0-9]/", "", $coltype2[$i]);
-				echo "ALTER TABLE step1 MODIFY ".$column2[$i]." ".$type." (".$len.");";
-				$query = "ALTER TABLE step1 MODIFY ".$column2[$i]." ".$type." (".$len.");";
+		for($i=0;$i<count($table2->getHeader());$i++){
+			if(!empty($table2->getCol()[$i]->getLen()) && $table2->getCol()[$i]->getLen() > $table1->getCol()[$i]->getLen()){
+				echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$table2->getCol()[$i]->getHead()." ".$table2->getCol()[$i]->getType()." (".$table2->getCol()[$i]->getLen().");";
+				$query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$table2->getCol()[$i]->getHead()." ".$table2->getCol()[$i]->getType()." (".$table2->getCol()[$i]->getLen().");";
 				$pdo->exec($query);
 			}
 		}
 		
-		$infotable = $pdo->prepare('SHOW COLUMNS FROM step1;');
-		$infotable->execute();
-		$i = 0;
-		$col1 = 0;
-		$row1 = 0;
-		$column1 = array();
-		$nbcol1 = array();
-		$array1 = array();
-		while($infos1 = $infotable->fetch(PDO::FETCH_ASSOC)){
-			preg_match('/[a-z]+/', $infos1['Type'], $type);
-			preg_match('/\d+/', $infos1['Type'], $len);
-			if(!isset($type[0]) || $type[0] == ""){
-				$type[0] = "";
-			}
-			if(!isset($len[0]) || $len[0] == ""){
-				$len[0] = "";
-			}
-			$column1[$col1] = $infos1["Field"];
-			$coltype1[$col1] = $type[0];
-			$charlength1[$column1[$col1]] = $len[0];
-			$col1++;
-		}
-		
-		$req = $pdo->prepare('SELECT * FROM step1;');
-		$req->execute();
-		while($data1 = $req->fetch(PDO::FETCH_ASSOC)){
-			for($i=0;$i<count($column1);$i++){
-				if($data1[$column1[$i]] == ""){
-					$array1[$i][$row1] = "NULL";
-				}else{
-					$array1[$i][$row1] = "'".$data1[$column1[$i]]."'";
-				}
-			}
-			$row1++;
-		}	
-		
-		for($i=0;$i<count($array2[0]);$i++){
-			if(isset($array1[0][$i]) && $array2[0][$i] == $array1[0][$i]){
-				$query = $pdo->prepare("SELECT * FROM step1 WHERE ".$column2[0]."=".$array2[0][$i].";");
-				$query->execute();
-				$numrows = $query->fetch(PDO::FETCH_ASSOC);
-				if($numrows>=1){
-					for($j=0;$j<count($column2);$j++){
-						echo"UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";
-						";
-						$query = "UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";";
-						$pdo->exec($query);
+		$table1 = new BDDsheet($pdo, "step1");
+		for($i=0;$i<count($table2->getId());$i++){
+			echo'oui';
+			print_r($table2->getId()[$i]);
+			if(null !== $table2->getId()[$i]->getValue()->getValue()){
+			for($j=0;$j<count($table2->getCol());$j++){
+				echo $table2->getCell()[$j][$i]->getValue();
+				echo $table2->getCol()[$j]->getType();
+				echo $table2->getCell()[$j][$i]->getColid()."<br>";
+					if($table2->getCell()[$j][$i]->getValue() == ""){
+						switch($table2->getCol()[$j]->getType()){
+							case "int":
+								$table2->getCell()[$j][$i]->setValue(0);
+							break;
+							case "tinyint":
+								$table2->getCell()[$j][$i]->setValue(0);
+							break;
+							case "date":
+								$table2->getCell()[$j][$i]->setValue("0001-01-01");
+							break;
+							case "varchar":
+								$table2->getCell()[$j][$i]->setValue("NULL");
+							break;
+							case "enum":
+								$table2->getCell()[$j][$i]->setValue("NULL");
+							break;
+						}
+					}else{
+						switch($table2->getCol()[$j]->getType()){
+							case "varchar":
+								$table2->getCell()[$j][$i]->setValue("'".$table2->getCell()[$j][$i]->getValue()."'");
+							break;
+							case "enum":
+								$table2->getCell()[$j][$i]->setValue("'".$table2->getCell()[$j][$i]->getValue()."'");
+							break;
+						}
 					}
-				}else{
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');
-					';
-					$query = 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');';
-					$pdo->exec($query);
-					for($j=1;$j<count($column2);$j++){
-						echo"UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";
-							";
-							$query = "UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";";
-							$pdo->exec($query);
+					switch($table2->getCol()[$j]->getType()){
+						case "date":
+							$table2->getCell()[$j][$i]->setValue("'".$table2->getCell()[$j][$i]->getValue()."'");
+						break;
+						case "tinyint":
+							$table2->getCell()[$j][$i]->setValue("'".$table2->getCell()[$j][$i]->getValue()."'");
+						break;
 					}
 				}
-			}else if(isset($array1[0][$i]) && $array2[0][$i] != $array1[0][$i]){
-				$query = $pdo->prepare("SELECT * FROM step1 WHERE ".$column2[0]."=".$array2[0][$i].";");
-				$query->execute();
-				$numrows = $query->fetch(PDO::FETCH_ASSOC);
-				if($numrows==0){
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');
-					';
-					$query = 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');';
-					$pdo->exec($query);
-					for($j=1;$j<count($column2);$j++){
-						echo"UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";
-							";
-							$query = "UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";";
-							$pdo->exec($query);
-					}		
-				}else{
-					for($j=0;$j<count($column2);$j++){
-						echo"UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";
-						";
-						$query = "UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";";
-						$pdo->exec($query);
+				if(null !== $table2->getCell() && null !== $table1->getCell() && null !== $table2->getCell()[0] && null !== $table1->getCell()[0]){
+					if(null !== $table2->getCell()[0][$i]->getValue() && null !== $table1->getCell()[0][$i]->getValue()){
+						echo $table2->getCell()[0][$i]->getValue();
+						echo $table1->getCell()[0][$i]->getValue();
+						if($table2->getCell()[0][$i]->getValue() == $table1->getCell()[0][$i]->getValue()){
+							$query = $pdo->prepare("SELECT * FROM ".$table1->getBdTab()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getId()[$i]->getValue()->getRowid().";");
+							$query->execute();
+							$numrows = $query->fetch(PDO::FETCH_ASSOC);
+							if($numrows>=1){
+								for($j=0;$j<count($table2->getCol());$j++){
+									echo"UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";
+									";
+									$query = "UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";";
+									$pdo->exec($query);
+								}
+							}else{
+								echo 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');
+								';
+								$query = 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');';
+								$pdo->exec($query);
+								for($j=1;$j<count($table2->getCol());$j++){
+									echo"UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";
+										";
+										$query = "UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";";
+										$pdo->exec($query);
+								}
+							}
+						}else if($table2->getCell()[0][$i]->getValue() != $table1->getCell()[0][$i]->getValue()){
+							$query = $pdo->prepare("SELECT * FROM ".$table1->getBdTab()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getId()[$i]->getValue()->getRowid().";");
+							$query->execute();
+							$numrows = $query->fetch(PDO::FETCH_ASSOC);
+							if($numrows==0){
+								echo 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');
+								';
+								$query = 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');';
+								$pdo->exec($query);
+								for($j=1;$j<count($table2->getCol());$j++){
+									echo"UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";
+										";
+										$query = "UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";";
+										$pdo->exec($query);
+								}		
+							}else{
+								for($j=0;$j<count($table2->getCol());$j++){
+									// echo $table2->getCell()[$j][$i]->getValue();
+									// echo $table2->getCell()[$j][$i]->getType();
+									echo $table2->getCol()[$j]->getHead();
+									echo $table2->getCell()[$j][$i]->getValue();
+									echo $table2->getCol()[$j]->getType();
+									echo $table2->getId()[$i]->getValue()->getColid();
+									echo $table2->getCell()[$j][$i]->getRowid();
+									echo"UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";
+									";
+									$query = "UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";";
+									$pdo->exec($query);
+								}
+							}
+						}
 					}
-				}
-			}else{
-					echo 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');
-					';
-					$query = 'INSERT INTO step1 ('.$column2[0].') VALUES ('.$array2[0][$i].');';
-					$pdo->exec($query);
-				for($j=1;$j<count($column2);$j++){
-					echo"UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";
-						";
-						$query = "UPDATE step1 SET ".$column2[$j]."=".$array2[$j][$i]." WHERE ".$column2[0]."=".$array2[0][$i].";";
-						$pdo->exec($query);
-				}
+						}else{
+								echo 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');
+								';
+								$query = 'INSERT INTO '.$table1->getBdTab().' ('.$table2->getId()[$i]->getValue()->getColid().') VALUES ('.$table2->getId()[$i]->getValue()->getRowid().');';
+								$pdo->exec($query);
+							for($j=1;$j<count($table2->getCol());$j++){
+								echo"UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";
+									";
+									$query = "UPDATE ".$table1->getBdTab()." SET ".$table2->getCol()[$j]->getHead()."=".$table2->getCell()[$j][$i]->getValue()." WHERE ".$table2->getId()[$i]->getValue()->getColid()."=".$table2->getCell()[$j][$i]->getRowid().";";
+									$pdo->exec($query);
+							}
+						}
 			}
 		}
 	echo'oui';

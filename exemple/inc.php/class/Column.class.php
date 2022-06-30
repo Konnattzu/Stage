@@ -5,8 +5,10 @@
         private $cells = Array();
         private $datatype;
         private $datalength;
+        private $pdo;
 
         public function __construct($numb, $head, $cells, $pdo){
+            $this->pdo = $pdo;
             $this->initNumb($numb);
             $this->initHead($head);
             $this->initCells($cells);
@@ -56,13 +58,12 @@
         }
 
         //datatype
-        public function initType($pdo){
-            $cells = $this->cells;
+        public function initType(){
             $type = Array();
             $enum = Array();
-            if(is_countable($cells)){
-                for($i=0;$i<count($cells);$i++){
-                    $type[$i] = $cells[$i]->getType();
+            if(is_countable($this->cells)){
+                for($i=0;$i<count($this->cells);$i++){
+                    $type[$i] = $this->cells[$i]->getType();
                 }
                 if($this->datatype != "enum"){
                     if(in_array("varchar", $type)){
@@ -77,24 +78,32 @@
                         $this->datatype = "varchar";
                     }
                 }
-                for($i=0;$i<count($cells);$i++){
-                    if(is_countable($this->getCells())){
-                        $enum[count($enum)] = $cells[$i]->getValue();
-                        if(count($enum)>0){
-                            for($k=0;$k<count($enum)-1;$k++){
-                                if($enum[$k] == $cells[$i]->getValue()){
-                                    unset($enum[count($enum)-1]);
-                                }
+                for($i=0;$i<count($this->cells);$i++){
+                    $enum[count($enum)] = $this->cells[$i]->getValue();
+                    // print_r($enum);
+                    // print_r($this->cells[$i]->getValue());
+                    if(count($enum)>0){
+                        for($k=0;$k<count($enum)-1;$k++){
+                            // print_r($enum[$k]);
+                            // echo'<br>';
+                            // print_r($this->cells[$i]->getValue());
+                            // echo' ';
+                            if($enum[$k] == $this->cells[$i]->getValue()){
+                                unset($enum[count($enum)-1]);
                             }
                         }
                     }
-                    if(($this->datatype == "tinyint") && ($cells[$i]->getValue() != "oui") && ($cells[$i]->getValue() != "non") && ($cells[$i]->getValue() != "1") && ($cells[$i]->getValue() != "0")){
-                        $cells[$i]->getCom()->setValue(trim(preg_replace("/(oui|non|1|0)/", " ", $cells[$i]->getValue())), $pdo);
+                    if(($this->datatype == "tinyint") && ($this->cells[$i]->getValue() != "oui") && ($this->cells[$i]->getValue() != "non") && ($this->cells[$i]->getValue() != "1") && ($this->cells[$i]->getValue() != "0")){
+                        $this->cells[$i]->getCom()->setValue(trim(preg_replace("/(oui|non|1|0)/", " ", $this->cells[$i]->getValue())), $this->pdo);
                         // $cells[$i]->setValue(str_replace($comment, " ", $cells[$i]->getValue()));
                         // $cells[$i]->setValue(trim($cells[$i]->getValue()));
                     }
                 }
-                if(count($cells)>16){
+                // echo'enum';
+                // print_r($enum);
+                // print_r(count($enum));
+                // print_r($this->getHead());
+                if(count($this->cells)>16){
                     if(count($enum)<8 && ($this->datatype == "varchar" || $this->datatype == "int") && count($enum)>0){
                         $this->datatype = "enum";
                         $datalength = "";
@@ -105,7 +114,7 @@
                         $this->datalength = $datalength;
                     }
                 }else{
-                    if(count($enum)<(count($cells)*0.5) && ($this->datatype == "varchar" || $this->datatype == "int") && count($enum)>0){
+                    if(count($enum)<(count($this->cells)*0.5) && ($this->datatype == "varchar" || $this->datatype == "int") && count($enum)>0){
                         $this->datatype = "enum";
                         $datalength = "";
                         for($k=0;$k<count($enum)-1;$k++){
