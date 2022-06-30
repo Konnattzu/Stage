@@ -151,7 +151,9 @@
 
         //datalength
         public function initLen(){
-            $this->datalength = 0;
+            if($this->datatype != "enum"){
+                $this->datalength = 0;
+            }
         }
         public function setLen($value){
             $this->datalength = datalength($value, "", 0);

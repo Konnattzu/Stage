@@ -9,9 +9,6 @@
 
 			$table = new BDDsheet($pdo, "step1");
 			// $table->createTable($pdo);
-			// echo'<pre>';
-			// print_r($table);
-			// echo'</pre>';
 			
 			for($j=0;$j<count($table->getHeader());$j++){
 				$header[$j] = $table->getHeader()[$j]->getValue();
@@ -21,6 +18,9 @@
 			}
 			
 			$table->json_encode_private();
+			// echo'<pre>';
+			// print_r($table);
+			// echo'</pre>';
 			
 			include("inc.php/parts/grid.inc.php");
 

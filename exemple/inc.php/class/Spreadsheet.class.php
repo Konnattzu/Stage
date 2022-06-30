@@ -130,7 +130,7 @@
             }
             for($i=0;$i<count($this->header);$i++){
                 for($j=0;$j<count($this->identifier);$j++){
-                    echo $this->identifier[$j]->getValue()->getValue();
+                    // echo $this->identifier[$j]->getValue()->getValue();
                     $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
                 }
             }
@@ -370,7 +370,7 @@
 					$this->header[$i] = $righthead[$i];
 				}else{
 					$overflow++;
-					print_r($this->header[count($basetable->column)-1 + $overflow]);
+					// print_r($this->header[count($basetable->column)-1 + $overflow]);
 					$righthead[$i] = $this->header[count($basetable->column)-1 + $overflow];
 				}
 			}
@@ -392,7 +392,7 @@
 				}
 				$this->column[$k]->setType($basetable->column[$k]->getType());
 				$this->column[$k]->setLen($basetable->column[$k]->getLen());
-				echo strlen($this->header[$k]->getValue());
+				// echo strlen($this->header[$k]->getValue());
 				if(strlen($this->header[$k]->getValue()) > 64){
 					$this->header[$k]->setValue(substr($this->header[$k]->getValue(), 0, 64));
 				}

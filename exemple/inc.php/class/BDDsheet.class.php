@@ -94,9 +94,11 @@
 
 		//identifier
 		public function initId(){
-            $idcol = "";
             for($i=0;$i<count($this->header);$i++){
-                if(!isset($idcol) || $idcol == ""){
+                // echo'<pre>';
+                // print_r($this->cells[$i]);
+                // echo'</pre>';
+                if(!isset($idcol)){
                     $data = Array();
                     $uniquedata = Array();
                     if(isset($this->cells[$i])){
@@ -116,19 +118,22 @@
                     }
                 }
             }
-            if(!isset($idcol) || $idcol == ""){
+            if(!isset($idcol)){
                 $idcol = 0;
             }
+            // echo'idcol'.$idcol;
             if(isset($this->cells[$idcol])){
                 for($j=0;$j<count($this->cells[$idcol]);$j++){
                     $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
                 }
-            }
-            for($i=0;$i<count($this->header);$i++){
-                for($j=0;$j<count($this->identifier);$j++){
-                    $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+                for($i=0;$i<count($this->header);$i++){
+                    for($j=0;$j<count($this->identifier);$j++){
+                        // echo $this->identifier[$j]->getValue()->getValue();
+                        $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+                    }
                 }
             }
+            // print_r($this->cells[$idcol]);
         }
         public function setId(){
             $this->header = $header;
@@ -299,14 +304,13 @@
             for($j=0;$j<count($this->getCol());$j++){
                 $query = "UPDATE ".$table1->getBdTab()." SET ".$this->getCol()[$j]->getHead()."=".$this->getCell()[$j][$i]->getValue()." WHERE ".$this->getId()[$i]->getValue()->getColid()."=".$this->getCell()[$j][$i]->getRowid().";";
                 echo $query;
-                print_r($this->pdo);
+                // print_r($this->pdo);
                 $this->pdo->exec($query);
             }
         }
 		public function sendTable($table1){
             //pour chaque ligne
             for($i=0;$i<count($this->getId());$i++){
-                print_r($this->getId()[$i]);
                 //si la ligne possède un ID
                 if(null !== $this->getId()[$i]->getValue()->getValue()){
                     $this->setNull($i);
@@ -322,6 +326,43 @@
                         $this->newLine($i, $table1);
                         $this->dataLine($i, $table1);
                     }
+                }
+            }
+        }
+        public function sendData($column, $row, $value){
+            // print_r($this->identifier);
+            if(!empty($this->column[$column]->getLen()) && strlen($value) > $this->column[$column]->getLen()){
+                $query = "ALTER TABLE ".$this->bddtable." MODIFY ".$this->header[$column]->getValue()." ".$this->column[$column]->getType()." (".$this->column[$column]->getLen().");";
+                echo $query;
+                $this->pdo->exec($query);
+            }
+            if($this->identifier[$row]->getValue()->getColid() != $this->header[$column]->getValue()){
+                if($this->cells[$column][$row]->getValue() != $value){
+                    $this->cells[$column][$row]->setValue($value);
+                    $query = "UPDATE ".$this->bddtable." SET ".$this->header[$column]->getValue()."='".$value."' WHERE ".$this->identifier[$row]->getValue()->getColid()."='".$this->identifier[$row]->getValue()->getValue()."';";
+                    echo $query;
+                    $this->pdo->exec($query);
+                }
+            }else if($this->identifier[$row]->getValue()->getColid() == $this->header[$column]->getValue()){
+                $exists = false;
+                for($i=0;$i<count($this->getId());$i++){
+                    if(null !== $this->identifier[$row]->getValue()->getValue()){
+                        if($this->getId()[$i]->getValue()->getValue() == $value){
+                            $exists = true;
+                        }
+                    }
+                }
+                if($exists == false){
+                    if($this->cells[$column][$row]->getValue() != ""){
+                        $query = "UPDATE ".$this->bddtable." SET ".$this->header[$column]->getValue()."='".$value."' WHERE ".$this->identifier[$row]->getValue()->getColid()."='".$this->identifier[$row]->getValue()->getValue()."';";
+                        echo $query;
+                        $this->pdo->exec($query);
+                    }else{
+                        $query = "INSERT INTO ".$this->bddtable." (".$this->header[$column]->getValue().") VALUES ('".$value."');";
+                        echo $query;
+                        $this->pdo->exec($query);
+                    }
+                    $this->cells[$column][$row]->setValue($value);
                 }
             }
         }
