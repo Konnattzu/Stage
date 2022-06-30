@@ -15,10 +15,10 @@
 				preg_match('/[a-z]+/', $infos['Type'], $type);
 				preg_match('/\d+/', $infos['Type'], $len);
 				if(!isset($type[0]) || $type[0] == ""){
-					$type[0] = "";
+					$type[0] = "varchar";
 				}
 				if(!isset($len[0]) || $len[0] == ""){
-					$len[0] = "";
+					$len[0] = 0;
 				}
 				$this->setHeader(new Header($infos["Field"], $i, ""), $i);
 				$this->setCol(new Column($i, $this->getHeader()[$i]->getValue(), Array(), $pdo), $i);
@@ -158,8 +158,8 @@
 
 		//methods
         public function createTable($pdo){
-			$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
-            $req->execute();
+			//$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
+            //$req->execute();
 		}
         function json_encode_private() {
 			function stackVal($value, $name) {

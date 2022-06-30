@@ -95,7 +95,7 @@
                     }
                 }
                 if(count($cells)>16){
-                    if(count($enum)<8 && $this->datatype != "tinyint"){
+                    if(count($enum)<8 && ($this->datatype == "varchar" || $this->datatype == "int") && count($enum)>0){
                         $this->datatype = "enum";
                         $datalength = "";
                         for($k=0;$k<count($enum)-1;$k++){
@@ -105,7 +105,7 @@
                         $this->datalength = $datalength;
                     }
                 }else{
-                    if(count($enum)<(count($cells)*0.75) && $this->datatype != "tinyint"){
+                    if(count($enum)<(count($cells)*0.5) && ($this->datatype == "varchar" || $this->datatype == "int") && count($enum)>0){
                         $this->datatype = "enum";
                         $datalength = "";
                         for($k=0;$k<count($enum)-1;$k++){

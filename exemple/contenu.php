@@ -49,7 +49,7 @@
 			}
 		} else { 
 			$page = "accueil";
-			header("Location: index.php?ref=".$page.""); 
+			include("inc.php/accueil.inc.php"); 
 		}
 		echo'<footer>';
 		include("inc.php/footer.inc.php");
