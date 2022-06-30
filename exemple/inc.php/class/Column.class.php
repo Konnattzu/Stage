@@ -129,7 +129,9 @@
                     }
                 }
             }
-            print_r($this);
+            // echo'<pre>';
+            // print_r($this);
+            // echo'</pre>';
         }
         public function setType($type){
             $this->datatype = $type;

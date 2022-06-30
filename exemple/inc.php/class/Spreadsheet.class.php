@@ -136,7 +136,6 @@
                     $tempcells[$i] = $cells[$j][$i];
                 }
                 $this->column[$j] = new Column($j, $header[$j], $tempcells, $pdo);
-				print_r($this->column[$j]);
             }
         }
         public function setCol($col, $pos){
@@ -462,8 +461,6 @@
 				}
 				$querydata[$j] .= ") VALUES (";
 				for($i=0;$i<count($this->header);$i++){
-					print_r($this->column[$i]);
-					print_r($basetable->column[$i]);
 					$this->column[$i]->setType($basetable->column[$i]->getType());
 					$this->cells[$i][$j]->setType($this->column[$i]->getType());
 					if($this->cells[$i][$j]->getType() == "date"){
