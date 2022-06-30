@@ -5,9 +5,11 @@
         public $identifier = Array();
         public $row = Array();
         public $column = Array();
-        public $bddtable = "step1";
+        public $bddtable;
+        public $pdo;
 
-        public function __construct($pdo){
+        public function __construct($pdo, $bddtable){
+            $this->bddtable = $bddtable;
             $infotable = $pdo->prepare('SHOW COLUMNS FROM '.$this->bddtable.';');
 			$infotable->execute();
             $i=0;
@@ -15,12 +17,12 @@
 				preg_match('/[a-z]+/', $infos['Type'], $type);
 				preg_match('/\d+/', $infos['Type'], $len);
 				if(!isset($type[0]) || $type[0] == ""){
-					$type[0] = "";
+					$type[0] = "varchar";
 				}
 				if(!isset($len[0]) || $len[0] == ""){
-					$len[0] = "";
+					$len[0] = 0;
 				}
-				$this->setHeader(new Header($infos["Field"], $i), $i);
+				$this->setHeader(new Header($infos["Field"], $i, ""), $i);
 				$this->setCol(new Column($i, $this->getHeader()[$i]->getValue(), Array(), $pdo), $i);
 				$this->column[$i]->setType($type[0]);
 				$this->column[$i]->setLen($len[0]);
@@ -33,25 +35,11 @@
 				for($i=0;$i<count($this->header);$i++){
 					$this->cells[$i][$row] = new Cell($data[$this->header[$i]->getValue()], $row, $i, $this->header[$i]->getValue(), $data[$this->header[0]->getValue()], $pdo);
 				}
-				$this->identifier[$row] = new Identifier($this->cells[0][$row], $row);
 				$row++;
 			}
-            $tempcells = array();
-            if(isset($this->cells[0])){
-                for($j=0;$j<count($this->cells[0]);$j++){
-                    for($i=0;$i<count($this->header);$i++){
-                        $tempcells[$i] = $this->cells[$i][$j];
-                    }
-                    $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
-                }
-            }
-            $tempcells = array();
-                for($j=0;$j<count($this->header);$j++){
-                    for($i=0;$i<count($this->identifier);$i++){
-                        $tempcells[$i] = $this->cells[$j][$i];
-                    }
-                    $this->column[$j] = new Column($j, $this->header[$j], $tempcells, $pdo);
-                }
+            $this->initId();
+            $this->initRow();
+            $this->initCol();
 			// echo'<pre>';
 			// print_r($this->header);
 			// echo'</pre>';
@@ -104,9 +92,42 @@
         }
 
 		//identifier
-		public function initId($cells){
-            for($j=0;$j<count($cells[0]);$j++){
-                $this->identifier[$j] = new Identifier($cells[0][$j], $j);
+		public function initId(){
+            $idcol = "";
+            for($i=0;$i<count($this->header);$i++){
+                if(!isset($idcol) || $idcol == ""){
+                    $data = Array();
+                    $uniquedata = Array();
+                    if(isset($this->cells[$i])){
+                        for($j=0;$j<count($this->cells[$i]);$j++){
+                            if(!in_array($this->cells[$i][$j]->getValue(), $data)){
+                                $uniquedata[$j] = $this->cells[$i][$j]->getValue();
+                            }
+                            $data[$j] = $this->cells[$i][$j]->getValue();
+                            // echo'<pre>unique';
+                            // print_r($uniquedata);
+                            // print_r($data);
+                            // echo'data</pre>';
+                        }
+                        if(count($uniquedata) == count($data)){
+                            $idcol = $i;
+                        }
+                    }
+                }
+            }
+            if(!isset($idcol) || $idcol == ""){
+                $idcol = 0;
+            }
+            if(isset($this->cells[$idcol])){
+                for($j=0;$j<count($this->cells[$idcol]);$j++){
+                    $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
+                }
+            }
+            for($i=0;$i<count($this->header);$i++){
+                for($j=0;$j<count($this->identifier);$j++){
+                    echo $this->identifier[$j]->getValue()->getValue();
+                    $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+                }
             }
         }
         public function setId(){
@@ -117,12 +138,13 @@
         }
 
 		//row
-        public function initRow($identifier, $header, $cells){
-            for($j=0;$j<count($identifier);$j++){
-                for($i=0;$i<count($header);$i++){
-                    $tempcells[$j] = $cells[$i][$j];
+        public function initRow(){
+            $tempcells = array();
+            for($j=0;$j<count($this->identifier);$j++){
+                for($i=0;$i<count($this->header);$i++){
+                    $tempcells[$i] = $this->cells[$i][$j];
                 }
-                $this->row[$j] = new Row($identifier[$j], $j, $tempcells);
+                $this->row[$j] = new Row($this->identifier[$j], $j, $tempcells);
             }
         }
         public function setRow(){
@@ -133,12 +155,16 @@
         }
 
 		//column
-        public function initCol($header, $identifier, $cells, $pdo){
-            for($j=0;$j<count($header);$j++){
-                for($i=0;$i<count($identifier);$i++){
-                    $tempcells[$j] = $cells[$j][$i];
+        public function initCol(){
+            $tempcells = array();
+            for($j=0;$j<count($this->header);$j++){
+                for($i=0;$i<count($this->identifier);$i++){
+                    $tempcells[$i] = $this->cells[$j][$i];
                 }
-                $this->column[$j] = new Column($j, $header[$j]->getValue(), $tempcells, $pdo);
+                $this->column[$j] = new Column($j, $this->header[$j]->getValue(), $tempcells, $this->pdo);
+                // echo'<pre>';
+                // print_r($this->column[$j]);
+                // echo'</pre>';
             }
         }
         public function setCol($col, $pos){
@@ -158,8 +184,8 @@
 
 		//methods
         public function createTable($pdo){
-			$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
-            $req->execute();
+			//$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
+            //$req->execute();
 		}
         function json_encode_private() {
 			function stackVal($value, $name) {
@@ -204,6 +230,9 @@
 			spreadsheet = new Spreadsheet();
 			spreadsheet.dataFill('.json_encode(extract_props($this)).');
 			</script>';
+		}
+		public function sendTable(){
+			
 		}
     }
 ?>

@@ -22,6 +22,8 @@ error_reporting(E_ALL);
 							$objPHPExcel = $objReader->load($inFile);
 
 							$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV');    
+							$objWriter->setPreCalculateFormulas(true);
+
 
 							$index = 0;
 							foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
@@ -30,6 +32,10 @@ error_reporting(E_ALL);
 
 								$outFile = "datafile.csv";
 								$objWriter->setSheetIndex($index);
+								$highestRow = $worksheet->getHighestDataRow();
+								$highestCol = $worksheet->getHighestDataColumn();
+								$worksheet->setHighestRow($highestRow);
+								$worksheet->setHighestColumn($highestCol);
 								$objWriter->save($outFile);
 								$index++;
 							}
@@ -48,6 +54,7 @@ error_reporting(E_ALL);
 							$objPHPExcel = $objReader->load($inFile);
 
 							$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV');    
+							$objWriter->setPreCalculateFormulas(true);
 
 							$index = 0;
 							foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {

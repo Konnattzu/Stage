@@ -73,6 +73,12 @@ class Cell {
             case "date":
                 this.color = "green";
             break;
+            case "enum":
+                this.color = "orange";
+            break;
+            case "tinyint":
+                this.color = "purple";
+            break;
         }
         if(typeof(this.html) != "undefined"){
             this.html.style.color = this.color;

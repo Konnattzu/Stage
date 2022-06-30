@@ -571,7 +571,6 @@ class PHPExcel_Calculation_Functions {
 				return 4;
 		} elseif(is_array($value)) {
 				return 64;
-				break;
 		} elseif(is_string($value)) {
 			//	Errors
 			if ((strlen($value) > 0) && ($value{0} == '#')) {
@@ -582,7 +581,7 @@ class PHPExcel_Calculation_Functions {
 		return 0;
 	}	//	function TYPE()
 
-
+	
 	/**
 	 * Convert a multi-dimensional array to a simple 1-dimensional array
 	 *
