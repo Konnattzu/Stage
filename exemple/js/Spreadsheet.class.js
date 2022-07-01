@@ -98,16 +98,18 @@ class Spreadsheet {
             clearTimeout(delay);
             for(var i=0;i<that.identifiers.length;i++){
                 var row = that.html.querySelectorAll('[aria-rowindex = "'+(i+1)+'"]')[0];
-                for(var j=0;j<that.header.length;j++){
-                    if(typeof(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]) != "undefined"){
-                        that.cells[i][j].setHtml(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]);
-                        if(that.cells[i][j].comment.html == ""){
-                            that.cells[i][j].comment.initHtml(that.cells[i][j].colnumb);
+                if(typeof(row) != "undefined"){
+                    for(var j=0;j<that.header.length;j++){
+                        if(typeof(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]) != "undefined"){
+                            that.cells[i][j].setHtml(row.querySelectorAll('[aria-colindex = "'+(j+2)+'"]')[0]);
+                            if(that.cells[i][j].comment.html == ""){
+                                that.cells[i][j].comment.initHtml(that.cells[i][j].colnumb);
+                            }
+                            if(typeof(that.cells[i][j].html) != "undefined"){
+                                that.cells[i][j].html.appendChild(that.cells[i][j].comment.html);
+                            }
+                            that.cells[i][j].initColor();
                         }
-                        if(typeof(that.cells[i][j].html) != "undefined"){
-                            that.cells[i][j].html.appendChild(that.cells[i][j].comment.html);
-                        }
-                        that.cells[i][j].initColor();
                     }
                 }
             }
