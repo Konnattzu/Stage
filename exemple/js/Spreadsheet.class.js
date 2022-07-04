@@ -120,6 +120,21 @@ class Spreadsheet {
             this.menuItems[i] = new MenuItem(items[i], items[i].getAttribute("data-dxh-id"), 0, this);
         }
 		console.log(this);
+        if(typeof(scrolling) == "undefined"){
+            var scrolling = false;
+        }
+        that = this;
+        var gridBody = document.getElementsByClassName("dhx_grid-body")[0];
+        console.log(gridBody);
+        gridBody.addEventListener('scroll', (event) => {
+                if(scrolling == false){
+                    that.initHtml();
+                    scrolling = true;
+                    delay = setTimeout(function(){ clearTimeout(delay); scrolling = false; }, 1000);
+                }
+            }, 
+            { passive: true }
+        );
     }
 
     //En-têtes du tableau
