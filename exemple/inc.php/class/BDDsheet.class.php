@@ -382,7 +382,7 @@
             fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
         
             foreach($tab as $ligne){
-                fputcsv($fichier_csv, $ligne, ",");
+                //fputcsv($fichier_csv, $ligne, ",");
             }
         
             fclose($fichier_csv);
