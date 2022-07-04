@@ -32,7 +32,7 @@ class Spreadsheet {
 			that.setHeader(header[i], i);
 		}
 		for(var i=0;i<rows.length;i++){
-			that.setId(cells[i][1], i);
+			that.setId(cells[i][2], i);
 		}
 		for(var i=0;i<rows.length;i++){
 			for(var j=0;j<header.length;j++){
@@ -91,7 +91,7 @@ class Spreadsheet {
         }
         //Identifiants
         for(var i=0;i<this.identifiers.length;i++){
-            this.identifiers[i].setHtml(this.html.getElementsByClassName("dhx_grid-cell")[(i*(this.header.length)-i)+1]);
+            this.identifiers[i].setHtml(this.html.getElementsByClassName("dhx_grid-cell")[(i*(this.header.length)-i)+2]);
         }
         //Cellules
         var delay = setTimeout(function(){
@@ -123,7 +123,7 @@ class Spreadsheet {
         if(typeof(scrolling) == "undefined"){
             var scrolling = false;
         }
-        that = this;
+        var that = this;
         var gridBody = document.getElementsByClassName("dhx_grid-body")[0];
         console.log(gridBody);
         gridBody.addEventListener('scroll', (event) => {
@@ -158,6 +158,7 @@ class Spreadsheet {
             this.identifiers[pos] = new Identifier();
         }
         if(typeof(identifier) != "undefined"){
+            console.log(identifier.innerText);
             this.identifiers[pos].setValue(identifier.innerText);
             this.identifiers[pos].setNumb(pos);
             this.identifiers[pos].setHtml(identifier);
@@ -177,8 +178,9 @@ class Spreadsheet {
         return this.rembtn;
     }
     remRow(row){
+        var that = this;
         var rowid = this.identifiers[row].value;
-        var colid = this.header[0].value;
+        var colid = this.header[1].value;
 		var data = new FormData();
 		data.append("row", rowid);
 		data.append("idcolumn", colid);
@@ -189,8 +191,8 @@ class Spreadsheet {
 				var results = request.responseText;
 				console.log(results);
 				console.log(request.responseText);
-				init();
-			}
+                that.initHtml();
+            }
 		}
 		request.open("POST", "inc.php/parts/delete_data.inc.php", true);
 		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
