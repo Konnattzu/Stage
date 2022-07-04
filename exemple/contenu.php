@@ -12,6 +12,7 @@
 		include("inc.php/class/Row.class.php");
 		include("inc.php/class/Column.class.php");
 		include("inc.php/class/Comment.class.php");
+		include("inc.php/class/Graph.class.php");
 		echo'<!DOCTYPE html>
 		<html lang="fr">
 		<head>
@@ -45,6 +46,16 @@
 				break;
 				case "saisie":
 					include("inc.php/table.inc.php");
+				break;
+				case "kaplan":
+					$dispgraph = new Graph();
+					$dispgraph->setType($page);
+					include("inc.php/graph.inc.php");
+				break;
+				case "sankey":
+					$dispgraph = new Graph();
+					$dispgraph->setType($page);
+					include("inc.php/graph.inc.php");
 				break;
 			}
 		} else { 
