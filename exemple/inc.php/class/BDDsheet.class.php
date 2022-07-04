@@ -95,9 +95,6 @@
 		//identifier
 		public function initId(){
             for($i=0;$i<count($this->header);$i++){
-                // echo'<pre>';
-                // print_r($this->cells[$i]);
-                // echo'</pre>';
                 if(!isset($idcol)){
                     $data = Array();
                     $uniquedata = Array();
@@ -107,10 +104,6 @@
                                 $uniquedata[$j] = $this->cells[$i][$j]->getValue();
                             }
                             $data[$j] = $this->cells[$i][$j]->getValue();
-                            // echo'<pre>unique';
-                            // print_r($uniquedata);
-                            // print_r($data);
-                            // echo'data</pre>';
                         }
                         if(count($uniquedata) == count($data)){
                             $idcol = $i;
@@ -121,19 +114,16 @@
             if(!isset($idcol)){
                 $idcol = 0;
             }
-            // echo'idcol'.$idcol;
             if(isset($this->cells[$idcol])){
                 for($j=0;$j<count($this->cells[$idcol]);$j++){
                     $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
                 }
                 for($i=0;$i<count($this->header);$i++){
                     for($j=0;$j<count($this->identifier);$j++){
-                        // echo $this->identifier[$j]->getValue()->getValue();
                         $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
                     }
                 }
             }
-            // print_r($this->cells[$idcol]);
         }
         public function setId(){
             $this->header = $header;
@@ -382,7 +372,7 @@
             fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
         
             foreach($tab as $ligne){
-                fputcsv($fichier_csv, $ligne, ",");
+                //fputcsv($fichier_csv, $ligne, ",");
             }
         
             fclose($fichier_csv);
