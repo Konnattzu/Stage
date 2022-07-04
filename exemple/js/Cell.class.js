@@ -10,7 +10,10 @@ class Cell {
         this.html = "";
         this.comment = new Comment();
         this.color = "";
-        this.editplace = "";
+        var currenturl = document.location.href;
+        currenturl = currenturl.replace(/\/$/, "");
+        var currentref = currenturl.substring (currenturl.lastIndexOf( "=" )+1 );
+        this.editplace = currentref;
     }
 
     setValue(value){
