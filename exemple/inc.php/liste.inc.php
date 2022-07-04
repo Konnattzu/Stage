@@ -18,7 +18,7 @@
 			}
 			
 			$table->json_encode_private();
-			// $table->export_data_to_csv();
+			$table->export_data_to_csv();
 			// echo'<pre>';
 			// print_r($table);
 			// echo'</pre>';

@@ -368,12 +368,12 @@
         }
 
         public function export_data_to_csv(){
-            $r = $this->pdo->query('SELECT * FROM '.$this->bddtable.';');
- 
+            $r = $this->pdo->prepare('SELECT annee_de_naissance, homologie___germline FROM '.$this->bddtable.';');
+            $r->execute();
             $tab = Array();
             $i = 0;
             while($data = $r->fetch(PDO::FETCH_ASSOC)){
-                $tab[$i] = $r;
+                $tab[$i] = $data;
                 $i++;
             }
             
@@ -382,8 +382,7 @@
             fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
         
             foreach($tab as $ligne){
-                print_r($ligne);
-                fputcsv($fichier_csv, $ligne, ";");
+                fputcsv($fichier_csv, $ligne, ",");
             }
         
             fclose($fichier_csv);
