@@ -15,19 +15,20 @@
 		include("inc.php/class/Graph.class.php");
 		echo'<!DOCTYPE html>
 		<html lang="fr">
-		<head>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>';
-		if(isset($_GET) && isset($_GET["ref"]) && ($_GET["ref"] != "")) {
-			$page = $_GET["ref"];
-			$_SESSION["currentpage"] = $page;
-			include('head.php');
-			echo'</head>
+		<head>';
+		include('head.php');
+		echo'</head>
 			<body>';
-			if($page != "kaplan" && $page != "sankey"){
+			if(isset($_GET) && isset($_GET["ref"])) {
+				$page = $_GET["ref"];
+			}
+			if(isset($page) && $page != "kaplan" && $page != "sankey"){
 				echo'<header>';
 				include('inc.php/header.inc.php');
 				echo'</header>';
 			}
+		if(isset($page) && ($page != "")) {
+			$_SESSION["currentpage"] = $page;
 			if($_SESSION["currentpage"] != "saisie"){
 				if(isset($_SESSION["path"])){
 					if(file_exists($_SESSION["path"])){
@@ -65,7 +66,7 @@
 			header("Location: index.php?ref=".$page);
 			include("inc.php/accueil.inc.php"); 
 		}
-		if($page != "kaplan" && $page != "sankey"){
+		if(isset($page) && $page != "kaplan" && $page != "sankey"){
 			echo'<footer>';
 			include("inc.php/footer.inc.php");	
 			echo'</footer>';

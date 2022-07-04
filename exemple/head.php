@@ -4,8 +4,11 @@
     <title>test</title>
     <meta name="description" content="test">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/graphe.css">
+    <link rel="stylesheet" href="css/sankey.css">
+    <link rel="stylesheet" href="css/kaplan.css">
     <script type="text/javascript" src="codebase/suite.js?v=7.3.4"></script>
     <link rel="stylesheet" href="codebase/suite.css?v=7.3.4">
     <link rel="stylesheet" href="css/index.css?v=7.3.4">
