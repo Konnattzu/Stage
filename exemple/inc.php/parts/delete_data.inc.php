@@ -24,7 +24,6 @@
 			$query = "DELETE FROM step2 WHERE ".$idcolumn."='".$row."';";
         	$pdo->exec($query);
 		}else{
-			echo $numrows;
 			$query = "DELETE FROM step2 WHERE ".$idcolumn."='".$row."' LIMIT ".($numrows-1).";";
         	$pdo->exec($query);
 		}
