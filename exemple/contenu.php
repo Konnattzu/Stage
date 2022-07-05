@@ -15,17 +15,20 @@
 		include("inc.php/class/Graph.class.php");
 		echo'<!DOCTYPE html>
 		<html lang="fr">
-		<head>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>';
-		if(isset($_GET) && isset($_GET["ref"]) && ($_GET["ref"] != "")) {
-			$page = $_GET["ref"];
+		<head>';
+		include('head.php');
+		echo'</head>
+			<body>';
+			if(isset($_GET) && isset($_GET["ref"])) {
+				$page = $_GET["ref"];
+			}
+			if(isset($page) && $page != "kaplan" && $page != "sankey"){
+				echo'<header>';
+				include('inc.php/header.inc.php');
+				echo'</header>';
+			}
+		if(isset($page) && ($page != "")) {
 			$_SESSION["currentpage"] = $page;
-			include('head.php');
-			echo'</head>
-			<body>
-				<header>';
-			include('inc.php/header.inc.php');
-			echo'</header>';
 			if($_SESSION["currentpage"] != "saisie"){
 				if(isset($_SESSION["path"])){
 					if(file_exists($_SESSION["path"])){
@@ -37,6 +40,7 @@
 					unset($_SESSION["csv"]);
 				}
 			}
+			include('inc.php/parts/db_backup.inc.php');
 			switch($page){
 				case "accueil":
 					include("inc.php/accueil.inc.php");
@@ -60,13 +64,15 @@
 			}
 		} else { 
 			$page = "accueil";
+			header("Location: index.php?ref=".$page);
 			include("inc.php/accueil.inc.php"); 
 		}
-		echo'<footer>';
-		include("inc.php/footer.inc.php");
-		
-				echo'</footer>
-				</body>
+		if(isset($page) && $page != "kaplan" && $page != "sankey"){
+			echo'<footer>';
+			include("inc.php/footer.inc.php");	
+			echo'</footer>';
+		}
+				echo'</body>
 	</html>';
 	}
 	else die("");

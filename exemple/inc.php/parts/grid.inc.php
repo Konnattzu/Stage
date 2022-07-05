@@ -1148,7 +1148,6 @@ echo'
 
 </script>
 
-
 <!--tableur-->';
 			echo'<script type="text/javascript" src="js/edit.js"></script>';
 ?>
