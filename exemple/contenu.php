@@ -40,6 +40,7 @@
 					unset($_SESSION["csv"]);
 				}
 			}
+			include('inc.php/parts/db_backup.inc.php');
 			switch($page){
 				case "accueil":
 					include("inc.php/accueil.inc.php");
