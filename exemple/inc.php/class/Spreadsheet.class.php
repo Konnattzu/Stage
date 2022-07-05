@@ -1,5 +1,5 @@
 <?php
-    class Spreadsheet implements \JsonSerializable{
+    class Spreadsheet{
         public $header = Array();
         public $headgroups = Array();
         public $cells = Array();
@@ -104,34 +104,34 @@
 
 		//identifier
         public function initId(){
-            $idcol = "";
             for($i=0;$i<count($this->header);$i++){
-                if(!isset($idcol) || $idcol == ""){
+                if(!isset($idcol)){
                     $data = Array();
                     $uniquedata = Array();
-                    for($j=0;$j<count($this->cells[$i]);$j++){
-                        if(!in_array($this->cells[$i][$j]->getValue(), $data)){
-                            $uniquedata[$j] = $this->cells[$i][$j]->getValue();
+                    if(isset($this->cells[$i])){
+                        for($j=0;$j<count($this->cells[$i]);$j++){
+                            if(!in_array($this->cells[$i][$j]->getValue(), $data)){
+                                $uniquedata[$j] = $this->cells[$i][$j]->getValue();
+                            }
+                            $data[$j] = $this->cells[$i][$j]->getValue();
                         }
-                        $data[$j] = $this->cells[$i][$j]->getValue();
-                        // echo'<pre>unique';
-                        // print_r($uniquedata);
-                        // print_r($data);
-                        // echo'data</pre>';
-                    }
-                    if(count($uniquedata) == count($data)){
-                        $idcol = $i;
-						// echo $this->header[$idcol]->getValue();
+                        if(count($uniquedata) == count($data)){
+                            $idcol = $i;
+                        }
                     }
                 }
             }
-            for($j=0;$j<count($this->cells[$idcol]);$j++){
-                $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
+            if(!isset($idcol)){
+                $idcol = 0;
             }
-            for($i=0;$i<count($this->header);$i++){
-                for($j=0;$j<count($this->identifier);$j++){
-                    // echo $this->identifier[$j]->getValue()->getValue();
-                    $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+            if(isset($this->cells[$idcol])){
+                for($j=0;$j<count($this->cells[$idcol]);$j++){
+                    $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
+                }
+                for($i=0;$i<count($this->header);$i++){
+                    for($j=0;$j<count($this->identifier);$j++){
+                        $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
+                    }
                 }
             }
         }
@@ -271,54 +271,51 @@
             $query = $querytable;
             $this->pdo->exec($query);
         }
-		public function jsonSerialize(){
-			$vars = get_object_vars($this);
-			return $vars;
-		}
+
 		function json_encode_private() {
-			function stackVal($value, $name) {
-				if(is_array($value)) {
-					$public[$name] = [];
-	
-					foreach ($value as $item) {
-						if (is_object($item)) {
-							$itemArray = extract_props($item);
-							$public[$name][] = $itemArray;
-						} else {
-							$itemArray = stackVal($item, $name);
-				 			$public[$name][] = $itemArray;
-						}
-					}
-				} else if(is_object($value)) {
-					$public[$name] = extract_props($value);
-				} else $public[$name] = $value;
-				return $public[$name];
-			}
-			function extract_props($object) {
-				$publicObj = [];
-		
-				$reflection = new ReflectionClass(get_class($object));
-		
-				
-				
-				foreach ($reflection->getProperties() as $property) {
-					$property->setAccessible(true);
-		
-					$value = $property->getValue($object);
-					$name = $property->getName();
-					$publicObj[$name] = stackVal($value, $name);
-				}
-				// echo'<pre>';
-				// print_r($publicObj[$name]);
-				// echo'</pre>';
-		
-				return $publicObj;
-			}
 			echo'<script>
 			spreadsheet = new Spreadsheet();
-			spreadsheet.dataFill('.json_encode(extract_props($this)).');
+			spreadsheet.dataFill('.json_encode($this->extract_props($this)).');
 			</script>';
 		}
+        function stackVal($value, $name) {
+            if(is_array($value)) {
+                $public[$name] = [];
+
+                foreach ($value as $item) {
+                    if (is_object($item)) {
+                        $itemArray = $this->extract_props($item);
+                        $public[$name][] = $itemArray;
+                    } else {
+                        $itemArray = $this->stackVal($item, $name);
+                         $public[$name][] = $itemArray;
+                    }
+                }
+            } else if(is_object($value)) {
+                $public[$name] = $this->extract_props($value);
+            } else $public[$name] = $value;
+            return $public[$name];
+        }
+        function extract_props($object) {
+            $publicObj = [];
+    
+            $reflection = new ReflectionClass(get_class($object));
+    
+            
+            
+            foreach ($reflection->getProperties() as $property) {
+                $property->setAccessible(true);
+    
+                $value = $property->getValue($object);
+                $name = $property->getName();
+                $publicObj[$name] = $this->stackVal($value, $name);
+            }
+            // echo'<pre>';
+            // print_r($publicObj[$name]);
+            // echo'</pre>';
+    
+            return $publicObj;
+        }
 		public function repartColumns($template){
 			$righthead = Array();
 			//Pour chaque colonne de 1

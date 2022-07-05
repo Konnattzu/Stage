@@ -95,9 +95,6 @@
 		//identifier
 		public function initId(){
             for($i=0;$i<count($this->header);$i++){
-                // echo'<pre>';
-                // print_r($this->cells[$i]);
-                // echo'</pre>';
                 if(!isset($idcol)){
                     $data = Array();
                     $uniquedata = Array();
@@ -107,10 +104,6 @@
                                 $uniquedata[$j] = $this->cells[$i][$j]->getValue();
                             }
                             $data[$j] = $this->cells[$i][$j]->getValue();
-                            // echo'<pre>unique';
-                            // print_r($uniquedata);
-                            // print_r($data);
-                            // echo'data</pre>';
                         }
                         if(count($uniquedata) == count($data)){
                             $idcol = $i;
@@ -121,19 +114,16 @@
             if(!isset($idcol)){
                 $idcol = 0;
             }
-            // echo'idcol'.$idcol;
             if(isset($this->cells[$idcol])){
                 for($j=0;$j<count($this->cells[$idcol]);$j++){
                     $this->identifier[$j] = new Identifier($this->cells[$idcol][$j], $j);
                 }
                 for($i=0;$i<count($this->header);$i++){
                     for($j=0;$j<count($this->identifier);$j++){
-                        // echo $this->identifier[$j]->getValue()->getValue();
                         $this->cells[$i][$j]->setRowid($this->identifier[$j]->getValue()->getValue());
                     }
                 }
             }
-            // print_r($this->cells[$idcol]);
         }
         public function setId(){
             $this->header = $header;
@@ -193,49 +183,49 @@
             //$req->execute();
 		}
         function json_encode_private() {
-			function stackVal($value, $name) {
-				if(is_array($value)) {
-					$public[$name] = [];
-	
-					foreach ($value as $item) {
-						if (is_object($item)) {
-							$itemArray = extract_props($item);
-							$public[$name][] = $itemArray;
-						} else {
-							$itemArray = stackVal($item, $name);
-				 			$public[$name][] = $itemArray;
-						}
-					}
-				} else if(is_object($value)) {
-					$public[$name] = extract_props($value);
-				} else $public[$name] = $value;
-				return $public[$name];
-			}
-			function extract_props($object) {
-				$publicObj = [];
-		
-				$reflection = new ReflectionClass(get_class($object));
-		
-				
-				
-				foreach ($reflection->getProperties() as $property) {
-					$property->setAccessible(true);
-		
-					$value = $property->getValue($object);
-					$name = $property->getName();
-					$publicObj[$name] = stackVal($value, $name);
-				}
-				// echo'<pre>';
-				// print_r($publicObj[$name]);
-				// echo'</pre>';
-		
-				return $publicObj;
-			}
 			echo'<script>
 			spreadsheet = new Spreadsheet();
-			spreadsheet.dataFill('.json_encode(extract_props($this)).');
+			spreadsheet.dataFill('.json_encode($this->extract_props($this)).');
 			</script>';
 		}
+        function stackVal($value, $name) {
+            if(is_array($value)) {
+                $public[$name] = [];
+
+                foreach ($value as $item) {
+                    if (is_object($item)) {
+                        $itemArray = $this->extract_props($item);
+                        $public[$name][] = $itemArray;
+                    } else {
+                        $itemArray = $this->stackVal($item, $name);
+                         $public[$name][] = $itemArray;
+                    }
+                }
+            } else if(is_object($value)) {
+                $public[$name] = $this->extract_props($value);
+            } else $public[$name] = $value;
+            return $public[$name];
+        }
+        function extract_props($object) {
+            $publicObj = [];
+    
+            $reflection = new ReflectionClass(get_class($object));
+    
+            
+            
+            foreach ($reflection->getProperties() as $property) {
+                $property->setAccessible(true);
+    
+                $value = $property->getValue($object);
+                $name = $property->getName();
+                $publicObj[$name] = $this->stackVal($value, $name);
+            }
+            // echo'<pre>';
+            // print_r($publicObj[$name]);
+            // echo'</pre>';
+    
+            return $publicObj;
+        }
         public function compareTablength($table1){
             if(count($this->getHeader()) > count($table1->getHeader())){
                 for($i=count($table1->getHeader());$i<count($this->getHeader());$i++){
@@ -365,6 +355,27 @@
                     $this->cells[$column][$row]->setValue($value);
                 }
             }
+        }
+
+        public function export_data_to_csv(){
+            $r = $this->pdo->prepare('SELECT annee_de_naissance, homologie___germline FROM '.$this->bddtable.';');
+            $r->execute();
+            $tab = Array();
+            $i = 0;
+            while($data = $r->fetch(PDO::FETCH_ASSOC)){
+                $tab[$i] = $data;
+                $i++;
+            }
+            
+            /*$fichier_csv = fopen("documents/graphfile.csv", "w+");
+        
+            fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+            foreach($tab as $ligne){
+                fputcsv($fichier_csv, $ligne, ",");
+            }
+        
+            fclose($fichier_csv);*/
         }
     }
 ?>

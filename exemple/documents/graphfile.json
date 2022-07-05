@@ -1,0 +1,17 @@
+{
+    "nodes":[
+    {"name":"Année de naissance"},
+    {"name":"Cliniciens"},
+    {"name":"UPN"},
+    {"name":"Score de Matutes"},
+    {"name":"Statut IGHV"}
+    ],
+    "links":[
+    {"source":"Année de naissance","target":"Cliniciens","value":2},
+    {"source":"UPN","target":"Cliniciens","value":2},
+    {"source":"UPN","target":"Score de Matutes","value":2},
+    {"source":"Année de naissance","target":"Statut IGHV","value":2},
+    {"source":"Cliniciens","target":"Score de Matutes","value":2},
+    {"source":"Cliniciens","target":"Statut IGHV","value":2},
+    {"source":"Score de Matutes","target":"Statut IGHV","value":4}
+    ]}

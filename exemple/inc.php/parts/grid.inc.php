@@ -15,7 +15,6 @@ echo'<section>
 <div id="chart"></div>
 </div>
 <script>
-console.log("oui");
 function redim(){
   if(window.innerWidth>1100){
     document.getElementById("layout").style.width = "50vw";
@@ -1148,7 +1147,6 @@ echo'
     });
 
 </script>
-
 
 <!--tableur-->';
 			echo'<script type="text/javascript" src="js/edit.js"></script>';

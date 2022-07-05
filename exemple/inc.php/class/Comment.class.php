@@ -11,7 +11,7 @@
         }
 
         public function valueInit($rowid, $colid, $pdo){
-            $req = $pdo->prepare('SELECT * FROM commentaires WHERE patient_id="'.$rowid.'" AND colonne="'.$colid.'";');
+            $req = $pdo->prepare('SELECT * FROM commentaires WHERE identifiant="'.$rowid.'" AND colonne="'.$colid.'";');
 			$req->execute();
 			while($com = $req->fetch(PDO::FETCH_ASSOC)){
 				$this->value = $com['commentaire'];
@@ -19,8 +19,8 @@
         }
         public function setValue($value, $pdo){
             if($value != ""){
-                echo'INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');';
-                $req = $pdo->prepare('INSERT INTO commentaires(patient_id, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');');
+                echo'INSERT INTO commentaires(identifiant, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');';
+                $req = $pdo->prepare('INSERT INTO commentaires(identifiant, colonne, commentaire) VALUES ('.$this->rowid.', '.$this->colid.', '.$value.');');
                 $req->execute();
                 $this->value = $value;
             }

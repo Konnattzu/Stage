@@ -1,0 +1,13 @@
+@media screen and (orientation: landscape) {
+p{
+display:none;
+}
+
+@media screen and (orientation: portrait) {
+p{
+    font-size: 3vh;
+    color: #8b0000;
+    font-weight: bold;
+}
+
+}
