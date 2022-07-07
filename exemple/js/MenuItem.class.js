@@ -2,13 +2,34 @@ class MenuItem {
     constructor(html, name, rank, sheet){
         this.html = html;
         this.name = name;
-        var that = this;
-        this.html.addEventListener("mouseenter", function(){ var delay = setTimeout(function(){ clearTimeout(delay);that.initItems(that); }, 100) }, false);
         this.subItems = new Array();
         this.rank = rank;
         this.sheet = sheet;
+        this.initHtml();
     }
 
+    initHtml(){
+        var that = this;
+        console.log(that);
+        this.html.addEventListener("mouseenter", function(){ var delay = setTimeout(function(){ clearTimeout(delay);that.initItems(that); }, 100) }, false);
+        switch(that.getName()){
+            case "savetable":
+                that.getHtml().addEventListener("click", function(){ that.sheet.sendTable(that.getHtml()); }, false);
+            break;
+            case "sankey":
+                that.getHtml().addEventListener("click", function(){
+                    that.sheet.graph.setType("sankey");
+                    that.sheet.graph.newGraph(); 
+                }, false);
+            break;
+            case "kaplan":
+                that.getHtml().addEventListener("click", function(){
+					that.sheet.graph.setType("kaplan");
+					that.sheet.graph.newGraph();
+                }, false);
+            break;
+        }
+    }
     setHtml(html){
         this.html = html;
     }
@@ -47,6 +68,9 @@ class MenuItem {
                 break;
                 case "addmore":
                     that.getItems()[i].getHtml().addEventListener("click", function(){ var delay = setTimeout(function(){ clearTimeout(delay); sheet.initData(); }, 100) }, false);
+                break;
+                case "savetable":
+                    that.getItems()[i].getHtml().addEventListener("click", function(){ var delay = setTimeout(function(){ clearTimeout(delay); sheet.sendTable(that.getItems()[i].getHtml()); }, 100) }, false);
                 break;
             }
         }

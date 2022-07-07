@@ -8,6 +8,7 @@ class Spreadsheet {
         this.html = "";
         this.savebtn = "";
         this.menuItems = new Array();
+        this.graph;
     }
     
     //Remplissage des données du tableau
@@ -69,6 +70,7 @@ class Spreadsheet {
                 this.cells[i][j].initCom();
             }
         }
+        this.graph = new Graph(dataArray.graph);
     }
 
     //Définition des éléments html
@@ -82,9 +84,9 @@ class Spreadsheet {
         // table.addEventListener("scroll", function(){ var delay = setTimeout(function(){ clearTimeout(delay);	that.initData(); }, 100); }, false);
         //Bouton de sauvegarde
         this.savebtn = document.getElementById("savetable");
-        if(typeof(this.savebtn) != 'undefined' && this.savebtn != null){
-            this.savebtn.addEventListener("click", function(){that.sendTable();}, false);
-        }
+        // if(typeof(this.savebtn) != 'undefined' && this.savebtn != null){
+        //     this.savebtn.addEventListener("click", function(){that.sendTable();}, false);
+        // }
         //En-têtes
         for(var i=0;i<(document.getElementsByClassName("dhx_grid-header-cell").length/2);i++){
             this.header[i].setHtml(document.getElementsByClassName("dhx_grid-header-cell")[i+1]);
@@ -117,7 +119,7 @@ class Spreadsheet {
         //Menu
         var items = document.getElementsByClassName("dhx_nav-menu-button");
         for(var i = 0;i<items.length;i++){
-            this.menuItems[i] = new MenuItem(items[i], items[i].getAttribute("data-dxh-id"), 0, this);
+            this.menuItems[i] = new MenuItem(items[i], items[i].getAttribute("data-dhx-id"), 0, this);
         }
 		console.log(this);
         if(typeof(scrolling) == "undefined"){
@@ -206,13 +208,13 @@ class Spreadsheet {
     getSave(){
         return this.savebtn;
     }
-    sendTable(){
+    sendTable(savebtn){
         var that = this;
         var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState === 4) {
 				var results = request.responseText;
-				that.savebtn.innerText = "Sauvegardé";
+				savebtn.innerText = "Sauvegardé";
 				console.log(results);
 			}
 		}
@@ -238,5 +240,15 @@ class Spreadsheet {
     }
     getCell(){
         return this.cells;
+    }
+
+    initGraph(){
+
+    }
+    setGraph(graph, type){
+        this.graph[type] = graph;
+    }
+    getGraph(){
+        return this.graph;
     }
 }

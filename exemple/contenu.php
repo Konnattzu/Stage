@@ -13,6 +13,9 @@
 		include("inc.php/class/Column.class.php");
 		include("inc.php/class/Comment.class.php");
 		include("inc.php/class/Graph.class.php");
+		include("inc.php/class/Login.class.php");
+		include("inc.php/class/User.class.php");
+		include("inc.php/class/Patient.class.php");
 		echo'<!DOCTYPE html>
 		<html lang="fr">
 		<head>';
@@ -23,9 +26,8 @@
 				$page = $_GET["ref"];
 			}
 			if(isset($page) && $page != "kaplan" && $page != "sankey"){
-				echo'<header>';
 				include('inc.php/header.inc.php');
-				echo'</header>';
+				include('inc.php/menu.inc.php');
 			}
 		if(isset($page) && ($page != "")) {
 			$_SESSION["currentpage"] = $page;
@@ -51,6 +53,15 @@
 				case "saisie":
 					include("inc.php/table.inc.php");
 				break;
+				case "login":
+					include("inc.php/login.inc.php");
+				break;
+				case "compte":
+					include("inc.php/compte.inc.php");
+				break;
+				case "fiche":
+					include("inc.php/fiche.inc.php");
+				break;
 				case "kaplan":
 					$dispgraph = new Graph();
 					$dispgraph->setType($page);
@@ -64,13 +75,10 @@
 			}
 		} else { 
 			$page = "accueil";
-			header("Location: index.php?ref=".$page);
 			include("inc.php/accueil.inc.php"); 
 		}
 		if(isset($page) && $page != "kaplan" && $page != "sankey"){
-			echo'<footer>';
-			include("inc.php/footer.inc.php");	
-			echo'</footer>';
+			include("inc.php/footer.inc.php");
 		}
 				echo'</body>
 	</html>';
