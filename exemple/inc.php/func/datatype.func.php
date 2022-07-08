@@ -42,22 +42,39 @@
 				}else if(!intval($data)){
 					$datatype = "varchar";
 				}else if(intval($data) && $datatype != "varchar"){
-					if(preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar") 
-					{
+					if(preg_match("#[0-9]{2}-[0-9]{2}-[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("/[0-9]{2}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 						$datatype = "date";
 					}else if(preg_match("/[0-9]{2}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 						$datatype = "date";
 					}else if(preg_match("#[0-9]{4}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 						$datatype = "date";
-					}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					}else if(preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 						$datatype = "date";
-					}else if(preg_match("#[0-9]{2}/[0-9]{2}/[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+					}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{4}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{2}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
+						$datatype = "date";
+					}else if(preg_match("#[0-9]{4}.[0-9]{2}.[0-9]{2}#",$data) && date($data) && $datatype != "int(" && $datatype != "varchar"){
 						$datatype = "date";
 					}else if($datatype != "varchar"){
 						$datatype = "int";
 					}else{
 						$datatype = "varchar";
 					}
+				}else if(is_float($data)){
+					$datatype = "float";
 				}else{
 					$datatype = "varchar";
 				}

@@ -1,13 +1,5 @@
 <?php
-	if(defined("constante")){
-		echo'
-		<section>
-			<article>
-				<a href="index.php?ref=liste">Voir les données</a>
-				<a href="index.php?ref=accueil">Retour à l&apos; accueil</a>
-				<h1>La liste</h1>';
-				echo'<a id="savetable">Sauvegarder</a>';
-		
+	if(defined("constante")){		
 		if(!isset($_SESSION["path"]) && !file_exists("documents/datafile.csv")) {
 			$query = $pdo->prepare('SHOW TABLES LIKE "step2";');
 			$query->execute();
@@ -36,8 +28,6 @@
 			$query->execute();
 			$numrows = $query->fetch(PDO::FETCH_ASSOC);
 			if($numrows==0){
-				$table->createBase($pdo);
-				$table->createTable($pdo);
 				$table->addData($csv, $pdo);
 			}
 			$query = $pdo->prepare('SHOW TABLES LIKE "step2";');

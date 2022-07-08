@@ -21,7 +21,7 @@
         }
 
         public function setValue($value){
-            $this->value = $value;
+            $this->value = trim($value);
         }
         public function getValue(){
             return $this->value;
@@ -38,7 +38,13 @@
         }
 
         public function initLen(){
-            $this->datalength = datalength($this->value, $this->datatype, 0);
+            if($this->datatype != "enum"){
+                $this->datalength = 0;
+                $len = datalength($this->getValue(), "", 0);
+                if($len > $this->datalength){
+                    $this->datalength = $len;
+                }
+            }
         }
         public function setLen($len){
             $this->datalength = $len;
