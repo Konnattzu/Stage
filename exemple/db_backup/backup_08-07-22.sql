@@ -14,6 +14,21 @@ INSERT INTO commentaires VALUES("99999","numero_du_patient","OuiLePainOuiLePainO
 INSERT INTO commentaires VALUES("20","upn","C\'est l\'identifiant 20
 ");
 INSERT INTO commentaires VALUES("20","annee_de_naissance","c\'est une date");
+INSERT INTO commentaires VALUES("20","vh","");
+INSERT INTO commentaires VALUES("42","statut_ighv","Ceci n\'est pas un commentaire !");
+INSERT INTO commentaires VALUES("331","upn","");
+
+
+
+DROP TABLE images;
+
+CREATE TABLE `images` (
+  `image_id` int(11) NOT NULL AUTO_INCREMENT,
+  `image_path` varchar(64) NOT NULL DEFAULT 'bddimg/default.png',
+  PRIMARY KEY (`image_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO images VALUES("2","bddimg/default.png");
 
 
 
@@ -85,8 +100,9 @@ CREATE TABLE `users` (
   `modlvl` int(10) NOT NULL,
   `profil_img` int(10) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
+INSERT INTO users VALUES("12","Lefebvre","Hugo","87469b695f7ac6e88b1b07d7902282ab","hugo18.flhs@gmail.com","1","2");
 
 
 
