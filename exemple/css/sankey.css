@@ -1,23 +1,14 @@
 @media screen and (orientation: landscape) {
-svg{
+#oui{
 width: 90vw;
 height: 90vh;
-}
-p{
-display:none;
 }
 }
 
 @media screen and (orientation: portrait) {
-svg{
+#oui{
 width: 300vw;
 height: 300vh;
 margin-top: -115vh;
 }
-p{
-    font-size: 3vh;
-    color: #8b0000;
-    font-weight: bold;
-}
-
 }

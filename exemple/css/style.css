@@ -385,19 +385,19 @@ margin: 0 87%;
     width: 250px;
 }
 
-nav{
+#accueil-nav, #saisie-nav, #liste-nav, #compte-nav{
 	background:#23263d;
 	border: 1px solid #171928;
 	display: grid;
 	grid-template-columns: 1fr 3fr 1fr ;
 }
 
-nav a{
+#accueil-nav a, #saisie-nav a, #liste-nav a, #compte-nav a{
 		text-decoration: none;
 		color:white;
 }
 
-nav li{
+#accueil-nav li, #saisie-nav li, #liste-nav li, #compte-nav li{
 	list-style: none;
 }
 
@@ -420,6 +420,11 @@ nav li{
 	padding: 6px;
 	display: block;
 	width: 123px;
+}
+
+#btn_accueil:hover, #btn_connect:hover
+{
+	background: #5bcedb;
 }
 
 .btn_nav {
@@ -450,11 +455,24 @@ nav #divConnect{
 #Sactive{
 	width: 140px;
 	padding: 6px;
+	border-radius: 3px;
 }
 
 #Lactive{
 	width: 157px;
 	padding: 6px;
+	border-radius: 3px;
+}
+
+#accueil-nav #Lactive:hover,
+#accueil-nav #Sactive:hover,
+#saisie-nav #Lactive:hover,
+#saisie-nav #Sactive:hover,
+#liste-nav #Sactive:hover,
+#liste-nav #Lactive:hover,
+#compte-nav #Sactive:hover,
+#compte-nav #Lactive:hover{
+	background: #a1a1a1;
 }
 
 #saisie-nav #Sactive, #liste-nav #Lactive{
@@ -469,7 +487,58 @@ nav #divConnect{
 
 /*-----------------------------------Accueil-------------------------------*/
 
-#accueil #content{
+#accueil{
+			width: 80%;
+		margin: auto;
+	}
 
-	
+#toc{
+	width: 20vw;
+	border: 1px solid black;
+	margin: 1vh 10vw;
+	padding:20px;
+	background:#818c98;
+}
+
+#toc a{
+	text-decoration: none;
+	color: black;
+}
+#toc a:hover{
+		color: white;
+		text-decoration: underline;
+		font-weight: bold;
+}
+#toc li{
+	list-style:inside;
+}
+#toc ol{
+	margin: 0;
+}
+#toc #sommaire{
+	margin: 0px 0 10px 0;
+}
+
+.imgTuto {
+	width: 45vw;
+	border: 1px solid black;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
+#bienvenue{
+	margin: 50px 0;
+}
+
+#bienvenue h1{
+	text-align: center;
+}
+
+#contents figcaption{
+	margin: 20px auto;
+}
+
+#contents img:hover{
+	box-shadow: 0 0 20px grey; 
 }
