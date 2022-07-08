@@ -63,7 +63,9 @@
             $enum = Array();
             if(is_countable($this->cells)){
                 for($i=0;$i<count($this->cells);$i++){
-                    $type[$i] = $this->cells[$i]->getType();
+                    if($this->cells[$i]->getValue() != ""){
+                        $type[$i] = $this->cells[$i]->getType();
+                    }
                 }
                 if($this->datatype != "enum"){
                     if(in_array("varchar", $type)){
@@ -153,10 +155,16 @@
         public function initLen(){
             if($this->datatype != "enum"){
                 $this->datalength = 0;
+                for($i=0;$i<count($this->cells);$i++){
+                    $len = datalength($this->cells[$i]->getValue(), "", 0);
+                    if($len > $this->datalength){
+                        $this->datalength = $len;
+                    }
+                }
             }
         }
         public function setLen($value){
-            $this->datalength = datalength($value, "", 0);
+            $this->datalength = $value;
         }
         public function getLen(){
             return $this->datalength;

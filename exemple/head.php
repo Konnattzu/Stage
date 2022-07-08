@@ -22,6 +22,7 @@
         <script type="text/javascript" src="js/Comment.class.js"></script>
         <script type="text/javascript" src="js/MenuItem.class.js"></script>
         <script type="text/javascript" src="js/Graph.class.js"></script>
+        <script type="text/javascript" src="js/Login.class.js"></script>
       	<script src="js/data.js?v=7.3.3"></script>';
 			}
 	else die("");

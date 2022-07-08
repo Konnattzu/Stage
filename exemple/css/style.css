@@ -4,14 +4,14 @@ body
 	margin: 0;
 }
 
-a
+header a, footer a
 {
 	text-decoration: none;
 	/*Modif 09/05*/
 	color: #02b5ce;
 }
 
-a:hover
+header a:hover
 {
 	color: #5bcedb;
 	/*Modif 09/05*/
@@ -292,4 +292,184 @@ margin: 0 87%;
 
 .dhx_638523928_message.dhx_message.dhx_widget{
 	display: none;
+}
+
+/*FORM DE LOGIN*/
+#inscription, #connexion{
+    position: relative;
+    margin-top: 10rem;
+    margin-bottom: 5rem;
+    text-align: center;
+    border: 1px solid #9c9c9c;
+    border-radius: 25px;
+    width: 367px;
+    padding: 17px;
+    background: #90B5E1;
+}
+#inscription .field, #connexion .field{
+    margin-bottom: -1rem;
+    padding: 2rem;
+}
+#inscription .field input:focus, #connexion .field input:focus{
+    border: 1.5px solid #1f52f9;
+}
+
+#inscription .field input, #connexion .field input{
+    outline: none;
+    height: 40px;
+    border-radius: 40px;
+    border: none;
+    padding: 10px;
+    width: 250px;
+
+}
+#inscription .field input, #connexion .field input{
+    outline: none;
+    height: 40px;
+    border-radius: 40px;
+    border: none;
+    padding: 10px;
+    width: 250px;
+}
+
+#inscription label, #connexion label{
+    right:5rem;
+    position: relative;
+    font-family:Rubik;
+    color: #555;
+    opacity: 0.6;
+    font-size: 15px;
+    pointer-events: none;
+    top: -28px;
+    transition: .2s all;
+}*
+
+#inscription input:focus ~label, #connexion input:focus ~label,
+#inscription input:valid ~label, #connexion input:valid ~ label{
+  top: -49px;
+  left: -5.5rem;
+  opacity: 100%;
+  background: #fff;
+  padding: 0 5px;
+  font-size: 10px;
+  color: #1f52f9;
+}
+#inscription .iconeye, #connexion .iconeye{
+    width: 10%;
+}
+#inscription .iconeye img, #connexion .iconeye img{
+    width: 100%;
+}
+#inscription input[type="submit"], #connexion input[type="submit"]{
+    text-align: center;
+    align-items: center;
+    background:  #4971f6;
+    color: #fff;
+    border: none;
+    padding:10px 30px;
+    border-radius: 20px;
+    margin:  40px 0 0px 180px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#inscription input:focus, #connexion input:focus {
+    border: 1.5px solid #1f52f9;
+}
+#inscription input, #connexion input {
+    outline: none;
+    height: 40px;
+    border-radius: 40px;
+    border: none;
+    padding: 10px;
+    width: 250px;
+}
+
+nav{
+	background:#23263d;
+	border: 1px solid #171928;
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr ;
+}
+
+nav a{
+		text-decoration: none;
+		color:white;
+}
+
+nav li{
+	list-style: none;
+}
+
+
+#btn_accueil{
+	background: #02B5CE;
+	color: white;
+	font-weight: bold;
+	border-radius: 3px;
+	padding: 6px;
+	display: block;
+	width: 78px;
+}
+
+#btn_connect{
+	background: #02B5CE;
+	color: white;
+	font-weight: bold;
+	border-radius: 3px;
+	padding: 6px;
+	display: block;
+	width: 123px;
+}
+
+.btn_nav {
+	padding: 6px;
+	width: 213px;
+}
+
+nav #liste {
+	border-left: 1px solid white;
+	padding-left: 60px;
+}
+
+nav #divAccueil{
+	align-items: center;
+	display: flex;
+}
+
+nav #divNormale{
+	display: flex;
+	margin: auto;
+}
+
+nav #divConnect{
+	display: flex;
+ 	margin: auto;
+}
+
+#Sactive{
+	width: 140px;
+	padding: 6px;
+}
+
+#Lactive{
+	width: 157px;
+	padding: 6px;
+}
+
+#saisie-nav #Sactive, #liste-nav #Lactive{
+	padding: 6px;
+	background: #818c98;
+}
+
+#saisie-nav #Lactive, #liste-nav #Sactive{
+	padding: 6px;
+	background: #23263d;
+}
+
+/*-----------------------------------Accueil-------------------------------*/
+
+#accueil #content{
+
+	
 }
