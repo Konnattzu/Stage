@@ -69,7 +69,7 @@ class Comment {
     comDisp(that){
         event.stopImmediatePropagation();
 		var comt = that.value;
-		const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'>"+comt+"</textarea><input type='submit' value='&#9989;'></form>";
+		const windowHtml = "<form method='post' action=''><textarea style='min-width:380px; min-height:420px;' tabindex='-1'>"+comt+"</textarea></form>";
 		const dhxwindow = new dhx.Window({
 			width: 440,
 			height: 520,
@@ -79,13 +79,13 @@ class Comment {
 		dhxwindow.show();
 		var comwindow = dhxwindow._popup;
 		comwindow.style.zIndex = "50";
-		var cover = document.createElement("div"); 
+		var cover = document.createElement("div");
 		if(document.body.getElementsByClassName("popup-cover").length == 0){
-			cover.classList.add("popup-cover"); 
-			document.body.insertBefore(cover, document.body.children[1]); 
+			cover.classList.add("popup-cover");
+			document.body.insertBefore(cover, document.body.children[1]);
 		}
-        var delay = setTimeout(function(){ 
-            clearTimeout(delay); 
+        var delay = setTimeout(function(){
+            clearTimeout(delay);
             var textarea = comwindow.firstChild.childNodes[1].firstChild.firstChild.getElementsByTagName("TEXTAREA")[0];
             textarea.focus();
 		    cover.addEventListener("click", function(){ that.comSend(that, comwindow, cover, textarea); }, false);
@@ -109,7 +109,7 @@ class Comment {
 		}
 		request.open("POST", "inc.php/parts/send_com.inc.php", true);
 		request.setRequestHeader("X-Requested-With", "xmlhttprequest");
-		request.send(data);	
+		request.send(data);
 		cover.remove();
 		comwindow.remove();
 		window.location.reload();

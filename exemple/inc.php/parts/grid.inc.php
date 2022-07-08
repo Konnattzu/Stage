@@ -30,12 +30,12 @@ function redim(){
   var datasetmenu = [
     {
         "id": "file",
-        "value": "File",
+        "value": "Fichier",
         "items": [';
 		if($_SESSION["currentpage"] == "saisie") {
-            echo'{ "id": "fileOpen", "value": "Open", "icon": "dxi dxi-folder-open" },';
+            echo'{ "id": "fileOpen", "value": "Ouvrir", "icon": "dxi dxi-folder-open" },';
 		}
-            echo'{ "id": "fileDownload", "value": "Download", "icon": "dxi dxi-download",
+            echo'{ "id": "fileDownload", "value": "Télécharger", "icon": "dxi dxi-download",
 
             "items": [
               {
@@ -103,7 +103,7 @@ function redim(){
             id: "add",
             type: "button",
             circle: true,
-            value: "Add a new row",
+            value: "Ajouter une ligne",
             size: "small",
             icon: "mdi mdi-plus",
             full: true
