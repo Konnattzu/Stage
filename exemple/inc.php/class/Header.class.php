@@ -12,7 +12,11 @@
         }
 
         public function setValue($value){
-            $this->value = clear($value);
+            $value = clear($value);
+            if(strlen($value) > 64){
+                $value = substr($value, 0, 64);
+            }
+            $this->value = $value;
         }
         public function getValue(){
             return $this->value;

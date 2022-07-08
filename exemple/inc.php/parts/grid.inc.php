@@ -63,11 +63,11 @@ function redim(){
         ]
     },';
     $balise1= "<img class='menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-pie.svg'/><span class='dhx_nav-menu-button__text'>Graphiques</span>";
-    $balise2= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-bar.svg'/><span class='dhx_menu-button__text'> Barre</span>";
+    $balise2= "<span class='dhx_menu-button__text'> Sankey</span>";
     $balise2_a= "<div class='dhx_menu-button__text btnchart' onclick='Hsimple()'><span class='dhx_menu-button__text' > Simple</span></div>";
     $balise2_b= "<div class='dhx_menu-button__text btnchart' onclick='Hempile()'><span class='dhx_menu-button__text' > Empilée</span></div>";
     $balise2_c= "<div class='dhx_menu-button__text btnchart' onclick='Hhorizontal()'><span class='dhx_menu-button__text' > Horizontale</span></div>";
-	$balise3= "<img class='menu-item context-menu-item' src='https://snippet.dhtmlx.com/codebase/data/menu/03/img/chart-donut.svg'/><span class='dhx_menu-button__text'> Circulaire</span>";
+	$balise3= "<span class='dhx_menu-button__text'> Kaplan</span>";
     $balise3_a= "<div class='dhx_menu-button__text btnchart' onclick='Ganneau()'><span class='dhx_menu-button__text' > Anneau</span></div>";
     $balise3_b= "<div class='dhx_menu-button__text btnchart' onclick='Gradar()'><span class='dhx_menu-button__text' > Radar</span></div>";
     $balise3_c= "<div class='dhx_menu-button__text btnchart' onclick='Gsecteur()'><span class='dhx_menu-button__text' > Secteur</span></div>";
@@ -77,69 +77,24 @@ function redim(){
     $balise4_c= "<div class='dhx_menu-button__text btnchart' onclick='Gnuage()'><span class='dhx_menu-button__text' > Nuage de points</span></div>";
 	$balise5 = "<span class='dhx_menu-button__text'> Ajouter une/des lignes</span>";
     $balise6 = "<span class='dhx_menu-button__text' onclick='openForm()'> Ajouter plusieurs lignes</span>";
+    if($_SESSION["currentpage"] == "liste") {
     echo'{
         "id": "charts",
         "html": "'.$balise1.'",
         "items": [
             {
-                "id": "barre",
-                "html": "'.$balise2.'",
-				"items": [
-                    {
-                        "id": "Hsimple",
-                        "html": "'.$balise2_a.'"
-                    },
-                    {
-                        "id": "Hempilé",
-                        "html": "'.$balise2_b.'"
-                    },
-                    {
-                        "id": "Hhorizontal",
-                        "html": "'.$balise2_c.'"
-                    }
-
-                ]
+                "id": "sankey",
+                "html": "'.$balise2.'"
             },
             {
-                "id": "circulaire",
-                "html": "'.$balise3.'",
-                "items": [
-                    {
-                        "id": "Ganneau",
-                        "html": "'.$balise3_a.'"
-                    },
-                    {
-                        "id": "Gradar",
-                        "html": "'.$balise3_b.'"
-                    },
-                    {
-                        "id": "Gsecteur",
-                          "html": "'.$balise3_c.'"
-                    }
-
-                ]
-            },
-            {
-                "id": "courbe",
-                "html": "'.$balise4.'",
-				"items": [
-                    {
-                        "id": "Gaire",
-                        "html": "'.$balise4_a.'"
-                    },
-                    {
-                        "id": "Gcourbe",
-                        "html": "'.$balise4_b.'"
-                    },
-                    {
-                        "id": "Gnuage",
-                          "html": "'.$balise4_c.'"
-                    }
-
-                ]
+                "id": "kaplan",
+                "html": "'.$balise3.'"
             }
-        ]
-    },
+
+                ]
+            },';
+        }
+            echo'
     {
         "id": "lignes",
         "html": "'.$balise5.'",
@@ -158,8 +113,20 @@ function redim(){
             icon: "dxi dxi-plus",
             "html": "'.$balise6.'"
         }
-    ]}
-]
+    ]}';
+    if($_SESSION["currentpage"] == "saisie") {
+      echo',
+    {
+        id: "savetable",
+        type: "button",
+        circle: true,
+        value: "Sauvegarder",
+        size: "small",
+        icon: "dxi dxi-content-save",
+        full: true
+    }';
+    }
+echo']
 const menu = new dhx.Menu("menu", {
 css: "dhx_widget--bg_white dhx_widget--bordered"
 });
@@ -227,7 +194,7 @@ let input = document.createElement("input");
 
             let files = Array.from(input.files);
 			var data = new FormData();
-		
+
 		data.append("table", input.files[0]);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
@@ -341,9 +308,9 @@ function Hsimple(){
       //rechargement du graphe
   const data = database;
 
-		  
-		  
-		  
+
+
+
           const config = {
     type: "bar",
     css: "dhx_widget--bg_white dhx_widget--bordered",
@@ -503,9 +470,9 @@ function Hhorizontal(){
       //rechargement du graphe
   const data = database;
 
-		  
-		  
-		  
+
+
+
           const config = {
     type: "xbar",
     css: "dhx_widget--bg_white dhx_widget--bordered",
@@ -529,7 +496,7 @@ function Hhorizontal(){
                   },
                   "left": {
                       text: "'.$header[0].'"
-                      
+
                   }
               },
 
@@ -585,13 +552,13 @@ function Ganneau(){
       //rechargement du graphe
   const data = database;
 
-		  
-		  
-		  
+
+
+
           const config = {
     type: "donut",
     css: "dhx_widget--bg_white dhx_widget--bordered",
-    
+
 
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
@@ -645,9 +612,9 @@ function Gradar(){
       //rechargement du graphe
   const data = database;
 
-		  
-		  
-		  
+
+
+
           const config = {
     type: "radar",
     css: "dhx_widget--bg_white dhx_widget--bordered",
@@ -710,13 +677,13 @@ function Gsecteur(){
       //rechargement du graphe
   const data = database;
 
-		  
-		  
-		  
+
+
+
           const config = {
     type: "pie",
     css: "dhx_widget--bg_white dhx_widget--bordered",
-    
+
 
               series: [';
           		for($j=0;$j<count($header)-1;$j++){
@@ -769,10 +736,10 @@ function Gaire(){
   window.onresize = redim;
       //rechargement du graphe
   const data = database;
-  
-		  
-		  
-		  
+
+
+
+
           const config = {
     type: "area",
     css: "dhx_widget--bg_white dhx_widget--bordered",
@@ -848,8 +815,8 @@ function Gcourbe(){
   window.onload = reloadUsingLocationHash();
   window.onresize = redim;
       //rechargement du graphe
-  const data = database;  
-		  
+  const data = database;
+
           const config = {
     type: "line",
     css: "dhx_widget--bg_white dhx_widget--bordered",
@@ -927,8 +894,8 @@ function Gnuage(){
   window.onresize = redim;
       //rechargement du graphe
   const data = database;
-		  
-		  
+
+
           const config = {
     css: "dhx_widget--bg_white dhx_widget--bordered",
     scales: {
@@ -1073,7 +1040,7 @@ function Gnuage(){
           				echo '"'.$val1.'_'.$val2.'",';
           			}
           		}
-          		
+
           		if(intval($array[$nbcol[$j]][0]) && !preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/",$array[$nbcol[$j]][0]) && $j > 0){
 						$val1 = $header[$j];
 						if(isset($header[$j+1])){
@@ -1138,7 +1105,7 @@ echo'
     document.getElementById("form").style.display = "none";
     dhx.message({
         text: nbLigne + " lignes ont été ajoutées.", // the text content
-    }); 
+    });
     timer++;
     setTimeout(function(){
     document.getElementsByClassName("dhx_message")[timer].remove();

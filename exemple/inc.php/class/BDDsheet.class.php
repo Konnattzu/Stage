@@ -7,6 +7,7 @@
         public $column = Array();
         public $bddtable;
         public $pdo;
+        public $graph = Array();
 
         public function __construct($pdo, $bddtable){
             $this->bddtable = $bddtable;
@@ -41,21 +42,7 @@
             $this->initId();
             $this->initRow();
             $this->initCol();
-			// echo'<pre>';
-			// print_r($this->header);
-			// echo'</pre>';
-			// echo'<pre>';
-			// print_r($this->cells);
-			// echo'</pre>';
-			// echo'<pre>';
-			// print_r($this->identifier);
-			// echo'</pre>';
-			// echo'<pre>';
-			// print_r($this->row);
-			// echo'</pre>';
-			// echo'<pre>';
-			// print_r($this->column);
-			// echo'</pre>';
+            $this->initGraph();
         }
 
 		//header
@@ -176,11 +163,39 @@
         public function getBdTab(){
             return $this->bddtable;
         }
+        
+        //graphs
+        public function initGraph(){
+			$graph = new Graph();
+			$graph->json_encode_private();
+        }
+        public function setGraph($graph){
+            $this->graph = $graph;
+        }
+        public function getGraph(){
+            return $this->graph;
+        }
 
 		//methods
-        public function createTable($pdo){
-			//$req = $pdo->prepare("CREATE TABLE IF NOT EXISTS `step1` (`numero_du_patient` int(11) DEFAULT NULL, `prenom` varchar(6) DEFAULT NULL, `nom` varchar(13) DEFAULT NULL, `sexe` enum('M','F','N/P') DEFAULT NULL, `date_de_naissance` date DEFAULT NULL, `groupe_sanguin` varchar(2) DEFAULT NULL, `pourcent_mutation` int(11) DEFAULT NULL, `mutation` tinyint(1) DEFAULT NULL, `deces` tinyint(1) DEFAULT NULL, `date_de_deces` date DEFAULT NULL)");
-            //$req->execute();
+        public function createTable(){
+            $query = "CREATE TABLE IF NOT EXISTS ".$this->bddtable." (";
+            for($i=0;$i<count($this->header)-1;$i++){
+                $query .= $this->header[$i]->getValue()." ".$this->column[$i]->getType();
+				if($this->column[$i]->getType() == "date"){
+					$query .= " DEFAULT NULL, ";
+				}else{
+					$query .= "(".$this->column[$i]->getLen().") DEFAULT NULL, ";
+				}
+            }
+			$query .= $this->header[$i]->getValue()." ".$this->column[$i]->getType();
+			if($this->column[$i]->getType() == "date"){
+				$query .= " DEFAULT NULL";
+			}else{
+				$query .= "(".$this->column[$i]->getLen().") DEFAULT NULL";
+			}
+            $query .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+			$req = $this->pdo->prepare($query);
+            $req->execute();
 		}
         function json_encode_private() {
 			echo'<script>
@@ -229,24 +244,19 @@
         public function compareTablength($table1){
             if(count($this->getHeader()) > count($table1->getHeader())){
                 for($i=count($table1->getHeader());$i<count($this->getHeader());$i++){
-                    echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
                     $query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
                     $pdo->exec($query);
                 }
-            }
-            for($i=0;$i<count($this->getHeader());$i++){
-                if(!empty($this->getCol()[$i]->getLen()) && $this->getCol()[$i]->getLen() > $table1->getCol()[$i]->getLen()){
-                    echo "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
-                    $query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
-                    $pdo->exec($query);
+                for($i=0;$i<count($this->getHeader());$i++){
+                    if(!empty($this->getCol()[$i]->getLen()) && $this->getCol()[$i]->getLen() > $table1->getCol()[$i]->getLen()){
+                        $query = "ALTER TABLE ".$table1->getBdTab()." ADD ".$this->getCol()[$i]->getHead()." ".$this->getCol()[$i]->getType()." (".$this->getCol()[$i]->getLen().");";
+                        $this->pdo->exec($query);
+                    }
                 }
             }
         }
         public function setNull($i){
             for($j=0;$j<count($this->getCol());$j++){
-                echo $this->getCell()[$j][$i]->getValue();
-                echo $this->getCol()[$j]->getType();
-                echo $this->getCell()[$j][$i]->getColid()."<br>";
                 if($this->getCell()[$j][$i]->getValue() == ""){
                     switch($this->getCol()[$j]->getType()){
                         case "int":
@@ -287,18 +297,37 @@
         }
         public function newLine($i, $table1){
             $query = 'INSERT INTO '.$table1->getBdTab().' ('.$this->getId()[$i]->getValue()->getColid().') VALUES ('.$this->getId()[$i]->getValue()->getRowid().');';
-            echo $query;
             $this->pdo->exec($query);
         }
         public function dataLine($i, $table1){
-            for($j=0;$j<count($this->getCol());$j++){
-                $query = "UPDATE ".$table1->getBdTab()." SET ".$this->getCol()[$j]->getHead()."=".$this->getCell()[$j][$i]->getValue()." WHERE ".$this->getId()[$i]->getValue()->getColid()."=".$this->getCell()[$j][$i]->getRowid().";";
-                echo $query;
-                // print_r($this->pdo);
-                $this->pdo->exec($query);
-            }
+            if($this->getId()[$i]->getValue()->getRowid() != ""){
+				for($j=0;$j<count($this->getCol());$j++){
+					if($this->getCol()[$j]->getType() == "varchar" && strlen($this->getCell()[$j][$i]->getValue()) > $this->getCol()[$j]->getLen()){
+						$query = 'ALTER TABLE '.$table1->getBdTab().' MODIFY '.$this->header[$j]->getValue().' '.$this->column[$j]->getType().' ('.strlen($this->getCell()[$j][$i]->getValue()).');';
+						$this->pdo->exec($query);
+						$this->getCol()[$j]->setLen(strlen($this->getCell()[$j][$i]->getValue()));
+					}
+					if($this->getCol()[$j]->getType() == "date"){
+						if($this->getCol()[$j]->getCells()[$i]->getLen() == ""){
+							$value = "NULL";
+						}else{
+                            echo $this->getCol()[$j]->getCells()[$i]->getLen();
+                            echo trim($this->getCol()[$j]->getCells()[$i]->getValue(), "'");
+							$date = date_create_from_format($this->getCol()[$j]->getCells()[$i]->getLen(), trim($this->getCol()[$j]->getCells()[$i]->getValue(), "'"));
+                            print_r($date);
+							$value = "'".date_format($date, "Y-m-d")."'";
+						}
+						$query = "UPDATE ".$table1->getBdTab()." SET ".$this->getCol()[$j]->getHead()."=".$value." WHERE ".$this->getId()[$i]->getValue()->getColid()."=".$this->getCell()[$j][$i]->getRowid().";";
+					}else{
+						$query = "UPDATE ".$table1->getBdTab()." SET ".$this->getCol()[$j]->getHead()."=".$this->getCell()[$j][$i]->getValue()." WHERE ".$this->getId()[$i]->getValue()->getColid()."=".$this->getCell()[$j][$i]->getRowid().";";
+					}
+					// print_r($this->pdo);
+					$this->pdo->exec($query);
+				}
+			}
         }
 		public function sendTable($table1){
+            $this->createTable();
             //pour chaque ligne
             for($i=0;$i<count($this->getId());$i++){
                 //si la ligne possède un ID
@@ -323,14 +352,12 @@
             // print_r($this->identifier);
             if(!empty($this->column[$column]->getLen()) && strlen($value) > $this->column[$column]->getLen()){
                 $query = "ALTER TABLE ".$this->bddtable." MODIFY ".$this->header[$column]->getValue()." ".$this->column[$column]->getType()." (".$this->column[$column]->getLen().");";
-                echo $query;
                 $this->pdo->exec($query);
             }
             if($this->identifier[$row]->getValue()->getColid() != $this->header[$column]->getValue()){
                 if($this->cells[$column][$row]->getValue() != $value){
                     $this->cells[$column][$row]->setValue($value);
                     $query = "UPDATE ".$this->bddtable." SET ".$this->header[$column]->getValue()."='".$value."' WHERE ".$this->identifier[$row]->getValue()->getColid()."='".$this->identifier[$row]->getValue()->getValue()."';";
-                    echo $query;
                     $this->pdo->exec($query);
                 }
             }else if($this->identifier[$row]->getValue()->getColid() == $this->header[$column]->getValue()){
@@ -345,18 +372,76 @@
                 if($exists == false){
                     if($this->cells[$column][$row]->getValue() != ""){
                         $query = "UPDATE ".$this->bddtable." SET ".$this->header[$column]->getValue()."='".$value."' WHERE ".$this->identifier[$row]->getValue()->getColid()."='".$this->identifier[$row]->getValue()->getValue()."';";
-                        echo $query;
                         $this->pdo->exec($query);
                     }else{
                         $query = "INSERT INTO ".$this->bddtable." (".$this->header[$column]->getValue().") VALUES ('".$value."');";
-                        echo $query;
                         $this->pdo->exec($query);
                     }
                     $this->cells[$column][$row]->setValue($value);
                 }
             }
         }
-
+        public function repartColumns($template){
+			$righthead = Array();
+			//Pour chaque colonne de 1
+			for($i=0;$i<count($this->getHeader());$i++){
+				if($this->getHeader()[$i] != $template->getHeader()[$i]){
+					$matching = 0;
+					$overflow = 0;
+					for($k=0;$k<count($template->getHeader());$k++){
+						$occupied = false;
+						if($this->column[$i]->getType() == $template->column[$k]->getType()){
+							similar_text($this->header[$i]->getValue(), $template->getHeader()[$k]->getValue(), $perc);
+							if($matching < $perc){
+								for($r=0;$r<count($this->header);$r++){
+									if(isset($righthead[$r]) && $righthead[$r] == $this->header[$i]){
+										$occupied = true;
+									}
+								}
+								if($occupied == false){
+									$righthead[$i] = $template->getHeader()[$k];
+									$matching = $perc;
+								}
+							}
+						}
+					}
+				}else{
+					$righthead[$i] = $template->getHeader()[$i];
+				}
+			}
+			for($i=0;$i<count($this->header);$i++){
+				if(isset($righthead[$i])){
+					$this->header[$i] = $righthead[$i];
+				}else{
+					$overflow++;
+					// print_r($this->header[count($basetable->column)-1 + $overflow]);
+					$righthead[$i] = $this->header[count($template->column)-1 + $overflow];
+				}
+			}
+			for($k=count($template->column);$k<count($this->header);$k++){
+				$template->column[$k] = $righthead[$k];
+				$header[$k] = $righthead[$k];
+				$headtype = "";
+				$headlen = 0;
+				for($l=0;$l<count($this->row);$l++){
+					if(!empty($this->cells[$k][$l]->getValue())){
+						$headtype = datatype($this->cells[$k][$l]->getValue(), $headtype, $headlen);
+						$headlen = datalength($this->cells[$k][$l]->getValue(), $headtype, $headlen);
+						$this->cells[$k][$l]->setLen($datalength);
+					}else{
+						$this->cells[$k][$l]->setType("varchar");
+						$this->cells[$k][$l]->setLen(16);
+					}
+				}
+				$this->column[$k]->setLen($basetable->column[$k]->getLen());
+				// echo strlen($this->header[$k]->getValue());
+				if(strlen($this->header[$k]->getValue()) > 64){
+					$this->header[$k]->setValue(substr($this->header[$k]->getValue(), 0, 64));
+				}
+				$req = $pdo->prepare('ALTER TABLE step2 ADD '.$this->header[$k]->getValue().' '.$this->column[$k]->getType().'('.$this->column[$k]->getLen().');');
+				$req->execute();
+			}
+		}
         public function export_data_to_csv(){
             $r = $this->pdo->prepare('SELECT annee_de_naissance, homologie___germline FROM '.$this->bddtable.';');
             $r->execute();
@@ -367,7 +452,7 @@
                 $i++;
             }
             
-            /*$fichier_csv = fopen("documents/graphfile.csv", "w+");
+            $fichier_csv = fopen("documents/graphfile.csv", "w+");
         
             fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
         
@@ -375,7 +460,7 @@
                 fputcsv($fichier_csv, $ligne, ",");
             }
         
-            fclose($fichier_csv);*/
+            fclose($fichier_csv);
         }
     }
 ?>
