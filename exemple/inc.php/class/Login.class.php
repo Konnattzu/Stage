@@ -127,6 +127,15 @@
                ) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1";
             $create = $this->pdo->prepare($query);
             $create->execute();
+            
+            $query = "CREATE TABLE IF NOT EXISTS `images` (
+                `image_id` int(11) NOT NULL AUTO_INCREMENT,
+                `image_path` varchar(64) NOT NULL DEFAULT 'bddimg/default.png',
+                PRIMARY KEY (`image_id`)
+               ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+               ";
+            $create = $this->pdo->prepare($query);
+            $create->execute();
         }
 
         function json_encode_private() {

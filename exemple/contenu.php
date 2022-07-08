@@ -16,15 +16,20 @@
 		include("inc.php/class/Login.class.php");
 		include("inc.php/class/User.class.php");
 		include("inc.php/class/Patient.class.php");
+		if(isset($_GET) && isset($_GET["ref"])) {
+			$page = $_GET["ref"];
+		}else{
+			header("Location: index.php?ref=accueil");
+		}
+		if(isset($page) && ($page == "deconnexion")){
+			include("inc.php/logout.inc.php");
+		}
 		echo'<!DOCTYPE html>
 		<html lang="fr">
 		<head>';
 		include('head.php');
 		echo'</head>
 			<body>';
-			if(isset($_GET) && isset($_GET["ref"])) {
-				$page = $_GET["ref"];
-			}
 			if(isset($page) && $page != "kaplan" && $page != "sankey"){
 				include('inc.php/header.inc.php');
 				include('inc.php/menu.inc.php');
@@ -73,9 +78,6 @@
 					include("inc.php/graph.inc.php");
 				break;
 			}
-		} else { 
-			$page = "accueil";
-			include("inc.php/accueil.inc.php"); 
 		}
 		if(isset($page) && $page != "kaplan" && $page != "sankey"){
 			include("inc.php/footer.inc.php");

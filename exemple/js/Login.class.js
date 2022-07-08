@@ -55,6 +55,10 @@ class Login {
                     console.log(request.responseText);
                     if(parseInt(results) == results){
                         window.location.href = "index.php?ref=compte&user="+results;
+                    }else{
+                        var msg = document.createElement("DIV");
+                        msg.innerHTML = results;
+                        that.connForm.appendChild(msg);
                     }
                 }
             }
@@ -66,10 +70,8 @@ class Login {
 
     subscribe(that){
         event.preventDefault();
-        if(event.target.getAttribute("name")=="inscription"){
+        if(event.target.getAttribute("name")=="inscription" || event.key == "Enter"){
             var data = new FormData(that.inscForm);
-            console.log(data);
-            console.log(that.inscForm);
             var request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (request.readyState === 4) {
@@ -78,6 +80,10 @@ class Login {
                     console.log(request.responseText);
                     if(parseInt(results) == results){
                         window.location.href = "index.php?ref=compte&user="+results;
+                    }else{
+                        var msg = document.createElement("DIV");
+                        msg.innerHTML = results;
+                        that.inscForm.appendChild(msg);
                     }
                 }
             }

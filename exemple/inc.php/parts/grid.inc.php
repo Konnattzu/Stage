@@ -77,6 +77,7 @@ function redim(){
     $balise4_c= "<div class='dhx_menu-button__text btnchart' onclick='Gnuage()'><span class='dhx_menu-button__text' > Nuage de points</span></div>";
 	$balise5 = "<span class='dhx_menu-button__text'> Ajouter une/des lignes</span>";
     $balise6 = "<span class='dhx_menu-button__text' onclick='openForm()'> Ajouter plusieurs lignes</span>";
+    if($_SESSION["currentpage"] == "liste") {
     echo'{
         "id": "charts",
         "html": "'.$balise1.'",
@@ -91,7 +92,9 @@ function redim(){
             }
 
                 ]
-            },
+            },';
+        }
+            echo'
     {
         "id": "lignes",
         "html": "'.$balise5.'",

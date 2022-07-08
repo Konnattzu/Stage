@@ -41,7 +41,7 @@
             $req->execute();
             $id = $req;
             $_SESSION["user_id"] = $id->fetch(PDO::FETCH_NUM)[0];
-            echo $id['user_id'];
+            echo $_SESSION["user_id"];
         }
     } 
 ?>
